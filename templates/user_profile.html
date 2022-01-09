@@ -5,7 +5,6 @@
 {% block content %}
 <link href="{% static 'css/pages/user_profile.css' %}" rel="stylesheet">
 <div class="login-box">
-
     <!--  Return img if it added  -->
     <div class="image-column">
         {% if user.photo %}
@@ -26,9 +25,10 @@
     </div>
     <!--  end Return img if it added  -->
 
-    <!--  User Profile Field  -->
+    <!--  User Profile -->
     <div class="details-column">
         <h1>User Profile</h1>
+        <!--  User Profile Field (Form)  -->
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
@@ -55,7 +55,6 @@
             {% if form.photo.errors %}
             <p class="messages">{{ form.photo.errors|join:", " }}</p>
             {% endif %}
-
             <h3>Current Password:
                 <label><input type="password" name="current_password"/></label></h3>
             {% if form.current_password.errors %}
@@ -95,8 +94,9 @@
 
             <input type="submit" value="Save Changes">
         </form>
+        <!-- end User Profile Field (Form) -->
     </div>
-    <!-- end User Profile Field  -->
+    <!-- end User Profile -->
 
 </div>
 {% endblock %}
