@@ -34,5 +34,3 @@ class Clients(AbstractUser):
     def save(self, *args, **kwargs):
         self.clean_fields(exclude=["photo"])
         super().save(*args, **kwargs)
-
-# new
