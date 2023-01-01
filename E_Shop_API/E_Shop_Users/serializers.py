@@ -1,13 +1,17 @@
-from .models import User_manager
+from .models import Clients
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
+
+from django.contrib.sites.models import Site  # google
+from allauth.socialaccount.models import SocialApp  # google
 
 
 class UserDetailSerializer(serializers.ModelSerializer):
     """Return fields in  GET user detail """
+    id = serializers.CharField(read_only=True)
 
     class Meta:
-        model = User_manager
+        model = Clients
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'birth_date', 'photo', 'disabled',
                   'created_at', 'updated_at']
 
@@ -17,9 +21,9 @@ class MyUserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(validators=[validate_password])
 
     class Meta:
-        model = User_manager
+        model = Clients
         fields = ['id', 'username', 'first_name', 'last_name', 'email', 'password', 'birth_date', 'photo', 'disabled',
-                  'created_at', 'updated_at', 'product']
+                  'created_at', 'updated_at']
 
     def update(self, instance, validated_data):
         """ HASH Password when you update it"""
@@ -30,3 +34,20 @@ class MyUserSerializer(serializers.ModelSerializer):
         except KeyError:
             pass
         return user
+
+
+class SiteSerializer(serializers.ModelSerializer):
+    """ Change your domain """
+
+    class Meta:
+        model = Site
+        fields = ('id', 'domain', 'name')
+
+
+class SocialAppSerializer(serializers.ModelSerializer):
+    """ Add provider """
+
+    class Meta:
+        model = SocialApp
+        fields = '__all__'
+        # fields = ['provider', 'name', 'client_id', 'secret', 'key']
