@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% block content %}
-
+{% block title %}{{ product.name }}{% endblock %}
 
 <!--<div class="login-box">-->
 <!--    <h1>{{ product.name }}</h1>-->
@@ -23,9 +23,6 @@
 <!--        ></script>-->
 <!--    </form>-->
 <!--</div>-->
-
-
-
 <div class="login-box">
     <div class="product-details">
         <h1>{{ product.name }}</h1>
@@ -50,7 +47,6 @@
     <img src="{{ product.photo.url }}" alt="" class="product-image"/>
     {% endif %}
 </div>
-
 
 
 <style>
@@ -94,9 +90,9 @@
     }
 
     .login-box {
-            background: rgba(0, 0, 0, .5);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-        }
+        background: rgba(0, 0, 0, .5);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+    }
 
 </style>
 
@@ -128,7 +124,6 @@
 <!--    }-->
 
 
-
 <!--        .login-box {-->
 <!--            background: rgba(0, 0, 0, .5);-->
 <!--            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);-->
@@ -139,9 +134,6 @@
 <!--        }-->
 
 <!--</style>-->
-
-
-
 
 
 {% endblock %}
