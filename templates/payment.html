@@ -1,0 +1,168 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+<!--<div class="login-box">-->
+<!--    <h1>{{ product.name }}</h1>-->
+<!--    {% if product.photo %}-->
+<!--    <img src="{{ product.photo.url }}" alt="" class="product-image"/>-->
+<!--    {% endif %}-->
+<!--    <h3>Description: {{ product.description }}</h3>-->
+<!--    <p>Price: {{ product.price }}</p>-->
+
+<!--    <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">-->
+<!--        {% csrf_token %}-->
+<!--        <script-->
+<!--                src="https://checkout.stripe.com/checkout.js" class="stripe-button"-->
+<!--                data-key="{{ stripe_public_key }}"-->
+<!--                data-amount="{{ product.price|floatformat:2|floatformat:0 }}00"-->
+<!--                data-name="{{ product.name }}"-->
+<!--                data-description="{{ product.description }}"-->
+<!--                data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"-->
+<!--                data-currency="usd"-->
+<!--        ></script>-->
+<!--    </form>-->
+<!--</div>-->
+
+
+
+<div class="login-box">
+    <div class="product-details">
+        <h1>{{ product.name }}</h1>
+        <h3>Description: {{ product.description }}</h3>
+        <p>Price: {{ product.price }}</p>
+
+        <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
+            {% csrf_token %}
+            <script
+                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                    data-key="{{ stripe_public_key }}"
+                    data-amount="{{ product.price|floatformat:2|floatformat:0 }}00"
+                    data-name="{{ product.name }}"
+                    data-description="{{ product.description }}"
+                    data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"
+                    data-currency="usd"
+            ></script>
+        </form>
+    </div>
+
+    {% if product.photo %}
+    <img src="{{ product.photo.url }}" alt="" class="product-image"/>
+    {% endif %}
+</div>
+
+
+
+<style>
+
+    .login-box {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 60%;
+        padding: 40px;
+        transform: translate(-50%, -50%);
+        box-sizing: border-box;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: row-reverse;
+        align-items: center;
+    }
+
+    .product-image {
+        width: 300px;
+        height: 300px;
+        object-fit: cover;
+        margin-top: 10px;
+        border-radius: 20px;
+    }
+
+    .product-details {
+        flex-grow: 1;
+        padding-left: 30px;
+
+    }
+
+    .login-box h1 {
+        margin: 0 0 30px;
+        padding: 0;
+        text-align: center;
+    }
+
+    .login-box h1, h3, p {
+        color: rgb(10, 255, 68);
+    }
+
+    .login-box {
+            background: rgba(0, 0, 0, .5);
+            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+        }
+
+</style>
+
+<!--<style>-->
+
+<!--    .login-box {-->
+<!--        position: absolute;-->
+<!--        top: 50%;-->
+<!--        left: 50%;-->
+<!--        width: 60%;-->
+<!--        padding: 40px;-->
+<!--        transform: translate(-50%, -50%);-->
+<!--        box-sizing: border-box;-->
+<!--        border-radius: 10px;-->
+<!--    }-->
+
+<!--    .product-image {-->
+<!--        width: 300px;-->
+<!--        height: 300px;-->
+<!--        object-fit: cover;-->
+<!--        margin-top: 10px;-->
+<!--        border-radius: 20px;-->
+<!--    }-->
+
+<!--    .login-box h1 {-->
+<!--        margin: 0 0 30px;-->
+<!--        padding: 0;-->
+<!--        text-align: center;-->
+<!--    }-->
+
+
+
+<!--        .login-box {-->
+<!--            background: rgba(0, 0, 0, .5);-->
+<!--            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);-->
+<!--        }-->
+
+<!--        .login-box h1, h3, p {-->
+<!--            color: #fff;-->
+<!--        }-->
+
+<!--</style>-->
+
+
+
+
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+    var form = document.getElementById('payment-form');
+    form.addEventListener('submit', function (event) {
+        // Get the product ID and quantity
+        var productId = "{{ product.id }}";
+        var quantity = "{{ product.count }}";
+
+        // Check if there are enough products available
+        if (quantity < 1) {
+            alert('This product is out of stock!');
+            event.preventDefault(); // Stop the form from submitting
+        } else {
+            // There are enough products available, so let the form submit
+            return true;
+        }
+    });
+</script>
+{% endblock %}

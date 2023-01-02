@@ -1,0 +1,228 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link href="{% static 'css/pages/user_profile.css' %}" rel="stylesheet">
+<div class="login-box">
+
+    <!--  Return img if it added  -->
+    <div class="image-column">
+        {% if user.photo %}
+        <img src="{{ user.photo.url }}" alt="User Photo" class="product-image"/>
+
+
+        <!--  Delete Photo button  -->
+        <form method="POST" action="{% url 'delete_photo' %}">
+            {% csrf_token %}
+            <input type="submit" value="Delete Photo">
+        </form>
+        <!--  end Delete Photo button -->
+
+
+        {% else %}
+        <h1>No photo</h1>
+        {% endif %}
+    </div>
+    <!--  end Return img if it added  -->
+
+    <!--  User Profile Field  -->
+    <div class="details-column">
+        <h1>User Profile</h1>
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+
+            {% if messages %}
+            <ul class="messages">
+                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            </ul>
+            {% endif %}
+
+            <h3>Username:
+                <label><input type="text" class="user_data" name="username" value="{{ user.username }}"/></label></h3>
+            {% if form.username.errors %}
+            <p class="messages">{{ form.username.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>Name:
+                <label><input type="text" class="user_data" name="first_name" value="{{ user.first_name }}"/>
+                    <input type="text" class="user_data" name="last_name" value="{{ user.last_name }}"/></label></h3>
+            {% if form.first_name.errors or form.last_name.errors %}
+            <p class="messages">{{ form.first_name.errors|join:", " }} {{ form.last_name.errors|join:", " }}</p>
+            {% endif %}
+            <h3>Photo:
+                <input type="file" name="photo" accept="image/*"></h3>
+            {% if form.photo.errors %}
+            <p class="messages">{{ form.photo.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>Current Password:
+                <label><input type="password" name="current_password"/></label></h3>
+            {% if form.current_password.errors %}
+            <p class="messages">{{ form.current_password.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>New Password:
+                <label><input type="password" name="new_password"/></label></h3>
+            {% if form.new_password.errors %}
+            <p class="messages">{{ form.new_password.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>Email:
+                <label><input type="email" name="email" value="{{ user.email }}"/></label></h3>
+            {% if form.email.errors %}
+            <p class="messages">{{ form.email.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>Birthday:
+                <label><input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"/></label></h3>
+            {% if form.birth_date.errors %}
+            <p class="messages">{{ form.birth_date.errors|join:", " }}</p>
+            {% endif %}
+
+            <h3>Disabled?
+                <div class="switch">
+                    <input type="checkbox" name="disabled" {% if user.disabled %}checked="checked" {% endif %}
+                           value="True"
+                           id="disabled-switch">
+                    <label for="disabled-switch"></label>
+                </div>
+            </h3>
+            {% if form.disabled.errors %}
+            <p class="messages">{{ form.disabled.errors|join:", " }}</p>
+            {% endif %}
+
+            <input type="submit" value="Save Changes">
+        </form>
+    </div>
+    <!-- end User Profile Field  -->
+
+</div>
+{% endblock %}
+
+
+<!--<style>-->
+<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; start data field -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
+<!--    -->
+<!--    /*.image-column input[type="submit"] {*/-->
+<!--    /*    margin-top: 12%;*/-->
+<!--    /*    background-color: rgba(255, 0, 0, 0.63);*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.login-box {*/-->
+<!--    /*    top: 69%;*/-->
+<!--    /*    left: 50%;*/-->
+<!--    /*    width: 60%;*/-->
+<!--    /*    padding: 40px;*/-->
+<!--    /*    border-radius: 10px;*/-->
+<!--    /*    display: flex;*/-->
+<!--    /*    position: absolute;*/-->
+<!--    /*    align-items: center;*/-->
+<!--    /*    box-sizing: border-box;*/-->
+<!--    /*    transform: translate(-50%, -50%);*/-->
+<!--    /*    background: rgba(0, 0, 0, 0.40);*/-->
+<!--    /*    box-shadow: 0 15px 25px rgba(10, 8, 8, 0.6);*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.image-column {*/-->
+<!--    /*    flex-basis: 40%;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.product-image {*/-->
+<!--    /*    width: 100%;*/-->
+<!--    /*    margin-top: 10px;*/-->
+<!--    /*    border-radius: 20px;*/-->
+<!--    /*    object-fit: cover;*/-->
+<!--    /*    height: auto;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.details-column {*/-->
+<!--    /*    flex-basis: 60%;*/-->
+<!--    /*    padding-left: 20px;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.login-box h1 {*/-->
+<!--    /*    margin: 0 0 30px;*/-->
+<!--    /*    padding: 0;*/-->
+<!--    /*    text-align: center;*/-->
+<!--    /*    color: #ffffff;*/-->
+<!--    -->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.login-box h3 {*/-->
+<!--    /*    color: #ffffff;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.user_data,*/-->
+<!--    /*input[type="email"], input[type="date"],*/-->
+<!--    /*input[type="password"], input[type="file"] {*/-->
+<!--    /*    padding: 10px;*/-->
+<!--    /*    border-radius: 5px;*/-->
+<!--    /*    border: 1px solid #ccc;*/-->
+<!--    /*    font-size: 16px;*/-->
+<!--    /*    width: 100%;*/-->
+<!--    /*    margin-bottom: 10px;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*input[type="submit"] {*/-->
+<!--    /*    background-color: #4CAF50;*/-->
+<!--    /*    color: white;*/-->
+<!--    /*    padding: 10px 20px;*/-->
+<!--    /*    border: none;*/-->
+<!--    /*    border-radius: 5px;*/-->
+<!--    /*    font-size: 16px;*/-->
+<!--    /*    cursor: pointer;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.messages {*/-->
+<!--    /*    color: #ff5353;*/-->
+<!--    /*    font-weight: bolder;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; start switch button -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
+<!--    /*.switch {*/-->
+<!--    /*    width: 52px;*/-->
+<!--    /*    height: 24px;*/-->
+<!--    /*    position: relative;*/-->
+<!--    /*    display: inline-block;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.switch label {*/-->
+<!--    /*    top: 0;*/-->
+<!--    /*    left: 0;*/-->
+<!--    /*    right: 0;*/-->
+<!--    /*    bottom: 0;*/-->
+<!--    /*    display: block;*/-->
+<!--    /*    cursor: pointer;*/-->
+<!--    /*    position: absolute;*/-->
+<!--    /*    border-radius: 34px;*/-->
+<!--    /*    background-color: #ccc;*/-->
+<!--    /*    transition: background-color 0.1s;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.switch label:before {*/-->
+<!--    /*    position: absolute;*/-->
+<!--    /*    content: "";*/-->
+<!--    /*    left: 4px;*/-->
+<!--    /*    bottom: 4px;*/-->
+<!--    /*    width: 16px;*/-->
+<!--    /*    height: 16px;*/-->
+<!--    /*    background-color: white;*/-->
+<!--    /*    border-radius: 50%;*/-->
+<!--    /*    transition: transform 0.2s;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.switch input:checked + label {*/-->
+<!--    /*    background-color: #c600ff;*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*.switch input:checked + label:before {*/-->
+<!--    /*    transform: translateX(26px);*/-->
+<!--    /*}*/-->
+<!--    -->
+<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;  end switch button  -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
+
+<!--   -->
+
+
+<!--</style>-->
+
