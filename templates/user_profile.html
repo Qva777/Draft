@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Edit Profile{% endblock %}
 
 {% block content %}
 <link href="{% static 'css/pages/user_profile.css' %}" rel="stylesheet">
@@ -74,7 +75,8 @@
             {% endif %}
 
             <h3>Birthday:
-                <label><input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"/></label></h3>
+                <label><input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"
+                              min="1930-01-01"/></label></h3>
             {% if form.birth_date.errors %}
             <p class="messages">{{ form.birth_date.errors|join:", " }}</p>
             {% endif %}
@@ -98,131 +100,3 @@
 
 </div>
 {% endblock %}
-
-
-<!--<style>-->
-<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; start data field -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
-<!--    -->
-<!--    /*.image-column input[type="submit"] {*/-->
-<!--    /*    margin-top: 12%;*/-->
-<!--    /*    background-color: rgba(255, 0, 0, 0.63);*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.login-box {*/-->
-<!--    /*    top: 69%;*/-->
-<!--    /*    left: 50%;*/-->
-<!--    /*    width: 60%;*/-->
-<!--    /*    padding: 40px;*/-->
-<!--    /*    border-radius: 10px;*/-->
-<!--    /*    display: flex;*/-->
-<!--    /*    position: absolute;*/-->
-<!--    /*    align-items: center;*/-->
-<!--    /*    box-sizing: border-box;*/-->
-<!--    /*    transform: translate(-50%, -50%);*/-->
-<!--    /*    background: rgba(0, 0, 0, 0.40);*/-->
-<!--    /*    box-shadow: 0 15px 25px rgba(10, 8, 8, 0.6);*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.image-column {*/-->
-<!--    /*    flex-basis: 40%;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.product-image {*/-->
-<!--    /*    width: 100%;*/-->
-<!--    /*    margin-top: 10px;*/-->
-<!--    /*    border-radius: 20px;*/-->
-<!--    /*    object-fit: cover;*/-->
-<!--    /*    height: auto;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.details-column {*/-->
-<!--    /*    flex-basis: 60%;*/-->
-<!--    /*    padding-left: 20px;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.login-box h1 {*/-->
-<!--    /*    margin: 0 0 30px;*/-->
-<!--    /*    padding: 0;*/-->
-<!--    /*    text-align: center;*/-->
-<!--    /*    color: #ffffff;*/-->
-<!--    -->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.login-box h3 {*/-->
-<!--    /*    color: #ffffff;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.user_data,*/-->
-<!--    /*input[type="email"], input[type="date"],*/-->
-<!--    /*input[type="password"], input[type="file"] {*/-->
-<!--    /*    padding: 10px;*/-->
-<!--    /*    border-radius: 5px;*/-->
-<!--    /*    border: 1px solid #ccc;*/-->
-<!--    /*    font-size: 16px;*/-->
-<!--    /*    width: 100%;*/-->
-<!--    /*    margin-bottom: 10px;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*input[type="submit"] {*/-->
-<!--    /*    background-color: #4CAF50;*/-->
-<!--    /*    color: white;*/-->
-<!--    /*    padding: 10px 20px;*/-->
-<!--    /*    border: none;*/-->
-<!--    /*    border-radius: 5px;*/-->
-<!--    /*    font-size: 16px;*/-->
-<!--    /*    cursor: pointer;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.messages {*/-->
-<!--    /*    color: #ff5353;*/-->
-<!--    /*    font-weight: bolder;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; start switch button -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
-<!--    /*.switch {*/-->
-<!--    /*    width: 52px;*/-->
-<!--    /*    height: 24px;*/-->
-<!--    /*    position: relative;*/-->
-<!--    /*    display: inline-block;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.switch label {*/-->
-<!--    /*    top: 0;*/-->
-<!--    /*    left: 0;*/-->
-<!--    /*    right: 0;*/-->
-<!--    /*    bottom: 0;*/-->
-<!--    /*    display: block;*/-->
-<!--    /*    cursor: pointer;*/-->
-<!--    /*    position: absolute;*/-->
-<!--    /*    border-radius: 34px;*/-->
-<!--    /*    background-color: #ccc;*/-->
-<!--    /*    transition: background-color 0.1s;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.switch label:before {*/-->
-<!--    /*    position: absolute;*/-->
-<!--    /*    content: "";*/-->
-<!--    /*    left: 4px;*/-->
-<!--    /*    bottom: 4px;*/-->
-<!--    /*    width: 16px;*/-->
-<!--    /*    height: 16px;*/-->
-<!--    /*    background-color: white;*/-->
-<!--    /*    border-radius: 50%;*/-->
-<!--    /*    transition: transform 0.2s;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.switch input:checked + label {*/-->
-<!--    /*    background-color: #c600ff;*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*.switch input:checked + label:before {*/-->
-<!--    /*    transform: translateX(26px);*/-->
-<!--    /*}*/-->
-<!--    -->
-<!--    /*!* -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;  end switch button  -&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45;&#45; *!*/-->
-
-<!--   -->
-
-
-<!--</style>-->
-
