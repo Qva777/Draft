@@ -153,5 +153,6 @@
 
     .sub-menu-link:hover p {
         color: #771cab;
+        font-weight: bold;
         transform: scale(1.1) translateX(7px);
     }

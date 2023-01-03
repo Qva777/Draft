@@ -1,3 +1,5 @@
+import random
+
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions
@@ -52,7 +54,6 @@ class ProductHomeListView(View):
         page_obj = paginator.get_page(page_number)
         return render(request, 'home_products_list.html', {'page_obj': page_obj})
 
-
 class CancelProduct(TemplateView):
     template_name = 'cancel.html'
 
@@ -60,6 +61,9 @@ class CancelProduct(TemplateView):
 @csrf_exempt
 def payment_pro(request, product_id):
     product = get_object_or_404(Product, id=product_id)
+
+    random_products = random.sample(list(Product.objects.all()), 4)#new  random
+
     if product.count < 1:
         # messages.error(request, 'Sorry, this product is currently out of stock.')
         # return redirect('error')
@@ -88,7 +92,8 @@ def payment_pro(request, product_id):
 
     context = {
         "product": product,
-        "stripe_public_key": settings.STRIPE_PUBLIC_KEY
+        "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
+        "random_products": random_products,
     }
     return render(request, "payment.html", context)
 

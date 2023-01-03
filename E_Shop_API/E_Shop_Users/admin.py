@@ -2,6 +2,10 @@ from django.contrib import admin
 from django.utils.html import mark_safe
 from E_Shop_API.E_Shop_Users.models import Clients
 
+# from django.contrib import admin
+#
+# admin.site.site_header = 'Your Custom Site Header'
+# admin.site.site_title = 'Your Custom Site Title'
 
 @admin.register(Clients)
 class UserAdmin(admin.ModelAdmin):

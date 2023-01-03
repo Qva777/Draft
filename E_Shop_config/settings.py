@@ -14,6 +14,8 @@ from datetime import timedelta
 from pathlib import Path
 from dotenv import load_dotenv
 
+# from django import __version__ as django_version
+
 
 load_dotenv()
 
@@ -50,6 +52,8 @@ INSTALLED_APPS = [
     'E_Shop_Frontend.Users.apps.UserConfig',
     'E_Shop_Frontend.Products.apps.ProductsConfig',
     # INSTALLED LIBRARY:
+    # 'admin_shortcuts',
+
     'djoser',
     'celery',
     'coreapi',
@@ -152,16 +156,6 @@ DATABASES = {
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-
-    # {
-    #     'NAME': 'E_Shop_API.E_Shop_Users.validators.validate_password',
-    # },
-
-
-
-    # {
-    #     'NAME': 'E_Shop_config.validators.CustomPasswordValidator',
-    # },
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
@@ -188,6 +182,8 @@ USE_I18N = True
 USE_TZ = True
 
 DATE_INPUT_FORMATS = ['%d-%m-%Y', ]
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
@@ -198,10 +194,13 @@ STATICFILES_DIRS = [
 ]
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+
+# JWT
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(minutes=60),
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
@@ -234,6 +233,72 @@ SIMPLE_JWT = {
     'SLIDING_TOKEN_REFRESH_LIFETIME': timedelta(days=1),
 }
 
+
 # Stripe payment
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+
+# Admin Shortcuts
+
+# ADMIN_SHORTCUTS = [
+#     {
+#         'shortcuts': [
+#             {
+#                 'url': '/',
+#                 'open_new_window': True,
+#             },
+#             {
+#                 'url_name': 'admin:logout',
+#             },
+#             {
+#                 'title': 'Users',
+#                 'url_name': 'admin:auth_user_changelist',
+#                 'count': 'example.utils.count_users',
+#             },
+#             {
+#                 'title': 'Groups',
+#                 'url_name': 'admin:auth_group_changelist',
+#                 'count': 'example.utils.count_groups',
+#             },
+#             {
+#                 'title': 'Add user',
+#                 'url_name': 'admin:auth_user_add',
+#                 'has_perms': 'example.utils.has_perms_to_users',
+#             },
+#         ]
+#     },
+#     {
+#         'title': 'CMS1',
+#         'shortcuts': [
+#             {
+#                 'title': 'Pages',
+#                 'url_name': 'admin:index',
+#             },
+#             {
+#                 'title': 'Files',
+#                 'url_name': 'admin:index',
+#             },
+#             {
+#                 'title': 'Contact forms',
+#                 'icon': 'columns',
+#                 'url_name': 'admin:index',
+#                 # 'count_new': '3',
+#             },
+#             {
+#                 'title': 'Products',
+#                 'url_name': 'admin:index',
+#             },
+#             {
+#                 'title': _('Orders'),
+#                 'url_name': 'admin:index',
+#                 # 'count_new': '12',
+#             },
+#         ]
+#     },
+# ]
+# ADMIN_SHORTCUTS_SETTINGS = {
+#     'show_on_all_pages': True,
+#     'hide_app_list': True,
+#     'open_new_window': False,
+# }

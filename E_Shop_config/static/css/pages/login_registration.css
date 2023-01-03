@@ -152,9 +152,9 @@
         box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
     }
 
-    .login-box h2 {
-        color: #fff;
-    }
+    /*.login-box h2 {*/
+    /*    color: #fff;*/
+    /*}*/
 
     .login-box .user-box input {
         color: #fff;
@@ -226,9 +226,9 @@
     }
 
 
-    .text_login {
-        color: #ffffff;
-    }
+    /*.text_light {*/
+    /*    color: #ffffff;*/
+    /*}*/
 
 }
 
@@ -246,9 +246,9 @@
 
     }
 
-    .login-box h2 {
-        color: #000000;
-    }
+    /*.login-box h2 {*/
+    /*    color: #000000;*/
+    /*}*/
 
     .login-box .user-box input {
         color: rgb(154, 0, 255);
@@ -315,9 +315,9 @@
         background: linear-gradient(360deg, transparent, #f403f0);
     }
 
-    .text_login {
-        color: #050505;
-    }
+    /*.text_login {*/
+    /*    color: #050505;*/
+    /*}*/
 
 }
 

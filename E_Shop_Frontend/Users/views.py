@@ -176,6 +176,3 @@ class UserLoginView(View):
                 login(request, user)
                 return redirect('home')
         return render(request, self.template_name, {'form': form})
-
-
-
