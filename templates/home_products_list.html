@@ -2,7 +2,6 @@
 {% load static %}
 {% include 'base.html' %}
 {% block content %}
-
 <div class="flex-container text-information">
     {% for item in page_obj %}
     <a href="{% url 'payment_pro' product_id=item.id %}">
