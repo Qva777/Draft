@@ -494,28 +494,28 @@ html {
         margin: 0;
         padding: 0;
         font-family: sans-serif;
-        background-image: url("../img/fon_dark_login.jpg");
-
-        /*background: linear-gradient(#141e30, #243b55);*/
-        /*background: linear-gradient(#191970, #000080);*/
-        background-attachment: fixed;
     }
 }
 
 
 @media (prefers-color-scheme: light) {
+    :root {
+        --body-color: #ffffff;
+
+        /*--body-color: #045e57;*/
+        --nav-color: rgb(255, 255, 255);
+        --side-nav: #f5f1f1;
+        --text-color: #000000;
+        --search-bar: #e4e4e4;
+        --search-text: #010718;
+    }
+
 
     body {
         margin: 0;
         padding: 0;
         font-family: sans-serif;
-        /*background-image: url("https://images.wallpaperscraft.ru/image/single/gradient_zelenyj_tekstura_131365_1920x1080.jpg");*/
-        background-image: url("../img/fon_light_login.jpg");
-
-
-        /*background: linear-gradient(#191970, #000080);*/
         background-attachment: fixed;
-
     }
 
     .text_color-scheme {
