@@ -7,22 +7,17 @@
 
 {% block content %}
 <link href="{% static 'css/pages/login_registration.css' %}" rel="stylesheet">
-
-
 <div class="login-box login-size text_color-scheme{% if form.errors %} error-message{% endif %}">
-
-
-
-    <!--<div class="login-box login-size text_color-scheme">-->
     <h2>Login</h2>
     <!-- Login Form -->
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         {% if form.errors %}
-        <div class="alert error-list" role="alert">
+        <div class="error-login" role="alert">
             <p>Invalid email or password. Please try again.</p>
         </div>
         {% endif %}
+
         <!-- User login field -->
         <div class="user-box">
             <input type="text" name="username" required>
