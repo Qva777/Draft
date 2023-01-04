@@ -1,61 +1,57 @@
 {% load static %}
 <link href="{% static 'css/base/navbar.css' %}" rel="stylesheet">
+
 <nav>
-    <div class="nav-bar">
+    <div class="nav-bar" id="nav-bar">
+        <!-- Menu lines -->
         <img src="{% static 'img/menu.png'%}" class="bx bx-menu sidebarOpen" id="menu">
+        <!-- end Menu -->
+
+        <!-- Logotype -->
         <span class="logo navLogo">
                 <a href="{% url 'home' %}">
                     <img src="{% static 'img/logo.png'%}" id="logo" class="logo_e_shop">
                 </a>
         </span>
+        <!-- end Logotype -->
 
+        <!--  Menu for phone -->
         <div class="menu">
+
             <div class="logo-toggle">
-                <span class="logo"><a href="#">Menu</a></span>
+                <span class="logo"><a href="{% url 'home' %}">Menu</a></span>
                 <i class='bx bx-x siderbarClose'></i>
             </div>
 
             <ul class="nav-links">
-                <li><a href="#">Cart<img src="{% static 'img/cart.png'%}" id="cart" style="height: 20px;
-    margin-left: 18px;"></a></li>
-
-<!--                <li><a href="#">Cart</a></li>-->
-<!--                <li><a href="#">Login</a></li>-->
-
-                <li><a href="{% url 'login' %}">Login<img src="{% static 'img/login.png'%}" id="login-ico" style="height: 18px;
-    margin-left: 18px;"></a></li>
-
-<!--                <li><a href="#">profile</a></li>-->
-
+                <li><a href="#">Cart</a></li>
+                <li><a href="#"><img src="{% static 'img/cart.png'%}" id="cart"></a></li>
+                <li><a href="{% url 'login' %}">Login</a></li>
             </ul>
         </div>
+        <!-- end Menu for phone -->
 
-        <div class="darkLight-searchBox">
-
+        <!-- Searchbar field and  -->
+        <div class="searchBox">
             <div class="searchBox">
                 <div class="searchToggle">
-                    <img src="{% static 'img/search.png'%}" id="search" style="height: 25px">
+                    <img src="{% static 'img/search.png'%}" id="search" class="search_img">
                 </div>
 
                 <div class="search-field">
-                    <input type="text" placeholder="Search...">
-                    <i class='bx bx-search'>go</i>
+                    <input type="text" placeholder="Search..." maxlength="255">
+                    <img src="{% static 'img/search.png'%}" id="search-input" class="search_img">
                 </div>
             </div>
+            <!-- end Search field -->
 
-
-            <!--            <div class="dark-light">-->
-            <!--                                    <i class='bx bx-moon moon'></i>-->
-            <!--                &lt;!&ndash;                    <i class='bx bx-sun sun'></i>&ndash;&gt;theme-->
-            <!--            </div>-->
-
-
+            <!-- subMenu -->
             {% if user.is_authenticated and user.photo %}
-
             <img src="{{ user.photo.url }}" class="user-picture" onclick="toggleMenu()" class="account-image"></button>
             {% else %}
             <img src="{% static 'img/unknown.png' %}" class="user-picture" onclick="toggleMenu()">
             {% endif %}
+
             <div class="sub-menu-wrap" id="subMenu">
                 <div class="sub-menu">
                     {% if user.is_authenticated %}
@@ -98,173 +94,225 @@
                         <span>></span></a>
                     {% endif %}
                 </div>
-                <!--            </div>-->
             </div>
+            <!-- end subMenu -->
         </div>
     </div>
 </nav>
 
 <script>
     const cartImg = document.getElementById('cart');
-    const logoImg = document.getElementById('logo');
     const searchImg = document.getElementById('search');
+    const searchInputImg = document.getElementById('search-input');
+    const logoImg = document.getElementById('logo');
     const menuImg = document.getElementById('menu');
-
 
 
     const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
     if (prefersDark) {
-        // cartImg.src = '{% static "img/cart_dark.png" %}';
-        // logoImg.src = '{% static "img/logo_dark.png" %}';
-        // searchImg.src = '{% static "img/search_dark.png" %}';
-        // menuImg.src = '{% static "img/menu_dark.png" %}';
-
         cartImg.src = '{% static "img/cart.png" %}';
         logoImg.src = '{% static "img/logo.png" %}';
         searchImg.src = '{% static "img/search.png" %}';
+        searchInputImg.src = '{% static "img/search.png" %}';
         menuImg.src = '{% static "img/menu.png" %}';
 
-
-
     } else {
-        // cartImg.src = '{% static "img/cart.png" %}';
-        // logoImg.src = '{% static "img/logo.png" %}';
-        // searchImg.src = '{% static "img/search.png" %}';
-        // menuImg.src = '{% static "img/menu.png" %}';
-
         cartImg.src = '{% static "img/cart_dark.png" %}';
         logoImg.src = '{% static "img/logo_dark.png" %}';
         searchImg.src = '{% static "img/search_dark.png" %}';
+        searchInputImg.src = '{% static "img/search_dark.png" %}';
         menuImg.src = '{% static "img/menu_dark.png" %}';
-
-
     }
 
 
     const body = document.querySelector("body"),
         nav = document.querySelector("nav"),
-        // modeToggle = document.querySelector(".dark-light"),
         searchToggle = document.querySelector(".searchToggle"),
-        sidebarOpen = document.querySelector(".sidebarOpen"),
-        siderbarClose = document.querySelector(".siderbarClose");
+        sidebarOpen = document.querySelector(".sidebarOpen");
+    // siderbarClose = document.querySelector(".siderbarClose");
+
 
     let getMode = localStorage.getItem("mode");
     if (getMode && getMode === "dark-mode") {
         body.classList.add("dark");
     }
 
-    // js code to toggle dark and light mode
-    // modeToggle.addEventListener("click", () => {
-    //     modeToggle.classList.toggle("active");
-    //     body.classList.toggle("dark");
-    //
-    //     // js code to keep user selected mode even page refresh or file reopen
-    //     if (!body.classList.contains("dark")) {
-    //         localStorage.setItem("mode", "light-mode");
-    //     } else {
-    //         localStorage.setItem("mode", "dark-mode");
-    //     }
-    // });
+    let subMenu = document.getElementById("subMenu");
 
-    // js code to toggle search box
+
+    function toggleMenu() {
+        subMenu.classList.toggle("open-menu");
+        searchToggle.classList.remove("active");
+    }
+
     searchToggle.addEventListener("click", () => {
         searchToggle.classList.toggle("active");
+        subMenu.classList.remove("open-menu");
     });
 
-
-    //   js code to toggle sidebar
-    sidebarOpen.addEventListener("click", () => {
-        nav.classList.add("active");
-    });
 
     body.addEventListener("click", e => {
         let clickedElm = e.target;
 
         if (!clickedElm.classList.contains("sidebarOpen") && !clickedElm.classList.contains("menu")) {
             nav.classList.remove("active");
+
+
+            // searchToggle.classList.remove("active");
+            // subMenu.classList.remove("open-menu");
         }
     });
 
+
+    sidebarOpen.addEventListener("click", () => {
+        nav.classList.add("active");
+        searchToggle.classList.remove("active");
+        subMenu.classList.remove("open-menu");
+    });
+
+    // Add event listener to the body element
+    // document.body.addEventListener("click", (event) => {
+    //     const target = event.target;
+    //
+    //     // Check if the target is a child of the nav element or the sidebarOpen element
+    //     if (!nav.contains(target) && target !== sidebarOpen) {
+    //         nav.classList.remove("active");
+    //         searchToggle.classList.remove("active");
+    //     }
+    // });
+
+
+    // ворк
+    // sidebarOpen.addEventListener("click", () => {
+    //     nav.classList.add("active");
+    //     searchToggle.classList.remove("active");
+    // });
+    const searchBox = document.querySelector('.searchBox');
+
+    document.addEventListener('click', function (event) {
+        const isClickInsideSearchBox = searchBox.contains(event.target);
+
+        if (!isClickInsideSearchBox) {
+            subMenu.classList.remove('open-menu');
+            searchToggle.classList.remove('active');
+
+        }
+    });
+
+
 </script>
 <style>
-    /*@media only screen and (min-width: 792px) {*/
-    /*    .nav-links li:nth-child(2),*/
-    /*    .nav-links li:nth-child(3) {*/
-    /*        display: none;*/
-    /*    }*/
-    /*}*/
+
+    @media only screen and (min-width: 792px) {
+        .nav-links li:nth-child(1),
+        .nav-links li:nth-child(3) {
+            display: none;
+        }
+    }
+
+    @media only screen and (max-width: 793px) {
+        .nav-links li:nth-child(2) {
+            display: none;
+        }
+    }
 
 
     @media (prefers-color-scheme: light) {
-        :root {
-            --body-color: #E4E9F7;
-            --nav-color: #ffffff;
-            --side-nav: #ffffff;
-            --text-color: #000000;
-            --search-bar: #F2F2F2;
-            --search-text: #010718;
+        /*:root {*/
+        /*    --body-color: #0044ff;*/
+        /*    --nav-color: #ffffff;*/
+        /*    --side-nav: #f5f1f1;*/
+        /*    --text-color: #000000;*/
+        /*    --search-bar: #ffffff;*/
+        /*    --search-text: #010718;*/
+        /*}*/
+        .sub-menu {
+            background: #e4e4e4;
         }
 
-        /*.menu {*/
-        /*    background-color: #d90000;*/
-        /*}*/
+.searchBox .search-field {
+        background-color: #e4e4e4;
+    }
+        .search-field input {
+            color: #000000;
+            background-color: var(--search-bar);
+        }
+
+        .sub-menu-link {
+            font-weight: bold;
+            color: #000000;
+        }
+
+
+        .user-info h3 {
+            color: #000000;
+        }
     }
 
     @media (prefers-color-scheme: dark) {
         :root {
             --body-color: #E4E9F7;
-            --nav-color: #000000;
-            --side-nav: #232323;
+            --nav-color: #181818;
+            --side-nav: #131313;
             --text-color: #FFF;
-            --search-bar: #F2F2F2;
+            --search-bar: #181818;
             --search-text: #010718;
         }
 
-        /*.menu {*/
-        /*    background-color: #000000;*/
+        /*    .sub-menu {*/
+        /*    background: #181818;*/
         /*}*/
+        .search-field input {
+            color: #ffffff;
+            background-color: var(--search-bar);
+        }
+
+        .searchBox .search-field {
+        background-color: #181818;
+    }
+        .sub-menu-link {
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        .sub-menu {
+            background: #181818;
+        }
+        .user-info h3 {
+            color: #FFFFFF;
+        }
+
     }
 
     /* ===== Google Font Import - Poppins ===== */
     @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
 
+    #cart {
+        height: 35px;
+    }
+
+    .search_img {
+        height: 25px;
+        margin-right: 10px;
+    }
 
     .logo_e_shop {
         height: 60px;
     }
 
     * {
-        margin: 0;
+        /*margin: 0;*/
         padding: 0;
         box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
+        /*font-family: 'Poppins', sans-serif;*/
         transition: all 0.4s ease;;
     }
 
-
-    /* ===== Colours ===== */
-    /*:root {*/
-    /*    --body-color: #E4E9F7;*/
-    /*    --nav-color: #ffffff;*/
-    /*    --side-nav: #4b3e04;*/
-    /*    --text-color: #FFF;*/
-    /*    --search-bar: #F2F2F2;*/
-    /*    --search-text: #010718;*/
+    /*body {*/
+    /*    height: 100vh;*/
+    /*    background-color: var(--body-color);*/
     /*}*/
-
-    body {
-        height: 100vh;
-        background-color: var(--body-color);
-    }
-
-    body.dark {
-        --body-color: #18191A;
-        --nav-color: #242526;
-        --side-nav: #63b2ff;
-        --text-color: #CCC;
-        --search-bar: #242526;
-    }
 
     nav {
         position: fixed;
@@ -351,13 +399,12 @@
         opacity: 1;
     }
 
-    .nav-bar .darkLight-searchBox {
+    .nav-bar .searchBox {
         display: flex;
         align-items: center;
     }
 
-    .darkLight-searchBox .dark-light,
-    .darkLight-searchBox .searchToggle {
+    .searchToggle {
         height: 40px;
         width: 40px;
         display: flex;
@@ -367,8 +414,8 @@
         color: #FFFFFF;
     }
 
-    .dark-light i,
-    .searchToggle i {
+
+    i, .searchToggle i {
         position: absolute;
         color: var(--text-color);
         font-size: 22px;
@@ -376,20 +423,6 @@
         transition: all 0.3s ease;
     }
 
-    .dark-light i.sun {
-        opacity: 0;
-        pointer-events: none;
-    }
-
-    .dark-light.active i.sun {
-        opacity: 1;
-        pointer-events: auto;
-    }
-
-    .dark-light.active i.moon {
-        opacity: 0;
-        pointer-events: none;
-    }
 
     .searchToggle i.cancel {
         opacity: 0;
@@ -412,13 +445,16 @@
 
     .searchBox .search-field {
         position: absolute;
-        bottom: -85px;
-        right: 5px;
+        /*bottom: -85px;*/
+        right: -88px;
         height: 50px;
         width: 300px;
         display: flex;
         align-items: center;
-        background-color: var(--nav-color);
+        /*background-color: var(--nav-color);*/
+        /*background-color: #181818;*/
+
+
         padding: 3px;
         border-radius: 6px;
         box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
@@ -433,32 +469,32 @@
         pointer-events: auto;
     }
 
-    .search-field::before {
-        content: '';
-        position: absolute;
-        right: 14px;
-        top: -4px;
-        height: 12px;
-        width: 12px;
-        background-color: var(--nav-color);
-        transform: rotate(-45deg);
-        z-index: -1;
-    }
+    /*.search-field::before {*/
+    /*    content: '';*/
+    /*    position: absolute;*/
+    /*    right: 102px;*/
+    /*    top: -4px;*/
+    /*    height: 12px;*/
+    /*    width: 12px;*/
+    /*    background-color: var(--nav-color);*/
+    /*    transform: rotate(-45deg);*/
+    /*    z-index: -1;*/
+    /*}*/
 
     .search-field input {
         height: 100%;
         width: 100%;
-        padding: 0 45px 0 15px;
+        padding: 0 11px 0 15px;
         outline: none;
         border: none;
         border-radius: 4px;
         font-size: 14px;
         font-weight: 400;
-        color: var(--search-text);
+        /*color: var(--search-text);*/
         background-color: var(--search-bar);
     }
 
-    body.dark .search-field input {
+    body.search-field input {
         color: var(--text-color);
     }
 
@@ -470,9 +506,14 @@
         cursor: pointer;
     }
 
-    body.dark .search-field i {
+    body.search-field i {
         color: var(--text-color);
     }
+
+    body .search-field i {
+        color: var(--text-color);
+    }
+
 
     @media (max-width: 790px) {
         nav .nav-bar .sidebarOpen {
@@ -526,26 +567,14 @@
     }
 
 
-    /*@media (prefers-color-scheme: dark) {*/
-    /*  #cart {*/
-    /*      content: url('/E_Shop_config/static/img/cart.png');*/
-    /*  }*/
-    /*}*/
-
-    /*@media (prefers-color-scheme: light) {*/
-    /*  #cart {*/
-    /*      content: url('/E_Shop_config/static/img/cart_dark.png');*/
-    /*  }*/
-    /*}*/
-
-
     .user-picture {
         object-fit: cover;
         cursor: pointer;
         width: 70px;
         /*height: 70px;*/
         /*margin-left: 30px;*/
-        margin-right: 30px;
+
+        /*margin-right: 30px;*/
         border-radius: 50%;
         clip-path: circle(30%);
     }
@@ -584,7 +613,8 @@
     .sub-menu {
         margin: 10px;
         padding: 20px;
-        background: #fff;
+        /*background: #e4e4e4;*/
+        /*background: #181818;*/
         border-radius: 9%;
     }
 
@@ -615,7 +645,7 @@
 
     .sub-menu-link {
         margin: 12px 0;
-        color: #525252;
+        /*color: #525252;*/
         display: flex;
         align-items: center;
         text-decoration: none;
@@ -637,12 +667,13 @@
 
     .sub-menu-link span {
         font-size: 22px;
-        transition: transform 0.5s;
+        transition: transform 0.1s;
     }
 
     .sub-menu-link:hover span {
-        transform: translateX(5px);
+        transform: translateX(20px);
     }
+
 </style>
 <script src="{% static 'js/base/navbar.js' %}"></script>
 
