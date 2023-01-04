@@ -82,7 +82,7 @@
         display: inline-block;
         padding: 8px 16px;
         margin: 0 5px;
-        border: 1px solid #ffffff;
+        /*border: 1px solid #ffffff;*/
         border-radius: 4px;
         font-weight: bold;
     }
@@ -244,8 +244,20 @@
         width: 250px;
         height: 250px;
         object-fit: cover;
-        margin-top: 10px;
+        /*margin-top: 10px;*/
+        margin-top: 25px;
+
         border-radius: 20px;
+    }
+
+    @media (max-width: 1276px) {
+    .product-image {
+        width: 250px;
+        height: 250px;
+        object-fit: cover;
+         margin-top: 1px;
+        border-radius: 20px;
+    }
     }
 
     @media (prefers-color-scheme: light) {
@@ -254,14 +266,14 @@
         }
 
         .pagination a {
-            border: 1px solid #ff00cc;
-            color: #ff00ea;
-            background: rgba(0, 0, 0, 0.5);
+            /*border: 1px solid #ff00cc;*/
+            color: #ffffff;
+            background: rgba(63, 63, 63);
         }
 
         .pagination span {
-            border: 1px solid #ff00fb;
-            background: rgba(0, 0, 0, 0.5);
+            /*border: 1px solid #ff00fb;*/
+            background: rgba(63, 63, 63);
         }
 
         .pagination a:hover {
@@ -283,14 +295,14 @@
         }
 
         .pagination a {
-            border: 1px solid #d000ff;
+            /*border: 1px solid #d000ff;*/
             color: #ffffff;
             background: rgba(0, 0, 0, 0.5);
 
         }
 
         .pagination span {
-            border: 1px solid #ffffff;
+            /*border: 1px solid #ffffff;*/
             color: #00ff30;
             background: rgba(0, 0, 0, 0.5);
 
