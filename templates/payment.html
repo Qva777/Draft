@@ -4,9 +4,9 @@
 
 <div class="login-box">
     <div class="product-details text_color-scheme">
-        <h1 class="center">{{ product.name }}</h1>
-        <h3 class="justify">Description: {{ product.description }}</h3>
-        <h4>Price: {{ product.price }}</h4>
+        <h1 class="center">{{ product.name }}</h1><br>
+        <h3 class="justify">Description: {{ product.description }}</h3><br>
+        <h4>Price: {{ product.price }}</h4><br>
 
         <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
             {% csrf_token %}
@@ -28,26 +28,26 @@
 
 </div>
     <!-- Display randomly generated products -->
-    <div class="flex-container text-information random-products">
-        {% for item in random_products %}
-        <a href="{% url 'payment_pro' product_id=item.id %}">
-            <div class="product">
-                {% if item.photo %}
-                <img src="{{ item.photo.url }}" alt="" class="product-image">
-                {% endif %}
-                <h3>{{ item.name|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h3>
-                <h4>{{ item.description|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h4>
-                <a href="{% url 'payment_pro' product_id=item.id %}" class="button2">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                    {{ item.price }} $
-                </a>
-            </div>
-        </a>
-        {% endfor %}
-    </div>
+<!--    <div class="flex-container text-information random-products">-->
+<!--        {% for item in random_products %}-->
+<!--        <a href="{% url 'payment_pro' product_id=item.id %}">-->
+<!--            <div class="product">-->
+<!--                {% if item.photo %}-->
+<!--                <img src="{{ item.photo.url }}" alt="" class="product-image">-->
+<!--                {% endif %}-->
+<!--                <h3>{{ item.name|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h3>-->
+<!--                <h4>{{ item.description|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h4>-->
+<!--                <a href="{% url 'payment_pro' product_id=item.id %}" class="button2">-->
+<!--                    <span></span>-->
+<!--                    <span></span>-->
+<!--                    <span></span>-->
+<!--                    <span></span>-->
+<!--                    {{ item.price }} $-->
+<!--                </a>-->
+<!--            </div>-->
+<!--        </a>-->
+<!--        {% endfor %}-->
+<!--    </div>-->
 
 
 <!--style list-->
@@ -196,12 +196,12 @@
         margin-top: 10px;
         border-radius: 20px;
     }
-    @media (prefers-color-scheme: dark) {
-        body {
-            background: linear-gradient(29deg, rgb(0, 16, 45), rgb(2, 62, 94), rgb(3, 106, 161));
-            background-attachment: fixed;
-        }
-    }
+    /*@media (prefers-color-scheme: dark) {*/
+    /*    !*body {*!*/
+    /*    !*    background: linear-gradient(29deg, rgb(0, 16, 45), rgb(2, 62, 94), rgb(3, 106, 161));*!*/
+    /*    !*    background-attachment: fixed;*!*/
+    /*    !*}*!*/
+    /*}*/
 
 
     /*<!--style list-->*/
@@ -299,7 +299,9 @@
         padding-left: 30px;
     }
 
-    @media only screen and (max-width: 767px) {
+    /*@media only screen and (max-width: 767px) {*/
+    @media only screen and (max-width: 920px) {
+
         .login-box {
             /*flex-direction: column;*/
             align-items: center;
@@ -320,7 +322,7 @@
         .product-details {
             padding: 0;
             text-align: center;
-            font-size: 10px;
+            /*font-size: 10px;*/
         }
     }
 
@@ -331,6 +333,14 @@
 
     .stripe-button-el span {
         background-image: linear-gradient(#19ca06, #276703 85%, #006510);
+    }
+
+    @media only screen and (max-width: 453px) {
+        .product-details {
+            padding: 0;
+            text-align: center;
+            font-size: 10px;
+        }
     }
 
 </style>
