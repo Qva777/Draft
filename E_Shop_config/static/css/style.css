@@ -484,38 +484,29 @@ button {
 }
 
 /* end style page don't found */
+
+
 /* login form*/
 html {
     height: 100%;
 }
 
+body {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+
 @media (prefers-color-scheme: dark) {
     body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
+        background: linear-gradient(29deg, rgb(0, 16, 45), rgb(2, 62, 94), rgb(3, 106, 161)) fixed;
     }
 }
 
 
 @media (prefers-color-scheme: light) {
-    :root {
-        --body-color: #ffffff;
-
-        /*--body-color: #045e57;*/
-        --nav-color: rgb(255, 255, 255);
-        --side-nav: #f5f1f1;
-        --text-color: #000000;
-        --search-bar: #e4e4e4;
-        --search-text: #010718;
-    }
-
-
     body {
-        margin: 0;
-        padding: 0;
-        font-family: sans-serif;
-        background-attachment: fixed;
+        background: #d5d0f5 fixed;
     }
 
     .text_color-scheme {
@@ -528,5 +519,3 @@ html {
         color: #ffffff;
     }
 }
-
-/*}*/
