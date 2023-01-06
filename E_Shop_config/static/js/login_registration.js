@@ -14,13 +14,12 @@ showPasswordField.addEventListener('click', function () {
 // ------ end Login eye Show Password
 
 const password1Field = document.querySelector('input[name=password1]');
-    const password2Field = document.querySelector('input[name=password2]');
+const password2Field = document.querySelector('input[name=password2]');
 
-    password1Field.addEventListener('input', () => {
-        if (password1Field.value === '') {
-            password2Field.removeAttribute('required');
-        } else {
-            password2Field.setAttribute('required', 'required');
-        }
-    });
-
+password1Field.addEventListener('input', () => {
+    if (password1Field.value === '') {
+        password2Field.removeAttribute('required');
+    } else {
+        password2Field.setAttribute('required', 'required');
+    }
+});
