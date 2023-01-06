@@ -1,15 +1,8 @@
-/*.white_text {*/
-/*    color: #FFFFFF;*/
-/*}*/
-
 /* start style page don't found */
-/*@charset "UTF-8";*/
 
 /***********************************/
 /* 1. BODY */
 /***********************************/
-
-/*@media (prefers-color-scheme: dark) {*/
 .top-header:before {
     content: '';
     display: block;
@@ -128,10 +121,6 @@ button {
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
 }
-
-/*.error__message {*/
-/*    text-align: center;*/
-/*}*/
 
 .message__title {
     font-family: 'Montserrat', sans-serif;
