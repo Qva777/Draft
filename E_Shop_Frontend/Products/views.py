@@ -30,7 +30,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 #     queryset = Product.objects.all()
 #     if not request.user.is_staff:
 #         queryset = queryset.filter(count__gt=0)
-#     return render(request, 'home_products_list.html', {'products': queryset})
+#     return render(request, 'home.html', {'products': queryset})
 # class ProductHomeListView(View):
 #     """ Main page/Product list """
 #
@@ -38,7 +38,17 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 #         queryset = Product.objects.all()
 #         if not request.user.is_staff:
 #             queryset = queryset.filter(count__gt=0)
-#         return render(request, 'home_products_list.html', {'products': queryset})
+#         return render(request, 'home.html', {'products': queryset})
+
+from django.shortcuts import render
+from django.db.models import Q
+
+
+def search(request):
+    query = request.GET.get('q')
+    products = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    context = {'query': query, 'products': products}
+    return render(request, 'pages/search_results.html', context)
 
 
 class ProductHomeListView(View):
@@ -52,10 +62,10 @@ class ProductHomeListView(View):
         paginator = Paginator(queryset, 12)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-        return render(request, 'home_products_list.html', {'page_obj': page_obj})
+        return render(request, 'home.html', {'page_obj': page_obj})
 
 class CancelProduct(TemplateView):
-    template_name = 'cancel.html'
+    template_name = 'not_found.html'
 
 
 @csrf_exempt
@@ -95,7 +105,7 @@ def payment_pro(request, product_id):
         "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
         "random_products": random_products,
     }
-    return render(request, "payment.html", context)
+    return render(request, "product_detail.html", context)
 
 # test card
 # Visa: 4242 4242 4242 4242
