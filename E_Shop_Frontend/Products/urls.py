@@ -7,5 +7,5 @@ urlpatterns = [
     path('product/<int:product_id>/pay/', views.payment_pro, name='payment_pro'),
     # path('success_pro/', views.success, name='success_purchase'),
     path('404/', views.CancelProduct.as_view(), name='cancel_purchase'),
-
+    path('search/', views.search, name='search'),
 ]
