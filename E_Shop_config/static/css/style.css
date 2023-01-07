@@ -508,3 +508,282 @@ body {
         color: #ffffff;
     }
 }
+
+
+
+
+
+
+/* product detail */
+/*    @media (prefers-color-scheme: light) {*/
+/*        .product {*/
+/*            text-align: center;*/
+/*            margin-bottom: 6px;*/
+/*            margin-right: 6px;*/
+/*            border-radius: 20px;*/
+/*            background: rgb(255 255 255 / 87%);*/
+/*            flex: 0 0 calc(20.33% - 6px);*/
+/*        }*/
+/*    }*/
+
+
+/*    .random-container {*/
+/*        display: flex;*/
+/*        flex-wrap: wrap;*/
+/*        justify-content: center;*/
+/*        padding-bottom: 10px;*/
+/*        margin-top: 560px;*/
+/*    }*/
+
+
+/*    @media (prefers-color-scheme: dark) {*/
+/*        .product {*/
+/*            text-align: center;*/
+/*            margin-bottom: 6px;*/
+/*            margin-right: 6px;*/
+/*            border-radius: 20px;*/
+/*            background: rgba(35, 34, 34, 0.87);*/
+/*            flex: 0 0 calc(20.33% - 6px);*/
+/*        }*/
+/*    }*/
+
+/*    a {*/
+/*        color: rgb(255, 255, 255);*/
+/*        font-size: 16px;*/
+/*        !*font-weight: bold;*!*/
+/*        text-decoration: none;*/
+/*        cursor: pointer;*/
+
+/*    }*/
+
+/*    .product:last-child {*/
+/*        margin-right: 0;*/
+/*    }*/
+
+/*    .button2 {*/
+/*        position: relative;*/
+/*        display: inline-block;*/
+/*        padding: 15px 31px;*/
+/*        border-radius: 4px;*/
+/*        color: #ffffff;*/
+/*        background: rgb(38, 182, 38);*/
+/*        text-decoration: none;*/
+/*        text-transform: uppercase;*/
+/*        overflow: hidden;*/
+/*        margin: 15px;*/
+/*        font-family: "Roboto", sans-serif;*/
+/*        filter: hue-rotate(0deg);*/
+/*        transition: all 0.1s linear;*/
+/*    }*/
+
+/*    .button2:hover span:nth-child(1) {*/
+/*        position: absolute;*/
+/*        display: block;*/
+/*        filter: hue-rotate(0deg);*/
+/*        top: 0;*/
+/*        left: 0;*/
+/*        width: 100%;*/
+/*        height: 3px;*/
+/*        background: linear-gradient(90deg, transparent, #00fff7);*/
+
+/*        animation: animate1 1s linear infinite;*/
+/*    }*/
+
+/*    @keyframes animate1 {*/
+/*        0% {*/
+/*            left: -100%;*/
+/*        }*/
+/*        50%,*/
+/*        100% {*/
+/*            left: 100%;*/
+/*        }*/
+/*    }*/
+
+/*    .button2:hover span:nth-child(2) {*/
+/*        position: absolute;*/
+/*        display: block;*/
+/*        filter: hue-rotate(60deg);*/
+/*        top: -100%;*/
+/*        right: 0;*/
+/*        width: 3px;*/
+/*        height: 100%;*/
+/*        background: linear-gradient(180deg, transparent, #00fff7);*/
+/*        animation: animate2 1s linear infinite;*/
+/*        animation-delay: 0.25s;*/
+/*    }*/
+
+/*    @keyframes animate2 {*/
+/*        0% {*/
+/*            top: -100%;*/
+/*        }*/
+/*        50%,*/
+/*        100% {*/
+/*            top: 100%;*/
+/*        }*/
+/*    }*/
+
+/*    .button2:hover span:nth-child(3) {*/
+/*        position: absolute;*/
+/*        display: block;*/
+/*        filter: hue-rotate(120deg);*/
+/*        bottom: 0;*/
+/*        right: 0;*/
+/*        width: 100%;*/
+/*        height: 2px;*/
+/*        background: linear-gradient(270deg, transparent, #ddff00);*/
+/*        animation: animate3 1s linear infinite;*/
+/*    }*/
+
+/*    @keyframes animate3 {*/
+/*        0% {*/
+/*            right: -100%;*/
+/*            height: 3px;*/
+/*        }*/
+/*        50%,*/
+/*        100% {*/
+/*            height: 2px;*/
+/*            right: 100%;*/
+/*        }*/
+/*    }*/
+
+/*    .button2:hover span:nth-child(4) {*/
+/*        position: absolute;*/
+/*        display: block;*/
+/*        filter: hue-rotate(300deg);*/
+/*        bottom: -100%;*/
+/*        left: 0;*/
+/*        width: 3px;*/
+/*        height: 100%;*/
+/*        background: linear-gradient(360deg, transparent, #00fff7);*/
+/*        animation: animate4 1s linear infinite;*/
+/*        animation-delay: 0.75s;*/
+/*    }*/
+
+/*    @keyframes animate4 {*/
+/*        0% {*/
+/*            bottom: -100%;*/
+/*        }*/
+/*        50%,*/
+/*        100% {*/
+/*            bottom: 100%;*/
+/*        }*/
+/*    }*/
+
+/*    .random-product-image {*/
+/*        width: 200px;*/
+/*        height: 200px;*/
+/*        object-fit: cover;*/
+/*        margin-top: 10px;*/
+/*        border-radius: 20px;*/
+/*    }*/
+
+
+/*    @media (prefers-color-scheme: light) {*/
+/*        .login-box h1, h3, p {*/
+/*            color: rgb(0, 0, 0);*/
+
+/*        }*/
+
+/*        .login-box {*/
+/*            background: rgb(255, 255, 255);*/
+/*            box-shadow: 0 15px 25px rgba(248, 246, 246, 0.6);*/
+/*        }*/
+/*    }*/
+
+/*    @media (prefers-color-scheme: dark) {*/
+/*        .login-box {*/
+/*            background: rgba(0, 0, 0, .5);*/
+/*            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);*/
+/*        }*/
+/*    }*/
+
+
+/*    .login-box {*/
+/*        position: absolute;*/
+/*        top: 40%;*/
+/*        left: 50%;*/
+/*        width: 80%;*/
+/*        max-width: 1111px;*/
+/*        padding: 40px;*/
+/*        transform: translate(-50%, -50%);*/
+/*        box-sizing: border-box;*/
+/*        border-radius: 10px;*/
+/*        display: flex;*/
+/*        flex-direction: row-reverse;*/
+/*        align-items: center;*/
+/*    }*/
+
+/*    .product-image-detail {*/
+/*        width: 100%;*/
+/*        max-width: 300px;*/
+/*        height: auto;*/
+/*        object-fit: cover;*/
+/*        margin-top: 10px;*/
+/*        border-radius: 20px;*/
+/*    }*/
+
+/*    .center {*/
+/*        text-align: center;*/
+/*    }*/
+
+/*    .justify {*/
+/*        text-align: justify;*/
+/*    }*/
+
+/*    .product-details {*/
+/*        flex-grow: 1;*/
+/*        padding-left: 30px;*/
+/*    }*/
+
+/*    !*@media only screen and (max-width: 767px) {*!*/
+/*    @media only screen and (max-width: 920px) {*/
+/*        .random-container {*/
+/*    display: none;*/
+/*  }*/
+
+/*        .login-box {*/
+/*            !*flex-direction: column;*!*/
+/*            top: 50%;*/
+/*            align-items: center;*/
+/*            flex-direction: column-reverse;*/
+/*        }*/
+
+/*        .product-image-detail {*/
+/*            width: 200px;*/
+/*            height: 200px;*/
+/*            max-width: none;*/
+/*            !*height: auto;*!*/
+/*            object-fit: cover;*/
+/*            margin-top: 20px;*/
+/*            border-radius: 20px;*/
+/*        }*/
+
+
+/*        .product-details {*/
+/*            padding: 0;*/
+/*            text-align: center;*/
+/*            !*font-size: 10px;*!*/
+/*        }*/
+/*    }*/
+
+/*    .stripe-button-el {*/
+/*        background-image: linear-gradient(#28a0e500, #015e9400);*/
+/*        min-width: 139px;*/
+/*    }*/
+
+/*    .stripe-button-el span {*/
+/*        background-image: linear-gradient(#19ca06, #276703 85%, #006510);*/
+/*    }*/
+
+
+/*    @media only screen and (max-width: 453px) {*/
+/*        .product-details {*/
+/*            padding: 0;*/
+/*            text-align: center;*/
+/*            font-size: 10px;*/
+/*        }*/
+/*    }*/
+
+
+
+/* product detail end*/
