@@ -57,6 +57,7 @@ body.addEventListener("click", e => {
         nav.classList.remove("active");
     }
 });
+searchToggle.classList.contains("sidebar")
 
 // Open menu for small device
 sidebarOpen.addEventListener("click", () => {
