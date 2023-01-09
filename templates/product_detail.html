@@ -1,18 +1,16 @@
 {% extends 'base.html' %}
-<!--{% load static %}-->
-
-<!--<link href="{% static 'css/style.css' %}" rel="stylesheet">-->
+{% load static %}
 
 {% block content %}
+<link href="{% static 'css/pages/product_detail.css' %}" rel="stylesheet">
 
-<!--{% block title %}{{ product.name }}{% endblock %}-->
-
-<div class="login-box">
+<!-- Product detail -->
+<div class="content-box">
     <div class="product-details text_color-scheme">
         <h1 class="center">{{ product.name }}</h1><br>
         <h3 class="justify">Description: {{ product.description }}</h3><br>
         <h4>Price: {{ product.price }}</h4><br>
-
+        <!-- Pay by card -->
         <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
             {% csrf_token %}
             <script
@@ -25,13 +23,14 @@
                     data-currency="usd"
             ></script>
         </form>
+        <!-- end Pay by card -->
     </div>
-
     {% if product.photo %}
     <img src="{{ product.photo.url }}" alt="" class="product-image-detail"/>
     {% endif %}
-
 </div>
+<!-- end Product detail -->
+
 <!-- Display randomly generated products -->
 <div class="random-container text-information random-products">
     {% for item in random_products %}
@@ -41,7 +40,6 @@
             <img src="{{ item.photo.url }}" alt="" class="random-product-image">
             {% endif %}
             <h3>{{ item.name|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h3>
-            <!--            <h4>{{ item.description|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h4>-->
             <a href="{% url 'payment_pro' product_id=item.id %}" class="button2">
                 <span></span>
                 <span></span>
@@ -53,364 +51,8 @@
     </a>
     {% endfor %}
 </div>
-
-
-<!--style list-->
-<style>
-    @media (prefers-color-scheme: light) {
-        .product {
-            text-align: center;
-            margin-bottom: 6px;
-            margin-right: 6px;
-            border-radius: 20px;
-            background: rgb(255 255 255 / 87%);
-            flex: 0 0 calc(20.33% - 6px);
-        }
-    }
-
-
-    .random-container {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        padding-bottom: 10px;
-        margin-top: 560px;
-    }
-
-
-    @media (prefers-color-scheme: dark) {
-        .product {
-            text-align: center;
-            margin-bottom: 6px;
-            margin-right: 6px;
-            border-radius: 20px;
-            background: rgba(35, 34, 34, 0.87);
-            flex: 0 0 calc(20.33% - 6px);
-        }
-    }
-
-    a {
-        color: rgb(255, 255, 255);
-        font-size: 16px;
-        /*font-weight: bold;*/
-        text-decoration: none;
-        cursor: pointer;
-
-    }
-
-    .product:last-child {
-        margin-right: 0;
-    }
-
-    .button2 {
-        position: relative;
-        display: inline-block;
-        padding: 15px 31px;
-        border-radius: 4px;
-        color: #ffffff;
-        background: rgb(38, 182, 38);
-        text-decoration: none;
-        text-transform: uppercase;
-        overflow: hidden;
-        margin: 15px;
-        font-family: "Roboto", sans-serif;
-        filter: hue-rotate(0deg);
-        transition: all 0.1s linear;
-    }
-
-    .button2:hover span:nth-child(1) {
-        position: absolute;
-        display: block;
-        filter: hue-rotate(0deg);
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 3px;
-        background: linear-gradient(90deg, transparent, #00fff7);
-
-        animation: animate1 1s linear infinite;
-    }
-
-    @keyframes animate1 {
-        0% {
-            left: -100%;
-        }
-        50%,
-        100% {
-            left: 100%;
-        }
-    }
-
-    .button2:hover span:nth-child(2) {
-        position: absolute;
-        display: block;
-        filter: hue-rotate(60deg);
-        top: -100%;
-        right: 0;
-        width: 3px;
-        height: 100%;
-        background: linear-gradient(180deg, transparent, #00fff7);
-        animation: animate2 1s linear infinite;
-        animation-delay: 0.25s;
-    }
-
-    @keyframes animate2 {
-        0% {
-            top: -100%;
-        }
-        50%,
-        100% {
-            top: 100%;
-        }
-    }
-
-    .button2:hover span:nth-child(3) {
-        position: absolute;
-        display: block;
-        filter: hue-rotate(120deg);
-        bottom: 0;
-        right: 0;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(270deg, transparent, #ddff00);
-        animation: animate3 1s linear infinite;
-    }
-
-    @keyframes animate3 {
-        0% {
-            right: -100%;
-            height: 3px;
-        }
-        50%,
-        100% {
-            height: 2px;
-            right: 100%;
-        }
-    }
-
-    .button2:hover span:nth-child(4) {
-        position: absolute;
-        display: block;
-        filter: hue-rotate(300deg);
-        bottom: -100%;
-        left: 0;
-        width: 3px;
-        height: 100%;
-        background: linear-gradient(360deg, transparent, #00fff7);
-        animation: animate4 1s linear infinite;
-        animation-delay: 0.75s;
-    }
-
-    @keyframes animate4 {
-        0% {
-            bottom: -100%;
-        }
-        50%,
-        100% {
-            bottom: 100%;
-        }
-    }
-
-    .random-product-image {
-        width: 200px;
-        height: 200px;
-        object-fit: cover;
-        margin-top: 10px;
-        border-radius: 20px;
-    }
-
-
-    @media (prefers-color-scheme: light) {
-        .login-box h1, h3, p {
-            color: rgb(0, 0, 0);
-
-        }
-
-        .login-box {
-            background: rgb(255, 255, 255);
-            box-shadow: 0 15px 25px rgba(248, 246, 246, 0.6);
-        }
-    }
-
-    @media (prefers-color-scheme: dark) {
-        .login-box {
-            background: rgba(0, 0, 0, .5);
-            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-        }
-    }
-
-
-    .login-box {
-        position: absolute;
-        top: 40%;
-        left: 50%;
-        width: 80%;
-        max-width: 1111px;
-        padding: 40px;
-        transform: translate(-50%, -50%);
-        box-sizing: border-box;
-        border-radius: 10px;
-        display: flex;
-        flex-direction: row-reverse;
-        align-items: center;
-    }
-
-    .product-image-detail {
-        width: 100%;
-        max-width: 300px;
-        height: auto;
-        object-fit: cover;
-        margin-top: 10px;
-        border-radius: 20px;
-    }
-
-    .center {
-        text-align: center;
-    }
-
-    .justify {
-        text-align: justify;
-    }
-
-    .product-details {
-        flex-grow: 1;
-        padding-left: 30px;
-    }
-
-    /*@media only screen and (max-width: 767px) {*/
-    @media only screen and (max-width: 920px) {
-        .random-container {
-    display: none;
-  }
-
-        .login-box {
-            /*flex-direction: column;*/
-            top: 50%;
-            align-items: center;
-            flex-direction: column-reverse;
-        }
-
-        .product-image-detail {
-            width: 200px;
-            height: 200px;
-            max-width: none;
-            /*height: auto;*/
-            object-fit: cover;
-            margin-top: 20px;
-            border-radius: 20px;
-        }
-
-
-        .product-details {
-            padding: 0;
-            text-align: center;
-            /*font-size: 10px;*/
-        }
-    }
-
-    .stripe-button-el {
-        background-image: linear-gradient(#28a0e500, #015e9400);
-        min-width: 139px;
-    }
-
-    .stripe-button-el span {
-        background-image: linear-gradient(#19ca06, #276703 85%, #006510);
-    }
-
-
-    @media only screen and (max-width: 453px) {
-        .product-details {
-            padding: 0;
-            text-align: center;
-            font-size: 10px;
-        }
-    }
-
-</style>
-
-<!--<style>-->
-
-<!--    .login-box {-->
-<!--        position: absolute;-->
-<!--        top: 50%;-->
-<!--        left: 50%;-->
-<!--        width: 60%;-->
-<!--        padding: 40px;-->
-<!--        transform: translate(-50%, -50%);-->
-<!--        box-sizing: border-box;-->
-<!--        border-radius: 10px;-->
-<!--    }-->
-
-<!--    .product-image {-->
-<!--        width: 300px;-->
-<!--        height: 300px;-->
-<!--        object-fit: cover;-->
-<!--        margin-top: 10px;-->
-<!--        border-radius: 20px;-->
-<!--    }-->
-
-<!--    .login-box h1 {-->
-<!--        margin: 0 0 30px;-->
-<!--        padding: 0;-->
-<!--        text-align: center;-->
-<!--    }-->
-
-
-<!--        .login-box {-->
-<!--            background: rgba(0, 0, 0, .5);-->
-<!--            box-shadow: 0 15px 25px rgba(0, 0, 0, .6);-->
-<!--        }-->
-
-<!--        .login-box h1, h3, p {-->
-<!--            color: #fff;-->
-<!--        }-->
-
-<!--</style>-->
-
+<!-- end Display randomly generated products -->
 
 {% endblock %}
 
-
-{% block scripts %}
-<script>
-    var form = document.getElementById('payment-form');
-    form.addEventListener('submit', function (event) {
-        // Get the product ID and quantity
-        var productId = "{{ product.id }}";
-        var quantity = "{{ product.count }}";
-
-        // Check if there are enough products available
-        if (quantity < 1) {
-            alert('This product is out of stock!');
-            event.preventDefault(); // Stop the form from submitting
-        } else {
-            // There are enough products available, so let the form submit
-            return true;
-        }
-    });
-</script>
-{% endblock %}
-
-
-<!--<div class="login-box">-->
-<!--    <h1>{{ product.name }}</h1>-->
-<!--    {% if product.photo %}-->
-<!--    <img src="{{ product.photo.url }}" alt="" class="product-image"/>-->
-<!--    {% endif %}-->
-<!--    <h3>Description: {{ product.description }}</h3>-->
-<!--    <p>Price: {{ product.price }}</p>-->
-
-<!--    <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">-->
-<!--        {% csrf_token %}-->
-<!--        <script-->
-<!--                src="https://checkout.stripe.com/checkout.js" class="stripe-button"-->
-<!--                data-key="{{ stripe_public_key }}"-->
-<!--                data-amount="{{ product.price|floatformat:2|floatformat:0 }}00"-->
-<!--                data-name="{{ product.name }}"-->
-<!--                data-description="{{ product.description }}"-->
-<!--                data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"-->
-<!--                data-currency="usd"-->
-<!--        ></script>-->
-
-<!--    </form>-->
-<!--</div>-->
+<script src="{% static 'js/pages/product_detail.js' %}"></script>
