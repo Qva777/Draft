@@ -1,12 +1,19 @@
+// Get image elements from the DOM
 const cartImg = document.getElementById('cart');
-const searchImg = document.getElementById('search');
-const searchInputImg = document.getElementById('search-input');
-const logoImg = document.getElementById('logo');
-const menuImg = document.getElementById('menu');
+searchImg = document.getElementById('search');
+searchInputImg = document.getElementById('search-input');
+logoImg = document.getElementById('logo');
+menuImg = document.getElementById('menu');
 
+const body = document.querySelector("body"),
+    nav = document.querySelector("nav"),
+    searchToggle = document.querySelector(".searchToggle"),
+    sidebarOpen = document.querySelector(".sidebarOpen");
 
+// Check if the user has set dark mode
 const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
+// Set the image depending on the theme
 if (prefersDark) {
     cartImg.src = staticUrl + "img/cart.png";
     logoImg.src = staticUrl + "img/logo.png";
@@ -22,32 +29,28 @@ if (prefersDark) {
     menuImg.src = staticUrl + "img/menu_dark.png";
 }
 
-
-const body = document.querySelector("body"),
-    nav = document.querySelector("nav"),
-    searchToggle = document.querySelector(".searchToggle"),
-    sidebarOpen = document.querySelector(".sidebarOpen");
-
+// Check if the dark mode  => and apply it
 let getMode = localStorage.getItem("mode");
 if (getMode && getMode === "dark-mode") {
     body.classList.add("dark");
 }
 
+// Get element from the DOM
 let subMenu = document.getElementById("subMenu");
 
+// When the user clicks on the menu button open it
 function toggleMenu() {
     subMenu.classList.toggle("open-menu");
     searchToggle.classList.remove("active");
 }
 
+// Change Searchbar active state
 searchToggle.addEventListener("click", () => {
     searchToggle.classList.toggle("active");
-    // searchToggle.classList.toggle("deactivate");
-
     subMenu.classList.remove("open-menu");
 });
 
-
+// If the user clicks outside of it => close menu
 body.addEventListener("click", e => {
     let clickedElm = e.target;
     if (!clickedElm.classList.contains("sidebarOpen") && !clickedElm.classList.contains("menu")) {
@@ -55,14 +58,14 @@ body.addEventListener("click", e => {
     }
 });
 
-
+// Open menu for small device
 sidebarOpen.addEventListener("click", () => {
     nav.classList.add("active");
     searchToggle.classList.remove("active");
     subMenu.classList.remove("open-menu");
 });
 
-
+// If the user clicks outside of it => close submenu
 const searchBox = document.querySelector('.searchBox');
 document.addEventListener('click', function (event) {
     const isClickInsideSearchBox = searchBox.contains(event.target);
