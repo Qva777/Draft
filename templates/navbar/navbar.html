@@ -77,13 +77,23 @@
                         <p>Your Cart</p>
                         <span>></span>
                     </a>
+
+                    <!-- Admin panel link -->
+                    {% if user.is_authenticated and user.is_staff %}
+                    <a href="{% url 'admin:index' %}" class="sub-menu-link">
+                        <img src="{% static 'img/dashboard.png'%}">
+                        <p>Dashboard</p>
+                        <span>></span>
+                    </a>
+                    {% endif %}
+                    <!-- end Admin panel link -->
+
                     <a href="{% url 'logout' %}" class="sub-menu-link">
                         <img src="{% static 'img/logout.png'%}">
                         <p>Logout</p>
                         <span>></span>
                     </a>
                     {% else %}
-
                     <div class="user-info"><img src="{% static 'img/unknown.png' %}">
                         <h3>Anonymous</h3>
                     </div>
