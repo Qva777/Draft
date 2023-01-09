@@ -4,7 +4,7 @@
 
 {% block content %}
 <link href="{% static 'css/pages/user_profile.css' %}" rel="stylesheet">
-<div class="login-box">
+<div class="user-profile-box">
     <!--  Return img if it added  -->
     <div class="image-column">
         {% if user.photo %}
@@ -32,21 +32,17 @@
         <form method="POST" enctype="multipart/form-data">
             {% csrf_token %}
 
-            {% if messages %}
-            <ul class="messages">
-                <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-            </ul>
-            {% endif %}
-
             <h3>Username:
-                <label><input type="text" class="user_data" name="username" value="{{ user.username }}"/></label></h3>
+                <label><input type="text" class="user_data" name="username" value="{{ user.username }}"/></label>
+            </h3>
             {% if form.username.errors %}
             <p class="messages">{{ form.username.errors|join:", " }}</p>
             {% endif %}
 
             <h3>Name:
                 <label><input type="text" class="user_data" name="first_name" value="{{ user.first_name }}"/>
-                    <input type="text" class="user_data" name="last_name" value="{{ user.last_name }}"/></label></h3>
+                    <input type="text" class="user_data" name="last_name" value="{{ user.last_name }}"/></label>
+            </h3>
             {% if form.first_name.errors or form.last_name.errors %}
             <p class="messages">{{ form.first_name.errors|join:", " }} {{ form.last_name.errors|join:", " }}</p>
             {% endif %}
@@ -100,3 +96,4 @@
 
 </div>
 {% endblock %}
+
