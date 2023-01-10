@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}{{ query }}{% endblock %}
+{% block content %}
+<link href="{% static 'css/pages/home.css' %}" rel="stylesheet">
+
+<h1>Search Results for "{{ query }}"</h1>
+
+{% if product_list.count == 0 %}
+<p>No results found.</p>
+{% else %}
+
+{% include 'elements/product_list.html' with products=page_obj %}
+{% include 'elements/pagination.html' with products=page_obj %}
+
+{% endif %}
+{% endblock %}
