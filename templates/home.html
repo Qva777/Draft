@@ -3,7 +3,12 @@
 {% block content %}
 <link href="{% static 'css/pages/home.css' %}" rel="stylesheet">
 
-{% include 'elements/product_list.html' with item=item %}
+<div class="flex-container text-information">
+    {% for item in products %}
+    {% include 'elements/product_list.html' with item=item %}
+    {% endfor %}
+</div>
+
 {% include 'elements/pagination.html' with products=products %}
 
 <script src="{% static 'js/script.js' %}"></script>
