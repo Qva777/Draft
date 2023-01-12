@@ -10,8 +10,23 @@
 <p>No results found.</p>
 {% else %}
 
-{% include 'elements/product_list.html' with products=page_obj %}
+<div class="flex-container text-information random-products">
+    {% for item in page_obj %}
+    {% include 'elements/product_list.html' with item=item %}
+    {% endfor %}
+</div>
+
+
+
 {% include 'elements/pagination.html' with products=page_obj %}
 
 {% endif %}
 {% endblock %}
+
+{% comment %}
+{% include 'elements/product_list.html' with products=page_obj %}
+
+
+
+
+{% endcomment %}
