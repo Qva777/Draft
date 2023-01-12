@@ -1,0 +1,16 @@
+<a href="{% url 'payment_pro' product_id=item.id %}">
+    <div class="product">
+        {% if item.photo %}
+        <img src="{{ item.photo.url }}" alt="" class="product-image">
+        {% endif %}
+        <h3>{{ item.name|truncatechars:14 }}{% if item.description|length > 14 %}{% endif %}</h3>
+        <h4>{{ item.description|truncatechars:14 }}{% if item.description|length > 14 %}{% endif %}</h4>
+        <a href="{% url 'payment_pro' product_id=item.id %}" class="payment_button">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            {{ item.price }} $
+        </a>
+    </div>
+</a>
