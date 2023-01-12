@@ -1,8 +1,10 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
 <link href="{% static 'css/pages/product_detail.css' %}" rel="stylesheet">
+<link href="{% static 'css/pages/home.css' %}" rel="stylesheet">
 
 <!-- Product detail -->
 <div class="content-box">
@@ -34,21 +36,7 @@
 <!-- Display randomly generated products -->
 <div class="random-container text-information random-products">
     {% for item in random_products %}
-    <a href="{% url 'payment_pro' product_id=item.id %}">
-        <div class="product">
-            {% if item.photo %}
-            <img src="{{ item.photo.url }}" alt="" class="random-product-image">
-            {% endif %}
-            <h3>{{ item.name|truncatechars:14 }}{% if item.description|length > 14 %}.{% endif %}</h3>
-            <a href="{% url 'payment_pro' product_id=item.id %}" class="button2">
-                <span></span>
-                <span></span>
-                <span></span>
-                <span></span>
-                {{ item.price }} $
-            </a>
-        </div>
-    </a>
+    {% include 'elements/product_list.html' with products=item %}
     {% endfor %}
 </div>
 <!-- end Display randomly generated products -->
