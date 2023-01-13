@@ -2,7 +2,7 @@
 <link href="{% static 'css/base/pagination.css' %}" rel="stylesheet">
 
 <div class="last-line">
-    <div class="flex-container text-information">
+    <div class="flex-container">
         <div class="pagination">
             {% if products.has_previous %}
             <a href="{% if query %}?q={{ query }}&page={{ products.previous_page_number }}{% else %}?page={{ products.previous_page_number }}{% endif %}">&lt;</a>
@@ -19,4 +19,3 @@
         </div>
     </div>
 </div>
-
