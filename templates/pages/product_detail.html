@@ -3,8 +3,9 @@
 {% block title %}{{ product.name }}{% endblock %}
 
 {% block content %}
-<link href="{% static 'css/pages/product_detail.css' %}" rel="stylesheet">
 <link href="{% static 'css/pages/home.css' %}" rel="stylesheet">
+
+<link href="{% static 'css/pages/product_detail.css' %}" rel="stylesheet">
 
 <!-- Product detail -->
 <div class="content-box">
@@ -34,13 +35,11 @@
 <!-- end Product detail -->
 
 <!-- Display randomly generated products -->
-<div class="random-container text-information random-products">
+<div class="random-container">
     {% for item in random_products %}
     {% include 'elements/product_list.html' with products=item %}
     {% endfor %}
 </div>
 <!-- end Display randomly generated products -->
-
-{% endblock %}
-
 <script src="{% static 'js/pages/product_detail.js' %}"></script>
+{% endblock %}
