@@ -1,7 +1,4 @@
-.form-group {
-    text-align: center;
-}
-
+/* --------------------------- end data field --------------------------- */
 .login-size {
     box-sizing: border-box;
     position: absolute;
@@ -13,7 +10,7 @@
     transform: translate(-50%, -50%);
 }
 
-/* ----- registration ----- */
+/* --------------------------- end registration --------------------------- */
 .registration-size {
     box-sizing: border-box;
     position: absolute;
@@ -25,45 +22,9 @@
     transform: translate(-50%, -50%);
 }
 
-/*----- end registration -----*/
-@media only screen and (min-width: 386px) {
-
-    .login-box h2 {
-        padding: 0;
-        margin: 0 0 30px;
-        text-align: center;
-    }
-}
-
+/* --------------------------- end registration --------------------------- */
 .login-box .user-box {
     position: relative;
-}
-
-.login-box .user-box input {
-    outline: none;
-    border: none;
-    width: 100%;
-    padding: 10px 0;
-    font-size: 16px;
-    margin-bottom: 30px;
-    background: transparent;
-}
-
-.login-box .user-box label {
-    top: 0;
-    left: 0;
-    padding: 10px 0;
-    font-size: 16px;
-    transition: .5s;
-    position: absolute;
-    pointer-events: none;
-}
-
-.login-box .user-box input:focus ~ label,
-.login-box .user-box input:valid ~ label {
-    left: 0;
-    top: -20px;
-    font-size: 12px;
 }
 
 .login-box form a {
@@ -77,13 +38,11 @@
     text-decoration: none;
     display: inline-block;
     text-transform: uppercase;
-
 }
 
 .login-box a span {
     display: block;
     position: absolute;
-
 }
 
 @keyframes btn-anim1 {
@@ -122,6 +81,26 @@
     }
 }
 
+.login-box .user-box input {
+    outline: none;
+    border: none;
+    width: 100%;
+    padding: 10px 0;
+    font-size: 16px;
+    margin-bottom: 30px;
+    background: transparent;
+}
+
+.login-box .user-box label {
+    top: 0;
+    left: 0;
+    padding: 10px 0;
+    font-size: 16px;
+    transition: .5s;
+    position: absolute;
+    pointer-events: none;
+}
+
 .login-box a span:nth-child(1) {
     top: 0;
     left: -100%;
@@ -157,116 +136,11 @@
     animation-delay: .75s;
 }
 
-@media (prefers-color-scheme: dark) {
-    .eye-icon {
-        color: white;
-        font-size: 1.3em;
-    }
-
-    .login-box {
-        background: rgba(0, 0, 0, .5);
-        box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
-    }
-
-    .login-box .user-box input {
-        color: #fff;
-        border-bottom: 1px solid #fff;
-    }
-
-    .login-box .user-box label {
-        color: #fff;
-    }
-
-    .login-box .user-box input:focus ~ label,
-    .login-box .user-box input:valid ~ label {
-        color: #03e9f4;
-    }
-
-    .login-box form a {
-        color: #03e9f4;
-    }
-
-    .login-box a:hover {
-        background: #03e9f4;
-        color: #fff;
-        border-radius: 5px;
-        box-shadow: 0 0 5px #03e9f4,
-        0 0 25px #03e9f4,
-        0 0 50px #03e9f4,
-        0 0 100px #03e9f4;
-    }
-
-    .login-box a span:nth-child(1) {
-        background: linear-gradient(90deg, transparent, #03e9f4);
-    }
-
-    .login-box a span:nth-child(2) {
-        background: linear-gradient(90deg, transparent, #03e9f4);
-    }
-
-    .login-box a span:nth-child(3) {
-        background: linear-gradient(270deg, transparent, #03e9f4);
-    }
-
-
-    .login-box a span:nth-child(4) {
-        background: linear-gradient(360deg, transparent, #03e9f4);
-    }
-}
-
-
-@media (prefers-color-scheme: light) {
-    .eye-icon {
-        color: #000000;
-        font-size: 1.3em;
-    }
-
-    .login-box {
-        background: rgb(255, 255, 255);
-        box-shadow: 0 5px 19px rgb(127 0 255);
-    }
-
-    .login-box .user-box input {
-        color: rgb(154, 0, 255);
-        border-bottom: 1.5px solid #000000;
-    }
-
-    .login-box .user-box label {
-        color: #000000;
-    }
-
-    .login-box .user-box input:focus ~ label,
-    .login-box .user-box input:valid ~ label {
-        color: #000000;
-    }
-
-    .login-box form a {
-        color: #000000;
-    }
-
-    .login-box a:hover {
-        background: #a6e0ff;
-
-
-        color: #000000;
-        border-radius: 5px;
-    }
-
-    .login-box a span:nth-child(1) {
-        background: linear-gradient(90deg, transparent, #9c03f4);
-    }
-
-    .login-box a span:nth-child(2) {
-        background: linear-gradient(180deg, transparent, #c003f4);
-    }
-
-    .login-box a span:nth-child(3) {
-        background: linear-gradient(270deg, transparent, #dc03f4);
-    }
-
-    .login-box a span:nth-child(4) {
-        background: linear-gradient(360deg, transparent, #f403f0);
-    }
+.login-box .user-box input:focus ~ label,
+.login-box .user-box input:valid ~ label {
+    left: 0;
+    top: -20px;
+    font-size: 12px;
 }
 
 .errorlist {
@@ -284,6 +158,18 @@
 
 }
 
+/* --------------------------- end data field --------------------------- */
+
+
+/* --------------------------- adapted for different device  --------------------------- */
+@media only screen and (min-width: 386px) {
+    .login-box h2 {
+        padding: 0;
+        margin: 0 0 30px;
+        text-align: center;
+    }
+}
+
 @media only screen and (max-width: 385px) {
     .registration {
         margin-top: 73px;
@@ -296,3 +182,117 @@
         width: 100%;
     }
 }
+
+/* --------------------------- end adapted for different device  --------------------------- */
+
+/* --------------------------- Device theme --------------------------- */
+@media (prefers-color-scheme: light) {
+    .eye-icon {
+        color: #000000;
+        font-size: 1.3em;
+    }
+
+    .login-box {
+        background: rgb(255, 255, 255);
+        box-shadow: 0 5px 19px rgb(127 0 255);
+    }
+
+    .login-box form a {
+        color: #000000;
+    }
+
+    .login-box a:hover {
+        background: #a6e0ff;
+
+
+        color: #000000;
+        border-radius: 5px;
+    }
+
+    .login-box .user-box input {
+        color: rgb(154, 0, 255);
+        border-bottom: 1.5px solid #000000;
+    }
+
+    .login-box .user-box label {
+        color: #000000;
+    }
+
+    .login-box a span:nth-child(1) {
+        background: linear-gradient(90deg, transparent, #9c03f4);
+    }
+
+    .login-box a span:nth-child(2) {
+        background: linear-gradient(180deg, transparent, #c003f4);
+    }
+
+    .login-box a span:nth-child(3) {
+        background: linear-gradient(270deg, transparent, #dc03f4);
+    }
+
+    .login-box a span:nth-child(4) {
+        background: linear-gradient(360deg, transparent, #f403f0);
+    }
+
+    .login-box .user-box input:focus ~ label,
+    .login-box .user-box input:valid ~ label {
+        color: #000000;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .eye-icon {
+        color: white;
+        font-size: 1.3em;
+    }
+
+    .login-box {
+        background: rgba(0, 0, 0, .5);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+    }
+
+    .login-box form a {
+        color: #03e9f4;
+    }
+
+    .login-box a:hover {
+        background: #03e9f4;
+        color: #fff;
+        border-radius: 5px;
+        box-shadow: 0 0 5px #03e9f4,
+        0 0 25px #03e9f4,
+        0 0 50px #03e9f4,
+        0 0 100px #03e9f4;
+    }
+
+    .login-box .user-box input {
+        color: #fff;
+        border-bottom: 1px solid #fff;
+    }
+
+    .login-box .user-box label {
+        color: #fff;
+    }
+
+    .login-box a span:nth-child(1) {
+        background: linear-gradient(90deg, transparent, #03e9f4);
+    }
+
+    .login-box a span:nth-child(2) {
+        background: linear-gradient(90deg, transparent, #03e9f4);
+    }
+
+    .login-box a span:nth-child(3) {
+        background: linear-gradient(270deg, transparent, #03e9f4);
+    }
+
+    .login-box a span:nth-child(4) {
+        background: linear-gradient(360deg, transparent, #03e9f4);
+    }
+
+    .login-box .user-box input:focus ~ label,
+    .login-box .user-box input:valid ~ label {
+        color: #03e9f4;
+    }
+}
+/* --------------------------- end Device theme --------------------------- */
