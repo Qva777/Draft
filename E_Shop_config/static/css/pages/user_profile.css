@@ -1,26 +1,16 @@
-/* --------------------------- start data field --------------------------- */
-
-.image-column input[type="submit"] {
-    margin-top: 12%;
-    background-color: rgba(255, 0, 0, 0.63);
-}
-
+/* --------------------------- data field --------------------------- */
 .user-profile-box {
     top: 66%;
     left: 50%;
     width: 71%;
-
-    /*height: 100%;*/
-
-
     padding: 40px;
-    border-radius: 10px;
     display: flex;
     position: absolute;
     align-items: center;
+    border-radius: 10px;
     box-sizing: border-box;
-    transform: translate(-50%, -50%);
     background: rgba(0, 0, 0, 0.40);
+    transform: translate(-50%, -50%);
     box-shadow: 0 15px 25px rgba(10, 8, 8, 0.6);
 }
 
@@ -29,11 +19,11 @@
 }
 
 .product-image {
+    object-fit: cover;
+    height: auto;
     width: 100%;
     margin-top: 10px;
     border-radius: 20px;
-    object-fit: cover;
-    height: auto;
 }
 
 .details-column {
@@ -42,46 +32,48 @@
 }
 
 .user-profile-box h1 {
-    /*margin: 0 0 30px;*/
-    margin: 0 0 -15px;
     padding: 0;
-    text-align: center;
     color: #ffffff;
-
+    margin: 0 0 -15px;
+    text-align: center;
 }
 
 .user-profile-box h3 {
     color: #ffffff;
 }
 
+input[type="submit"] {
+    color: white;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #4CAF50;
+}
+
+.image-column input[type="submit"] {
+    margin-top: 12%;
+    background-color: rgba(255, 0, 0, 0.63);
+}
+
 .user_data,
 input[type="email"], input[type="date"],
 input[type="password"], input[type="file"] {
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    font-size: 16px;
     width: 100%;
-    margin-bottom: 10px;
-}
-
-input[type="submit"] {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
+    padding: 10px;
     font-size: 16px;
-    cursor: pointer;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
 }
 
 .messages {
-    /*color: #ff5353;*/
     color: #d60202;
     font-weight: bolder;
 }
 
-/* --------------------------- start switch button --------------------------- */
+/* --------------------------- switch button --------------------------- */
 .switch {
     width: 52px;
     height: 24px;
