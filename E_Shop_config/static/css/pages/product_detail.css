@@ -1,0 +1,136 @@
+/* --------------------------- data field --------------------------- */
+.product {
+    text-align: center;
+    margin-bottom: 6px;
+    margin-right: 6px;
+    border-radius: 20px;
+    flex: 0 0 calc(20.33% - 6px);
+}
+
+.content-box {
+    top: 40%;
+    left: 50%;
+    width: 80%;
+    padding: 40px;
+    display: flex;
+    max-width: 1111px;
+    position: absolute;
+    align-items: center;
+    border-radius: 10px;
+    box-sizing: border-box;
+    flex-direction: row-reverse;
+    transform: translate(-50%, -50%);
+}
+
+.product-details {
+    flex-grow: 1;
+    padding-left: 30px;
+}
+
+.random-container {
+    display: flex;
+    flex-wrap: wrap;
+    margin-top: 560px;
+    padding-bottom: 10px;
+    justify-content: center;
+}
+
+.product-image-detail {
+    height: auto;
+    width: 100%;
+    margin-top: 10px;
+    max-width: 300px;
+    object-fit: cover;
+    border-radius: 20px;
+}
+
+.stripe-button-el span {
+    background-image: linear-gradient(#19ca06, #276703 85%, #006510);
+}
+
+.stripe-button-el {
+    min-width: 139px;
+    background-image: linear-gradient(#28a0e500, #015e9400);
+}
+
+/* --------------------------- end data field --------------------------- */
+
+
+/* --------------------------- adapted for different device --------------------------- */
+@media only screen and (min-width: 1440px) {
+    .random-container {
+        margin-top: 600px;
+    }
+}
+
+@media only screen and (max-width: 1022px) {
+    .random-container {
+        margin-top: 600px;
+    }
+}
+
+@media only screen and (max-width: 920px) {
+    .content-box {
+        top: 50%;
+        align-items: center;
+        flex-direction: column-reverse;
+    }
+
+    .random-container {
+        display: none;
+    }
+
+    .product-details {
+        padding: 0;
+        text-align: center;
+    }
+
+    .product-image-detail {
+        width: 200px;
+        height: 200px;
+        max-width: none;
+        margin-top: 20px;
+        object-fit: cover;
+        border-radius: 20px;
+    }
+
+}
+
+@media only screen and (max-width: 453px) {
+    .product-details {
+        padding: 0;
+        font-size: 10px;
+        text-align: center;
+    }
+}
+
+/* --------------------------- end adapted for different device --------------------------- */
+
+/* --------------------------- Device theme --------------------------- */
+@media (prefers-color-scheme: light) {
+    .product {
+        background: rgb(255 255 255 / 87%);
+    }
+
+    .content-box {
+        background: rgb(255, 255, 255);
+        box-shadow: 0 15px 25px rgba(248, 246, 246, 0.6);
+    }
+
+    .content-box h1, h3, p {
+        color: rgb(0, 0, 0);
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .product {
+        background: rgba(35, 34, 34, 0.87);
+    }
+
+    .content-box {
+        background: rgba(0, 0, 0, .5);
+        box-shadow: 0 15px 25px rgba(0, 0, 0, .6);
+    }
+}
+
+/* --------------------------- end Device theme --------------------------- */
