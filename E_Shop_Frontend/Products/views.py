@@ -7,7 +7,7 @@ from E_Shop_API.E_Shop_Products.serializers import ProductSerializer
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 import stripe
 from django.conf import settings
 from django.views.generic import TemplateView
