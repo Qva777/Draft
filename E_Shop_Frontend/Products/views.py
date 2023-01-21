@@ -3,7 +3,6 @@ import random
 from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions
-from E_Shop_API.E_Shop_Products.serializers import ProductSerializer
 from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
