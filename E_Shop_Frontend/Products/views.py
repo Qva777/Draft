@@ -4,11 +4,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework import permissions
 from E_Shop_API.E_Shop_Products.serializers import ProductSerializer
-from django.urls import reverse, reverse_lazy
-from django.core.paginator import Paginator
-from django.views.generic import View
-from django.shortcuts import render
-from django.contrib import messages
+from django.urls import reverse
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.shortcuts import redirect, render
@@ -23,7 +19,6 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
-
 
 # def product_list(request):
 #     """ Main page/Product list """
@@ -42,13 +37,26 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 
 from django.shortcuts import render
 from django.db.models import Q
+from django.core.paginator import Paginator
 
 
+# def search(request):
+#     query = request.GET.get('q')
+#     products = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+#     context = {'query': query, 'products': products}
+#     return render(request, 'pages/search_results.html', context)
+
+
+# work
 def search(request):
     query = request.GET.get('q')
-    products = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
-    context = {'query': query, 'products': products}
-    return render(request, 'pages/search_results.html', context)
+    product_list = Product.objects.filter(Q(name__icontains=query) | Q(description__icontains=query))
+    if not request.user.is_staff:
+        product_list = product_list.filter(count__gt=0)
+    paginator = Paginator(product_list, 12)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'pages/search_results.html', {'query': query, 'page_obj': page_obj, 'product_list': product_list})
 
 
 class ProductHomeListView(View):
@@ -59,25 +67,27 @@ class ProductHomeListView(View):
 
         if not request.user.is_staff:
             queryset = queryset.filter(count__gt=0)
+
         paginator = Paginator(queryset, 12)
         page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
-        return render(request, 'home.html', {'page_obj': page_obj})
+        products = paginator.get_page(page_number)
+        return render(request, 'pages/home.html', {'products': products})
+
 
 class CancelProduct(TemplateView):
-    template_name = 'not_found.html'
+    template_name = 'pages/not_found.html'
 
 
 @csrf_exempt
 def payment_pro(request, product_id):
     product = get_object_or_404(Product, id=product_id)
 
-    random_products = random.sample(list(Product.objects.all()), 4)#new  random
+    random_products = random.sample(list(Product.objects.all()), 4)  # new  random
 
     if product.count < 1:
         # messages.error(request, 'Sorry, this product is currently out of stock.')
         # return redirect('error')
-        error_url = reverse('cancel_purchase')  # , kwargs={'description': 'Product count is less than 1'})
+        error_url = reverse('404')  # , kwargs={'description': 'Product count is less than 1'})
         return redirect(error_url)
     if request.method == "POST":
         # Use Stripe to charge the user's card
@@ -105,7 +115,7 @@ def payment_pro(request, product_id):
         "stripe_public_key": settings.STRIPE_PUBLIC_KEY,
         "random_products": random_products,
     }
-    return render(request, "product_detail.html", context)
+    return render(request, "pages/product_detail.html", context)
 
 # test card
 # Visa: 4242 4242 4242 4242
