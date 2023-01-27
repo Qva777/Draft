@@ -7,7 +7,6 @@ from django.shortcuts import redirect
 import stripe
 from django.conf import settings
 from django.views.generic import TemplateView
-
 from E_Shop_API.E_Shop_Products.models import Product
 from django.views import View
 
