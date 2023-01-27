@@ -9,6 +9,9 @@ from django.conf import settings
 from django.views.generic import TemplateView
 from E_Shop_API.E_Shop_Products.models import Product
 from django.views import View
+from django.shortcuts import render
+from django.db.models import Q
+from django.core.paginator import Paginator
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -27,9 +30,7 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 #             queryset = queryset.filter(count__gt=0)
 #         return render(request, 'home.html', {'products': queryset})
 
-from django.shortcuts import render
-from django.db.models import Q
-from django.core.paginator import Paginator
+
 
 
 # def search(request):
