@@ -14,7 +14,6 @@ from E_Shop_API.E_Shop_Products.models import Product
 from django.views import View
 from rest_framework import status
 from rest_framework.views import APIView
-from rest_framework.response import Response
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
