@@ -23,11 +23,17 @@
         {% endif %}
         <!-- message-->
 
+
+
+
         {% if not in_cart %}
         <button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add to Cart</a></button>
         {% else %}
         <p style="color: red">in cart</p>
         {% endif %}
+
+
+
 
         <!--<button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add</a></button>-->
 
