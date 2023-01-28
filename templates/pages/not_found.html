@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
 {% load static %}
+
 {% block nav %}{% endblock %}
 
 {% block content %}
-    <link href="{% static 'css/pages/not_found.css' %}" rel="stylesheet">
+<link href="{% static 'css/pages/not_found.css' %}" rel="stylesheet">
 
+<!-- Lamp -->
 <div class="lamp__wrap">
     <div class="lamp">
         <div class="cable"></div>
@@ -16,8 +18,9 @@
     </div>
 </div>
 <!-- END Lamp -->
+
+<!-- Content -->
 <section class="error">
-    <!-- Content -->
     <div class="error__content">
         <div class="error__message message">
             <h1 class="message__title">Page Not Found</h1>
@@ -27,96 +30,7 @@
             <a href="{% url 'home' %}" class="e-nav__link"></a>
         </div>
     </div>
-    <!-- END Content -->
-
 </section>
+<!-- END Content -->
 
-
-
-<style>
-    body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Montserrat', sans-serif;
-    height: 100vh;
-    overflow: hidden;
-    width: 100vw;
-
-}</style>
-    {% endblock %}
-
-
-
-
-
-
-{% comment %}
-<!--{% load static %}-->
-<!--<!DOCTYPE html>-->
-<!--<html>-->
-<!--<head>-->
-<!--    <title></title>-->
-<!--    <link href="{% static 'css/style.css' %}" rel="stylesheet">-->
-<!--    <link href="{% static 'css/pages/not_found.css' %}" rel="stylesheet">-->
-
-<!--</head>-->
-<!--<body>-->
-<!--<header class="top-header">-->
-<!--</header>-->
-
-<!--&lt;!&ndash;dust particel&ndash;&gt;-->
-<!--<div>-->
-<!--    <div class="starsec"></div>-->
-<!--    <div class="starthird"></div>-->
-<!--    <div class="starfourth"></div>-->
-<!--    <div class="starfifth"></div>-->
-<!--</div>-->
-<!--&lt;!&ndash;Dust particle end-&ndash;&gt;-->
-
-<!--{% block content %}-->
-<!--<div class="lamp__wrap">-->
-<!--    <div class="lamp">-->
-<!--        <div class="cable"></div>-->
-<!--        <div class="cover"></div>-->
-<!--        <div class="in-cover">-->
-<!--            <div class="bulb"></div>-->
-<!--        </div>-->
-<!--        <div class="light"></div>-->
-<!--    </div>-->
-<!--</div>-->
-<!--&lt;!&ndash; END Lamp &ndash;&gt;-->
-<!--<section class="error">-->
-<!--    &lt;!&ndash; Content &ndash;&gt;-->
-<!--    <div class="error__content">-->
-<!--        <div class="error__message message">-->
-<!--            <h1 class="message__title">Page Not Found</h1>-->
-<!--            <p class="message__text">We're sorry, the page you were looking for isn't found here.</p>-->
-<!--        </div>-->
-<!--        <div class="error__nav e-nav">-->
-<!--            <a href="{% url 'home' %}" class="e-nav__link"></a>-->
-<!--        </div>-->
-<!--    </div>-->
-<!--    &lt;!&ndash; END Content &ndash;&gt;-->
-
-<!--</section>-->
-
-
-
-<!--<style>-->
-<!--    body {-->
-<!--    margin: 0;-->
-<!--    padding: 0;-->
-<!--    font-family: 'Montserrat', sans-serif;-->
-<!--    height: 100vh;-->
-<!--    overflow: hidden;-->
-<!--    width: 100vw;-->
-
-<!--}</style>-->
-<!--</body>-->
-<!--</html>-->
-{% endcomment %}
-
-
-
-
-
+{% endblock %}
