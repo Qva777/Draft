@@ -24,8 +24,8 @@
             </div>
 
             <ul class="nav-links">
-                <li><a href="#">Cart</a></li>
-                <li><a href="#"><img src="{% static 'img/cart.png'%}" id="cart"></a></li>
+                <li><a href="{% url 'my_cart' %}">Cart</a></li>
+                <li><a href="{% url 'my_cart' %}"><img src="{% static 'img/cart.png'%}" id="cart"></a></li>
                 <li><a href="{% url 'login' %}">Login</a></li>
             </ul>
         </div>
