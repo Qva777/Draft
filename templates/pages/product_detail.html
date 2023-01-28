@@ -12,6 +12,25 @@
         <h1 class="center">{{ product.name }}</h1><br>
         <h3 class="justify">Description: {{ product.description }}</h3><br>
         <h4>Price: {{ product.price }}</h4><br>
+        <!-- message-->
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <!-- message-->
+
+        {% if not in_cart %}
+        <button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add to Cart</a></button>
+        {% else %}
+        <p style="color: red">in cart</p>
+        {% endif %}
+
+        <!--<button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add</a></button>-->
+
+
         <!-- Pay by card -->
         <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
             {% csrf_token %}
@@ -42,3 +61,7 @@
 <!-- end Display randomly generated products -->
 
 {% endblock %}
+
+
+<!-- make non valid form -->
+
