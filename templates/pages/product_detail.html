@@ -39,7 +39,6 @@
 
 
 
-
         <!-- Pay by card -->
         <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
             {% csrf_token %}
