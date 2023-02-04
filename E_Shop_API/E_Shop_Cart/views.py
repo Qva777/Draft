@@ -6,7 +6,6 @@ from django.urls import reverse
 from django.http import JsonResponse
 from .models import Cart, CartProduct
 
-
 # def add_to_cart(request, product_id):
 #     """Add a product to the cart"""
 #     cart, created = Cart.objects.get_or_create(user=request.user)
