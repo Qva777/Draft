@@ -1,5 +1,3 @@
-from django.contrib.auth import get_user_model
-
 from E_Shop_API.E_Shop_Products.models import Product
 from django.conf import settings
 from django.contrib import messages
