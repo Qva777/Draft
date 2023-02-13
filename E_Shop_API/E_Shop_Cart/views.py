@@ -5,8 +5,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.http import JsonResponse
 from .models import Cart, CartProduct
-
 import stripe
+
 # def add_to_cart(request, product_id):
 #     """Add a product to the cart"""
 #     cart, created = Cart.objects.get_or_create(user=request.user)
