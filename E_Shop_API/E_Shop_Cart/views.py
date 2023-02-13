@@ -6,7 +6,7 @@ from django.urls import reverse
 from django.http import JsonResponse
 from .models import Cart, CartProduct
 
-
+import stripe
 # def add_to_cart(request, product_id):
 #     """Add a product to the cart"""
 #     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -166,7 +166,7 @@ def cart_detail(request):
 
     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
-from django.contrib.auth.models import AnonymousUser
+
 
 # def cart_detail(request):
 #     """View the contents of the cart"""
@@ -204,7 +204,7 @@ from django.contrib.auth.models import AnonymousUser
 #     cart_products.delete()
 #     return redirect('cart_detail')
 
-import stripe
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
