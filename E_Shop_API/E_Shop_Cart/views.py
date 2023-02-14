@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from .models import Cart, CartProduct
 import stripe
 
+
 # def add_to_cart(request, product_id):
 #     """Add a product to the cart"""
 #     cart, created = Cart.objects.get_or_create(user=request.user)
@@ -64,7 +65,6 @@ def add_to_cart(request, product_id):
         cart_product.save()
 
         return redirect('cart_detail')
-
 
 
 # def update_cart(request, product_id):
@@ -144,7 +144,6 @@ def update_cart(request, product_id):
 #     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
-
 def cart_detail(request):
     """View the contents of the cart"""
 
@@ -167,7 +166,6 @@ def cart_detail(request):
     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
-
 # def cart_detail(request):
 #     """View the contents of the cart"""
 #
@@ -187,7 +185,6 @@ def cart_detail(request):
 #     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
-
 # def remove_cart(request, product_id):
 #     """Remove a product from the cart"""
 #     cart = Cart.objects.get(user=request.user)
@@ -205,8 +202,8 @@ def cart_detail(request):
 #     return redirect('cart_detail')
 
 
-
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
 
 # def payment_cart(request):
 #     cart = Cart.objects.get(user=request.user)
@@ -302,9 +299,6 @@ def payment_success(request):
 #     return redirect(checkout_session.url)
 
 
-
-
-
 # NEW LINE  end anonimus
 def remove_cart(request, product_id):
     """Remove a product from the cart"""
@@ -387,23 +381,7 @@ def payment_cart(request):
 
     return redirect(checkout_session.url)
 
-
 # NEW LINE  end anonimus
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 # def update_cart(request, product_id):
