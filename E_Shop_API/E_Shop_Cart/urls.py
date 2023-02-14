@@ -1,5 +1,6 @@
 from django.urls import path
 from E_Shop_API.E_Shop_Cart import views
+
 urlpatterns = [
     path('cart_detail/', views.cart_detail, name='cart_detail'),
     path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
