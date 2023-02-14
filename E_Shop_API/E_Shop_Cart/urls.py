@@ -16,7 +16,6 @@ urlpatterns = [
     # path('cart/pay/', views.pay_cart, name='pay_cart'),
     path('cart/payment/', views.payment_cart, name='payment_cart'),
     path('success_cart/', views.payment_success, name='payment_success'),
-
 ]
 
 # from django.urls import path, include
