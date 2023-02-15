@@ -9,6 +9,7 @@ urlpatterns = [
     path('empty_cart/', views.empty_cart, name='empty_cart'),
 
     path('update-cart/<int:product_id>/', views.update_cart, name='update_cart'),
+
     # zim
     # path('cart/pay/', views.pay_cart, name='pay_cart'),
     path('cart/payment/', views.payment_cart, name='payment_cart'),
