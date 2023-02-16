@@ -2,6 +2,7 @@ from django.urls import path
 from E_Shop_API.E_Shop_Cart import views
 
 urlpatterns = [
+    # sss
     path('cart_detail/', views.cart_detail, name='cart_detail'),
     path('add/<int:product_id>/', views.add_to_cart, name='add_to_cart'),
     path('remove/<int:product_id>/', views.remove_cart, name='remove_from_cart'),
