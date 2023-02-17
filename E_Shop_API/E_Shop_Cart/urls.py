@@ -17,7 +17,6 @@ urlpatterns = [
     path('success_cart/', views.payment_success, name='payment_success'),
 ]
 
-
 # from django.urls import path, include
 #
 # from .views import CartView, CartProductListView
