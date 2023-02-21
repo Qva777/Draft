@@ -401,6 +401,7 @@ def payment_cart(request):
 #     return redirect('cart_detail')
 
 
+
 # from django import template
 #
 # register = template.Library()
