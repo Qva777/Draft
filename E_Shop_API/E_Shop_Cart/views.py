@@ -33,6 +33,7 @@ import stripe
 #
 #         return redirect('cart_detail')
 
+
 def add_to_cart(request, product_id):
     """Add a product to the cart"""
     if request.user.is_authenticated:
