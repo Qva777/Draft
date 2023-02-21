@@ -12,7 +12,6 @@ from E_Shop_API.E_Shop_Users.serializers import MyUserSerializer, UserDetailSeri
     SiteSerializer
 
 
-
 class UserDetailView(APIView):
     """ User Detail View get/put/patch/delete """
     permission_classes = [permissions.IsAdminUser, ]
