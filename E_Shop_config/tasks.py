@@ -72,8 +72,3 @@ def delete_cart(cart_id):
 
     except Cart.DoesNotExist:
         print(f"Cart {cart_id} does not exist.")
-
-
-
-
-
