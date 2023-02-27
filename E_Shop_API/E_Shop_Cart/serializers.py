@@ -18,6 +18,7 @@
 # #         model = Cart
 # #         fields = ('id', 'user', 'created_at', 'total_price')
 #
+#
 # class CartSerializer(serializers.ModelSerializer):
 #     """ Post/Get/ Cart"""
 #
