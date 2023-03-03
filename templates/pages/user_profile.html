@@ -8,8 +8,7 @@
     <!--  Return img if it added  -->
     <div class="image-column">
         {% if user.photo %}
-        <img src="{{ user.photo.url }}" alt="User Photo" class="product-image"/>
-
+        <img id="user-photo" src="{{ user.photo.url }}" alt="User Photo" class="product-image"/>
 
         <!--  Delete Photo button  -->
         <form method="POST" action="{% url 'delete_photo' %}">
@@ -17,8 +16,6 @@
             <input type="submit" value="Delete Photo">
         </form>
         <!--  end Delete Photo button -->
-
-
         {% else %}
         <h1>No photo</h1>
         {% endif %}
@@ -47,7 +44,8 @@
             <p class="messages">{{ form.first_name.errors|join:", " }} {{ form.last_name.errors|join:", " }}</p>
             {% endif %}
             <h3>Photo:
-                <input type="file" name="photo" accept="image/*"></h3>
+                <input type="file" name="photo" accept="image/*" id="photo-input">
+            </h3>
             {% if form.photo.errors %}
             <p class="messages">{{ form.photo.errors|join:", " }}</p>
             {% endif %}
@@ -70,8 +68,9 @@
             {% endif %}
 
             <h3>Birthday:
-                <label><input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"
-                              min="1930-01-01"/></label></h3>
+                <label>
+                    <input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}" min="1930-01-01"/>
+                </label></h3>
             {% if form.birth_date.errors %}
             <p class="messages">{{ form.birth_date.errors|join:", " }}</p>
             {% endif %}
@@ -87,7 +86,6 @@
             {% if form.disabled.errors %}
             <p class="messages">{{ form.disabled.errors|join:", " }}</p>
             {% endif %}
-
             <input type="submit" value="Save Changes">
         </form>
         <!-- end User Profile Field (Form) -->
@@ -95,5 +93,6 @@
     <!-- end User Profile -->
 
 </div>
-{% endblock %}
 
+<script src="{% static 'js/pages/user_profile.js' %}"></script>
+{% endblock %}
