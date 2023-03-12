@@ -9,56 +9,54 @@
 <!-- Product detail -->
 <div class="content-box">
     <div class="product-details text_color-scheme">
-        <!--        <h1 class="center">{{ product.name }}</h1><br>-->
-        <!--        <h3 class="justify">Description: {{ product.description }}</h3><br>-->
         <p class="product_name">{{ product.name }}</p>
         <p class="">Description: {{ product.description }}</p><br>
         <h4>Price: {{ product.price }}$</h4><br>
 
 
         <!-- message-->
-                <div class="button-container">
-        {% if not in_cart and cart_product_count < 10 %}
-        <!--    <button><a href="{% url 'add_to_cart' product.id %}" class="add_to_cart">Add to Cart</a></button>-->
-        <a href="{% url 'add_to_cart' product.id %}">
+        <div class="button-container">
+            {% if not in_cart and cart_product_count < 10 %}
+            <!--    <button><a href="{% url 'add_to_cart' product.id %}" class="add_to_cart">Add to Cart</a></button>-->
+            <a href="{% url 'add_to_cart' product.id %}">
 
-            <button class="bookmarkBtn">
+                <button class="bookmarkBtn">
   <span class="IconContainer">
                             <img src="{% static 'img/cart_dark.png'%}" class="picture">
 
 
 
       </span>
-                <p class="text">Add to Cart</p>
-            </button>
-        </a>
+                    <p class="text">Add to Cart</p>
+                </button>
+            </a>
 
-        {% else %}
-        {% if cart_product_count >= 10 %}
-        <p style="color: red">You have reached the maximum limit of 10 products in your cart.</p>
-        {% else %}
-        <p style="color: red">The product is already in your cart.</p>
-        {% endif %}
-        {% endif %}
+            {% else %}
+            {% if cart_product_count >= 10 %}
+            <p style="color: red">You have reached the maximum limit of 10 products in your cart.</p>
+            {% else %}
+            <p style="color: red">The product is already in your cart.</p>
+            {% endif %}
+            {% endif %}
 
 
-
-        <!-- Pay by card -->
-        <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
-            {% csrf_token %}
-            <script
-                    src="https://checkout.stripe.com/checkout.js" class="stripe-button"
-                    data-key="{{ stripe_public_key }}"
-                    data-amount="{{ product.price|floatformat:2|floatformat:0 }}00"
-                    data-name="{{ product.name }}"
-                    data-description="{{ product.description }}"
-                    data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"
-                    data-currency="usd"
-                    data-label="Pay by Card"
-            ></script>
-        </form>
-        <!-- end Pay by card -->
-                </div></div>
+            <!-- Pay by card -->
+            <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
+                {% csrf_token %}
+                <script
+                        src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+                        data-key="{{ stripe_public_key }}"
+                        data-amount="{{ product.price|floatformat:2|floatformat:0 }}00"
+                        data-name="{{ product.name }}"
+                        data-description="{{ product.description }}"
+                        data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"
+                        data-currency="usd"
+                        data-label="Pay by Card"
+                ></script>
+            </form>
+            <!-- end Pay by card -->
+        </div>
+    </div>
     {% if product.photo %}
     <img src="{{ product.photo.url }}" alt="" class="product-image-detail"/>
     {% endif %}
@@ -195,8 +193,6 @@
 
 
     /*}*/
-
-
 
 
     .stripe-button-el {
