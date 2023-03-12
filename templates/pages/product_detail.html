@@ -9,34 +9,58 @@
 <!-- Product detail -->
 <div class="content-box">
     <div class="product-details text_color-scheme">
-        <h1 class="center">{{ product.name }}</h1><br>
-        <h3 class="justify">Description: {{ product.description }}</h3><br>
-        <h4>Price: {{ product.price }}</h4><br>
+        <!--        <h1 class="center">{{ product.name }}</h1><br>-->
+        <!--        <h3 class="justify">Description: {{ product.description }}</h3><br>-->
+        <p class="product_name">{{ product.name }}</p>
+        <p class="">Description: {{ product.description }}</p><br>
+        <h4>Price: {{ product.price }}$</h4><br>
+
+        <!--       добавить прайс баттон -->
+
+        <!--        {% if not in_cart %}-->
+        <!--    <button><a href="{% url 'add_to_cart' product.id %}" class="add_to_cart">Add to Cart</a></button>-->
+        <!--{% else %}-->
+        <!--    <p style="color: red">The product is already in your cart.</p>-->
+        <!--{% endif %}-->
+
 
         <!-- message-->
-        {% if messages %}
-        <ul class="messages">
-            {% for message in messages %}
-            <li {% if message.tags %} class="{{ message.tags }}" {% endif %}>{{ message }}</li>
-            {% endfor %}
-        </ul>
-        {% endif %}
-        <!-- message-->
+                <div class="button-container">
+        {% if not in_cart and cart_product_count < 10 %}
+        <!--    <button><a href="{% url 'add_to_cart' product.id %}" class="add_to_cart">Add to Cart</a></button>-->
+        <a href="{% url 'add_to_cart' product.id %}">
+
+            <button class="bookmarkBtn">
+  <span class="IconContainer">
+                            <img src="{% static 'img/cart_dark.png'%}" class="picture">
 
 
 
+      </span>
+                <p class="text">Add to Cart</p>
+            </button>
+        </a>
 
-        {% if not in_cart %}
-        <button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add to Cart</a></button>
         {% else %}
-        <p style="color: red">in cart</p>
+        {% if cart_product_count >= 10 %}
+        <p style="color: red">You have reached the maximum limit of 10 products in your cart.</p>
+        {% else %}
+        <p style="color: red">The product is already in your cart.</p>
+        {% endif %}
         {% endif %}
 
 
+        <!--{% if messages %}-->
+        <!--    <ul class="messages">-->
+        <!--&lt;!&ndash;        {% for message in messages %}&ndash;&gt;-->
+        <!--            {% if message.tags == 'error' %}-->
+        <!--                <li class="{{ message.tags }}">{{ message }}</li>-->
+        <!--            {% endif %}-->
+        <!--&lt;!&ndash;        {% endfor %}&ndash;&gt;-->
+        <!--    </ul>-->
+        <!--{% endif %}-->
 
-        <!--<button><a href="{% url 'add_to_cart' product.id %}" class="btn btn-danger">Add</a></button>-->
-
-
+        <!-- message-->
 
 
         <!-- Pay by card -->
@@ -50,15 +74,18 @@
                     data-description="{{ product.description }}"
                     data-image="{% if product.photo %}{{ product.photo.url }}{% endif %}"
                     data-currency="usd"
+                    data-label="Pay by Card"
             ></script>
         </form>
         <!-- end Pay by card -->
-    </div>
+                </div></div>
     {% if product.photo %}
     <img src="{{ product.photo.url }}" alt="" class="product-image-detail"/>
     {% endif %}
+    <!--</div>-->
 </div>
 <!-- end Product detail -->
+
 
 <!-- Display randomly generated products -->
 <div class="random-container">
@@ -68,8 +95,161 @@
 </div>
 <!-- end Display randomly generated products -->
 
+
+<style>
+    .stripe-button-el span {
+        display: inline;
+        position: static;
+        padding: 0;
+        height: auto;
+        line-height: normal;
+        background: none;
+        background-image: none;
+        font-size: inherit;
+        color: inherit;
+        font-weight: inherit;
+        font-family: inherit;
+        text-shadow: none;
+        box-shadow: none;
+        border-radius: 0;
+
+    }
+
+
+    .picture {
+        width: 21px;
+        height: 21px;
+    }
+
+    .bookmarkBtn {
+        width: 140px;
+        margin-bottom: 10px;
+        height: 40px;
+        border-radius: 40px;
+        border: 1px solid rgba(255, 255, 255, 0.349);
+        background-color: rgb(12, 12, 12);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition-duration: .3s;
+        overflow: hidden;
+    }
+
+    .IconContainer {
+        width: 30px;
+        height: 30px;
+        background: linear-gradient(to bottom, rgb(255, 136, 255), rgb(172, 70, 255));
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        z-index: 2;
+        transition-duration: .3s;
+    }
+
+    /*.icon {*/
+    /*    border-radius: 1px;*/
+    /*}*/
+
+    .text {
+        height: 100%;
+        /*width: 60px;*/
+        width: 100px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        z-index: 1;
+        transition-duration: .3s;
+        font-size: 1.04em;
+    }
+
+    .bookmarkBtn:hover .IconContainer {
+        /*width: 90px;*/
+        width: 130px;
+
+        border-radius: 40px;
+        transition-duration: .3s;
+    }
+
+    .bookmarkBtn:hover .text {
+        transform: translate(10px);
+        width: 0;
+        font-size: 0;
+        transition-duration: .3s;
+    }
+
+    .bookmarkBtn:active {
+        transform: scale(0.95);
+        transition-duration: .3s;
+    }
+
+
+    /*.stripe-button-el span {*/
+    /*    background-image: linear-gradient(#19ca06, #19ca06);*/
+    /*    !*box-shadow: rgba(240, 46, 162, 0.4) 5px 5px, rgba(240, 46, 170, 0.3) 10px 10px, rgba(240, 46, 170, 0.2) 15px 15px, rgba(240, 46, 170, 0.1) 20px 20px, rgba(240, 46, 170, 0.05) 25px 25px;*!*/
+    /*}*/
+
+    /*.stripe-button-el {*/
+    /*    overflow: visible;*/
+    /*}*/
+
+    /*.add_to_cart {*/
+    /*    margin-bottom: 15px;*/
+    /*    !*margin: 15px;*!*/
+    /*    color: #ffffff;*/
+    /*    overflow: hidden;*/
+    /*    padding: 8px 16px;*/
+    /*    border-radius: 4px;*/
+    /*    position: relative;*/
+    /*    text-decoration: none;*/
+    /*    display: inline-block;*/
+    /*    filter: hue-rotate(0deg);*/
+    /*    text-transform: uppercase;*/
+    /*    transition: all 0.1s linear;*/
+    /*    background: rgb(0, 0, 0);*/
+    /*    font-family: "Roboto", sans-serif;*/
+
+
+    /*}*/
+
+
+
+
+    .stripe-button-el {
+
+        width: 120px;
+        height: 40px;
+        border: none;
+        border-radius: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        color: white;
+        font-weight: 600;
+        background: linear-gradient(to right, #8be3fc, #576bff);
+        box-shadow: 0 20px 30px -7px rgba(97, 118, 238, 0.5);
+        transition: all 0.3s ease-in-out;
+        cursor: pointer;
+    }
+
+    .stripe-button-el:hover {
+        box-shadow: none;
+        transform: translate(0px, 2.2px);
+    }
+
+    .stripe-button-el:active {
+        transform: scale(0.96) translate(0px, 3.2px);
+    }
+
+    .stripe-button-el span {
+        min-height: 1px !important;
+    }
+
+</style>
 {% endblock %}
-
-
-<!-- make non valid form -->
 
