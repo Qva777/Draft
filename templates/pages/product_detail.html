@@ -16,13 +16,6 @@
         <h4>Price: {{ product.price }}$</h4><br>
 
 
-        <!--        {% if not in_cart %}-->
-        <!--    <button><a href="{% url 'add_to_cart' product.id %}" class="add_to_cart">Add to Cart</a></button>-->
-        <!--{% else %}-->
-        <!--    <p style="color: red">The product is already in your cart.</p>-->
-        <!--{% endif %}-->
-
-
         <!-- message-->
                 <div class="button-container">
         {% if not in_cart and cart_product_count < 10 %}
