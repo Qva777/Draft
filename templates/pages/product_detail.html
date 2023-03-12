@@ -50,18 +50,6 @@
         {% endif %}
 
 
-        <!--{% if messages %}-->
-        <!--    <ul class="messages">-->
-        <!--&lt;!&ndash;        {% for message in messages %}&ndash;&gt;-->
-        <!--            {% if message.tags == 'error' %}-->
-        <!--                <li class="{{ message.tags }}">{{ message }}</li>-->
-        <!--            {% endif %}-->
-        <!--&lt;!&ndash;        {% endfor %}&ndash;&gt;-->
-        <!--    </ul>-->
-        <!--{% endif %}-->
-
-        <!-- message-->
-
 
         <!-- Pay by card -->
         <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
