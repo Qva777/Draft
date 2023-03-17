@@ -17,6 +17,7 @@
 <!--        <div class="button-container">-->
             <div class="button-container {% if cart_product_count >= 10 %}vertical{% endif %}">
 
+
             <!-- Cart button -->
             {% if not in_cart and cart_product_count < 10 %}
             <a href="{% url 'add_to_cart' product.id %}">
