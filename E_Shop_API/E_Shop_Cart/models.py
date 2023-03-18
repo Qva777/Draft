@@ -2,7 +2,6 @@ from django.db import models
 from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Products.models import Product
 
-
 class Cart(models.Model):
     """ add comment  """
 
