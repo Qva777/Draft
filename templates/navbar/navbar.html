@@ -24,8 +24,8 @@
             </div>
 
             <ul class="nav-links">
-                <li><a href="{% url 'my_cart' %}">Cart</a></li>
-                <li><a href="{% url 'my_cart' %}"><img src="{% static 'img/cart.png'%}" id="cart"></a></li>
+                <li><a href="{% url 'cart_detail' %}">Cart</a></li>
+                <li><a href="{% url 'cart_detail' %}"><img src="{% static 'img/cart.png'%}" id="cart"></a></li>
                 <li><a href="{% url 'login' %}">Login</a></li>
             </ul>
         </div>
@@ -72,7 +72,7 @@
                         <p>Edit Profile</p>
                         <span>></span>
                     </a>
-                    <a href="#" class="sub-menu-link">
+                    <a href="{% url 'cart_detail' %}" class="sub-menu-link">
                         <img src="{% static 'img/cart_dark.png'%}">
                         <p>Your Cart</p>
                         <span>></span>
