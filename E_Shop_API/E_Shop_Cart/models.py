@@ -4,6 +4,8 @@ from E_Shop_API.E_Shop_Products.models import Product
 
 
 class Cart(models.Model):
+    """ add comment  """
+
     user = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=32, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,10 +26,10 @@ class Cart(models.Model):
 
 
 class CartProduct(models.Model):
+    """ add comment  """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='products')
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart")
     quantity = models.IntegerField(default=0)
-    # new line
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
