@@ -14,6 +14,8 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('get_photo', 'created_at', 'updated_at')
     save_on_top = True
 
+    list_per_page = 20
+
     def get_photo(self, obj):
         """ Method which return img in admin panel """
         if obj.photo:
