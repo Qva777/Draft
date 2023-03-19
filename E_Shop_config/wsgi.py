@@ -14,3 +14,9 @@ from django.core.wsgi import get_wsgi_application
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'E_Shop_config.settings')
 
 application = get_wsgi_application()
+
+# Import and add the middleware here damn
+# from E_Shop_API.E_Shop_Users.views.anonymous_session_middleware import AnonymousSessionMiddleware
+# from E_Shop_API.E_Shop_Users.views import AnonymousSessionMiddleware
+#
+# application = AnonymousSessionMiddleware(application)
