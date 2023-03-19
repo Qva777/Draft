@@ -2,14 +2,15 @@ from django.db import models
 from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Products.models import Product
 
-class Cart(models.Model):
-    """ add comment  """
 
+class Cart(models.Model):
+    """  Cart models/fields  """
     user = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=32, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_cart_owner(self):
+        """ Returns the owner of the cart """
         if self.user:
             return self.user
         else:
@@ -25,7 +26,7 @@ class Cart(models.Model):
 
 
 class CartProduct(models.Model):
-    """ add comment  """
+    """  Cart models/fields  Product in cart """
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='products')
     cart = models.ForeignKey(Cart, on_delete=models.CASCADE, related_name="cart")
     quantity = models.IntegerField(default=0)
@@ -38,4 +39,5 @@ class CartProduct(models.Model):
         unique_together = ('cart', 'product')
 
     def subtotal(self):
+        """ Calculate the subtotal price for the cart product """
         return self.product.price * self.quantity
