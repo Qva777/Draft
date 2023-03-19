@@ -27,6 +27,7 @@ urlpatterns = [
     # FRONTEND APPLICATION
     path('', include('E_Shop_Frontend.Users.urls')),
     path('', include('E_Shop_Frontend.Products.urls')),
+    # path('', include('E_Shop_Frontend.Cart.urls')),  #  ###############
 
     # ADMIN PANEL
     path('admin/', admin.site.urls),
@@ -41,7 +42,7 @@ urlpatterns = [
     # API APPLICATION
     path('api/', include('E_Shop_API.E_Shop_Users.urls')),
     path('api/', include('E_Shop_API.E_Shop_Products.urls')),
-    path('api/', include('E_Shop_API.E_Shop_Cart.urls')),
+    path('api/', include('E_Shop_API.E_Shop_Cart.urls')),  ################
 
     # DJOSER
     path('api/auth/', include('djoser.urls')),
