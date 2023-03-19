@@ -7,31 +7,48 @@ from django.http import JsonResponse
 from .models import Cart, CartProduct
 import stripe
 
+from django.contrib.messages import error
+# worked
 # def add_to_cart(request, product_id):
 #     """Add a product to the cart"""
-#     cart, created = Cart.objects.get_or_create(user=request.user)
+#     if request.user.is_authenticated:
+#         # User is authenticated
+#         cart, created = Cart.objects.get_or_create(user=request.user)
+#     else:
+#         # User is anonymous
+#         session_key = request.session.session_key
+#         if not session_key:
+#             request.session.cycle_key()
+#         cart, created = Cart.objects.get_or_create(session_key=session_key)
+#
 #     product = get_object_or_404(Product, id=product_id)
 #
-#     # check if requested quantity is greater than the product count
+#     # Check if requested quantity is greater than the product count
 #     quantity = int(request.POST.get('quantity', 1))
 #     if quantity > product.count:
 #         quantity = product.count
 #
-#     # limit the number of products to 10
-#     # check if adding this quantity would exceed the limit of 10 products in the cart
+#         # Check if the product is already in the cart
+#     cart_product = CartProduct.objects.filter(cart=cart, product=product).first()
+#     if cart_product:
+#         messages.warning(request, "This product is already in your cart.")
+#         # return redirect('cart_detail')
+#
+#
+#     # Limit the number of products to 10
+#     # Check if adding this quantity would exceed the limit of 10 products in the cart
 #     if CartProduct.objects.filter(cart=cart).count() >= 10:
 #         messages.warning(request, "You can only add up to 10 products to your cart.")
-#         # return redirect('payment_pro')
 #         return redirect(reverse('payment_pro', kwargs={'product_id': product_id}))
-#
+#     # if CartProduct.objects.filter(cart=cart).count() >= 10:
+#         # messages.warning(request, "You can only add up to 10 products to your cart.")
+#         # cart_limit_reached = True
 #     else:
 #         cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
 #         cart_product.quantity += quantity
 #         cart_product.save()
-#
-#         # messages.success(request, f"{product.name} has been added to your cart.")
-#
-#         return redirect('cart_detail')
+#     return redirect('cart_detail')
+
 
 def add_to_cart(request, product_id):
     """Add a product to the cart"""
@@ -52,11 +69,8 @@ def add_to_cart(request, product_id):
     if quantity > product.count:
         quantity = product.count
 
-    # Limit the number of products to 10
-    # Check if adding this quantity would exceed the limit of 10 products in the cart
-    if CartProduct.objects.filter(cart=cart).count() >= 10:
-        messages.warning(request, "You can only add up to 10 products to your cart.")
-        return redirect(reverse('payment_pro', kwargs={'product_id': product_id}))
+
+
 
     else:
         cart_product, created = CartProduct.objects.get_or_create(cart=cart, product=product)
@@ -64,6 +78,7 @@ def add_to_cart(request, product_id):
         cart_product.save()
 
         return redirect('cart_detail')
+
 
 
 # def update_cart(request, product_id):
@@ -143,18 +158,44 @@ def update_cart(request, product_id):
 #     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
+# def cart_detail(request):
+#     """View the contents of the cart"""
+#
+#     if request.user.is_authenticated:
+#         # User is authenticated
+#         cart, created = Cart.objects.get_or_create(user=request.user)
+#     else:
+#         # User is anonymous
+#         session_key = request.session.session_key
+#         if not session_key:
+#             request.session.cycle_key()
+#         cart, created = Cart.objects.get_or_create(session_key=session_key)
+#
+#     cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
+#
+#     for cart_product in cart_products:
+#         if cart_product.product.count == 0 or cart_product.quantity > cart_product.product.count:
+#             cart_product.delete()
+#
+#     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 def cart_detail(request):
     """View the contents of the cart"""
-
     if request.user.is_authenticated:
-        # User is authenticated
-        cart, created = Cart.objects.get_or_create(user=request.user)
+        cart_queryset = Cart.objects.filter(user=request.user)
+        if cart_queryset.exists():
+            cart = cart_queryset.first()
+        else:
+            cart = Cart.objects.create(user=request.user)
+        session_key = request.session.session_key
     else:
-        # User is anonymous
         session_key = request.session.session_key
         if not session_key:
             request.session.cycle_key()
-        cart, created = Cart.objects.get_or_create(session_key=session_key)
+        cart_queryset = Cart.objects.filter(session_key=session_key)
+        if cart_queryset.exists():
+            cart = cart_queryset.first()
+        else:
+            cart = Cart.objects.create(session_key=session_key)
 
     cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
 
@@ -165,23 +206,7 @@ def cart_detail(request):
     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
-# def cart_detail(request):
-#     """View the contents of the cart"""
-#
-#     if isinstance(request.user, AnonymousUser):
-#         # User is anonymous
-#         cart = None
-#         cart_products = None
-#     else:
-#         # User is authenticated
-#         cart = Cart.objects.get(user=request.user)
-#         cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
-#
-#         for cart_product in cart_products:
-#             if cart_product.product.count == 0 or cart_product.quantity > cart_product.product.count:
-#                 cart_product.delete()
-#
-#     return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
+
 
 
 # def remove_cart(request, product_id):
@@ -242,6 +267,17 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 #     return redirect(checkout_session.url)
 
 
+# def payment_success(request):
+#     # Get the cart object from the metadata of the checkout session
+#     checkout_session_id = request.session.get('checkout_session_id')
+#     checkout_session = stripe.checkout.Session.retrieve(checkout_session_id)
+#     cart_id = checkout_session.metadata.get('cart_id')
+#     cart = Cart.objects.get(id=cart_id)
+#
+#     # Clear the cart
+#     # cart.cartproducts.all().delete()
+#     cart.cart.all().delete()
+#     return render(request, "payment_success.html")
 def payment_success(request):
     # Get the cart object from the metadata of the checkout session
     checkout_session_id = request.session.get('checkout_session_id')
@@ -249,9 +285,17 @@ def payment_success(request):
     cart_id = checkout_session.metadata.get('cart_id')
     cart = Cart.objects.get(id=cart_id)
 
+    # Retrieve the cart products associated with the cart
+    cart_products = CartProduct.objects.filter(cart=cart)
+
+    for cart_product in cart_products:
+        product = cart_product.product
+        product.count -= cart_product.quantity
+        product.save()
+
     # Clear the cart
-    # cart.cartproducts.all().delete()
-    cart.cart.all().delete()
+    cart_products.delete()
+
     return render(request, "payment_success.html")
 
 
@@ -352,6 +396,9 @@ def payment_cart(request):
         if product.count < cart_product.quantity:
             return JsonResponse({'error': 'The quantity of the product is more than the available amount'})
 
+        # product.count -= cart_product.quantity
+        # product.save()
+
         line_item = {
             'price_data': {
                 'currency': 'usd',
@@ -399,7 +446,6 @@ def payment_cart(request):
 #         else:
 #             cart_product.save()
 #     return redirect('cart_detail')
-
 
 
 # from django import template
