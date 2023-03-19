@@ -12,8 +12,9 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-from dotenv import load_dotenv
 
+# from celery.schedules import crontab
+from dotenv import load_dotenv
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -50,11 +51,11 @@ INSTALLED_APPS = [
     'E_Shop_Frontend.Products.apps.ProductsConfig',
     # INSTALLED LIBRARY:
     'djoser',
-    'celery',
+    # 'celery',
     'coreapi',
     'drf_yasg',
 
-    'coverage',
+    # 'coverage', # count of tests
     'rest_framework',
     'rest_framework.authtoken',
     # google
@@ -65,7 +66,7 @@ INSTALLED_APPS = [
     'django.contrib.sites',
 
     # url
-    'django_extensions',
+    # 'django_extensions',
 
 ]
 AUTH_USER_MODEL = 'E_Shop_Users.Clients'
@@ -111,6 +112,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+
+    # my anonim user
+    # 'E_Shop_API.E_Shop_Users.views.AnonymousSessionMiddleware',
 ]
 
 ROOT_URLCONF = 'E_Shop_config.urls'
@@ -229,4 +234,9 @@ SIMPLE_JWT = {
 # Stripe payment
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+
+
+
+
+#
 
