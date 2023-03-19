@@ -1,3 +1,9 @@
+.change-list img[src*="/media/"] {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
 /* --------------------------- Device theme --------------------------- */
 @media (prefers-color-scheme: dark) {
     #header {
