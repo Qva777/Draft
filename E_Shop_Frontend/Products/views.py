@@ -68,7 +68,6 @@ def search(request):
 #         return render(request, 'pages/home.html', {'products': products})
 
 
-
 class ProductHomeListView(View):
     """Main page/Product list"""
 
