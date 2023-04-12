@@ -7,6 +7,7 @@ python3 manage.py dumpdata --format=json E_Shop_API > mydemodata.json
 <br>
 python3 manage.py loaddata mydemodata.json
 
+
 python3 manage.py dumpdata --format=json --indent 4 E_Shop_API > mydemodata.json
 <br>
 python3 manage.py loaddata mydemodata.json
