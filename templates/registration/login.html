@@ -13,7 +13,7 @@
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
         {% if form.errors %}
-        <div class="error-login" role="alert">
+        <div class="alert-message" role="alert">
             <p>Invalid email or password. Please try again.</p>
         </div>
         {% endif %}
@@ -56,6 +56,15 @@
     </form>
     <!-- end Login Form -->
 </div>
+
+<style>
+
+
+    .form-group {
+        text-align: center;
+    }
+
+</style>
 
 
 <script src="{% static 'js/registration/login_registration.js' %}"></script>
