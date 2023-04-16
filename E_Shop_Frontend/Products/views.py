@@ -69,7 +69,6 @@ def search(request):
 
 
 
-
 class ProductHomeListView(View):
     """Main page/Product list"""
 
