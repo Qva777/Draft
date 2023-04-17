@@ -14,7 +14,7 @@
         <h4>Price: {{ product.price }}$</h4><br>
 
         <!-- Buttons 'Add_to_cart' and 'Pay' -->
-            <div class="button-container {% if cart_product_count >= 10 %}vertical{% endif %}">
+        <div class="button-container {% if cart_product_count >= 10 %}vertical{% endif %}">
 
             <!-- Cart button -->
             {% if not in_cart and cart_product_count < 10 %}
@@ -68,4 +68,3 @@
 </div>
 <!-- end Display randomly generated products -->
 {% endblock %}
-
