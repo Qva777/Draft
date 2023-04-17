@@ -24,11 +24,10 @@
 }
 
 .user-picture {
-    width: 70px;
-    cursor: pointer;
+    width: 50px;
+    height: 50px;
     object-fit: cover;
     border-radius: 50%;
-    clip-path: circle(30%);
 }
 
 .user-info h3 {
@@ -82,7 +81,7 @@ body.search-field i {
 .searchBox .search-field {
     display: flex;
     opacity: 0;
-    right: -88px;
+    right: -50px;
     height: 50px;
     width: 300px;
     padding: 3px;
@@ -95,12 +94,12 @@ body.search-field i {
 
 .searchToggle.active ~ .search-field {
     opacity: 1;
+    left: -200px;
     margin-top: 140px;
     pointer-events: auto;
 }
 
 /* --------------------------- data field --------------------------- */
-
 
 
 /* --------------------------- Navbar --------------------------- */
@@ -239,6 +238,7 @@ i, .searchToggle i {
     opacity: 0;
     pointer-events: none;
 }
+
 /* --------------------------- end searchToggle --------------------------- */
 
 /* --------------------------- Sub-menu --------------------------- */
@@ -257,7 +257,7 @@ i, .searchToggle i {
 }
 
 .sub-menu-wrap {
-    top: 100%;
+    top: 120%;
     right: -12%;
     width: 320px;
     max-height: 0;
@@ -271,7 +271,6 @@ i, .searchToggle i {
     margin: 12px 0;
     align-items: center;
     text-decoration: none;
-
 }
 
 .sub-menu-link p {
@@ -284,7 +283,6 @@ i, .searchToggle i {
     border-radius: 30%;
     margin-right: 20px;
     background: #e5e5e5;
-
 }
 
 .sub-menu-link span {
@@ -366,6 +364,7 @@ i, .searchToggle i {
         margin-top: 20px;
     }
 }
+
 /* --------------------------- end adapted for different device  --------------------------- */
 
 
@@ -437,4 +436,5 @@ i, .searchToggle i {
     }
 
 }
+
 /* --------------------------- end Device theme --------------------------- */
