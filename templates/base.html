@@ -11,14 +11,22 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 </head>
 <body>
+<!-- Navbar -->
 {% block nav %}{% include 'navbar/navbar.html' %}{% endblock %}
+<!-- end Navbar -->
 
+<!-- Content -->
 <div class="content">
     {% block content %}
     {% endblock %}
 </div>
+<!-- end Content -->
 
+<!-- Stars background -->
 {% include 'elements/background_stars.html' %}
+<!-- end Stars background -->
+
+
 <script src="{% static 'js/script.js' %}"></script>
 </body>
 </html>
