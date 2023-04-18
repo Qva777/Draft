@@ -22,6 +22,11 @@ button {
 /* --------------------------- end data --------------------------- */
 
 /* --------------------------- payment button animation --------------------------- */
+
+.alert-message {
+    color: #ef0909;
+}
+
 .payment_button {
     margin: 15px;
     color: #ffffff;
