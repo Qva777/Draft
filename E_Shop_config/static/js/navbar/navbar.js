@@ -10,24 +10,29 @@ const body = document.querySelector("body"),
     searchToggle = document.querySelector(".searchToggle"),
     sidebarOpen = document.querySelector(".sidebarOpen");
 
+
 // Check if the user has set dark mode
-const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+let prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
 
 // Set the image depending on the theme
-if (prefersDark) {
-    cartImg.src = staticUrl + "img/cart.png";
-    logoImg.src = staticUrl + "img/logo.png";
-    searchImg.src = staticUrl + "img/search.png";
-    searchInputImg.src = staticUrl + "img/search.png";
-    menuImg.src = staticUrl + "img/menu.png";
+function setImage() {
+    if (prefersDark) {
+        cartImg.src = staticUrl + "img/cart.png";
+        logoImg.src = staticUrl + "img/logo.png";
+        searchImg.src = staticUrl + "img/search.png";
+        searchInputImg.src = staticUrl + "img/search.png";
+        menuImg.src = staticUrl + "img/menu.png";
 
-} else {
-    cartImg.src = staticUrl + "img/cart_dark.png";
-    logoImg.src = staticUrl + "img/logo_dark.png";
-    searchImg.src = staticUrl + "img/search_dark.png";
-    searchInputImg.src = staticUrl + "img/search_dark.png";
-    menuImg.src = staticUrl + "img/menu_dark.png";
+    } else {
+        cartImg.src = staticUrl + "img/cart_dark.png";
+        logoImg.src = staticUrl + "img/logo_dark.png";
+        searchImg.src = staticUrl + "img/search_dark.png";
+        searchInputImg.src = staticUrl + "img/search_dark.png";
+        menuImg.src = staticUrl + "img/menu_dark.png";
+    }
 }
+
+setImage();
 
 // Check if the dark mode  => and apply it
 let getMode = localStorage.getItem("mode");
@@ -75,4 +80,11 @@ document.addEventListener('click', function (event) {
         searchToggle.classList.remove('active');
 
     }
+});
+
+
+// Listen for theme changes and update images accordingly
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    prefersDark = e.matches;
+    setImage();
 });
