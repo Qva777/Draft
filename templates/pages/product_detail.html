@@ -13,6 +13,7 @@
         <p class="">Description: {{ product.description }}</p><br>
         <h4>Price: {{ product.price }}$</h4><br>
 
+
         <!-- Buttons 'Add_to_cart' and 'Pay' -->
         <div class="button-container {% if cart_product_count >= 10 %}vertical{% endif %}">
 
@@ -36,7 +37,8 @@
             <!-- end Cart button -->
 
             <!-- Pay by card -->
-            <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST">
+            <form id="payment-form" action="{% url 'payment_pro' product_id=product.id %}" method="POST"
+                  class="pay-by-card-button">
                 {% csrf_token %}
                 <script
                         src="https://checkout.stripe.com/checkout.js" class="stripe-button"
@@ -53,10 +55,24 @@
         </div>
         <!-- end Buttons 'Add_to_cart' and 'Pay' -->
     </div>
-
-    {% if product.photo %}
-    <img src="{{ product.photo.url }}" alt="" class="product-image-detail"/>
+    <!-- Slideshow -->
+    {% if product.photos.all %}
+    <div class="slideshow-container">
+        {% for photo in product.photos.all %}
+        <div class="mySlides fade">
+            <img src="{{ photo.image.url }}" alt="Product Image" class="product-image-detail"
+                 onclick="openImage('{{ photo.image.url }}')">
+        </div>
+        {% endfor %}
+        <!-- Previous & Next buttons -->
+        {% if product.photos.count > 1 %}
+        <a class="prev" onclick="plusSlides(-1)">❮</a>
+        <a class="next" onclick="plusSlides(1)">❯</a>
+        {% endif %}
+        <!-- end Previous & Next buttons -->
+    </div>
     {% endif %}
+    <!-- end Slideshow -->
 </div>
 <!-- end Product detail -->
 
@@ -67,4 +83,38 @@
     {% endfor %}
 </div>
 <!-- end Display randomly generated products -->
+
+
+<!--<script>-->
+<!--    let slideIndex = 1;-->
+<!--    showSlides(slideIndex);-->
+
+<!--    function plusSlides(n) {-->
+<!--        showSlides(slideIndex += n);-->
+<!--    }-->
+
+
+<!--    function showSlides(n) {-->
+<!--        let i;-->
+<!--        let slides = document.getElementsByClassName("mySlides");-->
+<!--        let dots = document.getElementsByClassName("dot");-->
+<!--        if (n > slides.length) {-->
+<!--            slideIndex = 1-->
+<!--        }-->
+<!--        if (n < 1) {-->
+<!--            slideIndex = slides.length-->
+<!--        }-->
+<!--        for (i = 0; i < slides.length; i++) {-->
+<!--            slides[i].style.display = "none";-->
+<!--        }-->
+<!--        for (i = 0; i < dots.length; i++) {-->
+<!--            dots[i].className = dots[i].className.replace(" active", "");-->
+<!--        }-->
+<!--        slides[slideIndex - 1].style.display = "block";-->
+<!--        dots[slideIndex - 1].className += " active";-->
+<!--    }-->
+<!--</script>-->
+
+<script src="{% static 'js/pages/product_detail.js' %}"></script>
+
 {% endblock %}
