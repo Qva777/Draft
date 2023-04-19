@@ -7,6 +7,7 @@ from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
 
+# STRIPE KEY
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
