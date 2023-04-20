@@ -1,5 +1,12 @@
 /* --------------------------- data field --------------------------- */
 
+.prev {
+    left: 0;
+}
+
+.next {
+    right: 0;
+}
 
 .text {
     z-index: 1;
@@ -68,6 +75,43 @@
     border-radius: 20px;
 }
 
+.fade {
+    animation-name: fade;
+    animation-duration: 1.5s;
+}
+
+@keyframes fade {
+    from {
+        opacity: .4
+    }
+    to {
+        opacity: 1
+    }
+}
+
+.prev, .next {
+    top: 50%;
+    color: white;
+    padding: 16px;
+    font-size: 18px;
+    cursor: pointer;
+    font-weight: bold;
+    user-select: none;
+    position: absolute;
+    border-radius: 3px;
+    transform: translateY(-50%);
+}
+
+.slideshow-container {
+    margin: auto;
+    max-width: 1000px;
+    position: relative;
+}
+
+.slideshow-container:hover .prev,
+.slideshow-container:hover .next {
+    background-color: rgba(134, 134, 134, 0.79);
+}
 
 .bookmarkBtn {
     width: 140px;
@@ -192,6 +236,7 @@
         display: none;
     }
 
+
     .product-details {
         padding: 0;
     }
@@ -225,6 +270,12 @@
         .random-container {
             margin-top: 700px;
         }
+    }
+}
+
+@media (max-width: 768px) {
+    .pay-by-card-button {
+        display: none;
     }
 }
 
