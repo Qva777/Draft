@@ -46,6 +46,10 @@
     display: none;
 }
 
+.scrollable-email {
+    overflow-y: scroll;
+}
+
 body.search-field input {
     color: var(--text-color);
 }
@@ -311,6 +315,9 @@ i, .searchToggle i {
 @media only screen and (min-width: 792px) {
     .nav-links li:nth-child(1),
     .nav-links li:nth-child(3) {
+        display: none;
+    }
+    .desktop-hidden {
         display: none;
     }
 }
