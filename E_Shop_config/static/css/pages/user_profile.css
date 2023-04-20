@@ -156,6 +156,7 @@ input[type="password"], input[type="file"] {
         align-items: center;
         flex-direction: column;
         justify-content: center;
+        margin-bottom: 12px;
     }
 
     .image-column input[type="submit"] {
