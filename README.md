@@ -1,6 +1,7 @@
 pip freeze > requirements.txt <br>
 check
 
+
 <h4>dumpdata and loaddata:</h4>
 makemigrations
 migrate
@@ -12,7 +13,6 @@ python3 manage.py loaddata mydemodata.json
 python3 manage.py dumpdata --format=json --indent 4 E_Shop_API > mydemodata.json
 <br>
 python3 manage.py loaddata mydemodata.json
-
 
 
 
