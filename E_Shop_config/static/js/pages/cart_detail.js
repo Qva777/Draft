@@ -30,8 +30,8 @@ window.onclick = function (event) {
 
 // Auto input max count for product
 function checkMaxQuantity(input) {
-    var maxQuantity = parseInt(input.getAttribute('max'));
-    var enteredValue = parseInt(input.value);
+    let maxQuantity = parseInt(input.getAttribute('max'));
+    let enteredValue = parseInt(input.value);
 
     if (enteredValue > maxQuantity) {
         input.value = maxQuantity;
