@@ -56,13 +56,6 @@ class UserEditForm(UserChangeForm):
             raise forms.ValidationError('This email address is already in use.')
         return email
 
-    # def clean_current_password(self):
-    #     """Checking the current password entered by the user, if not correct, an error is displayed """
-    #     current_password = self.cleaned_data.get('current_password')
-    #     if current_password:
-    #         if not self.instance.check_password(current_password):
-    #             raise forms.ValidationError('The current password is incorrect.')
-    #     return current_password
     def clean(self):
         """Checking the current password entered by the user, if not correct, an error is displayed """
         super().clean()
