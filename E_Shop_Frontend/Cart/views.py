@@ -102,7 +102,7 @@ class CartDetailView(View, CartMixin):
             if cart_product.product.count == 0 or cart_product.quantity > cart_product.product.count:
                 cart_product.delete()
 
-        return render(request, 'cart_detail.html', {'cart': cart, 'cart_products': cart_products})
+        return render(request, 'pages/cart_detail.html', {'cart': cart, 'cart_products': cart_products})
 
 
 class PaymentCartView(View, CartMixin):
