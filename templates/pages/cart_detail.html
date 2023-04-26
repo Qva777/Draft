@@ -63,10 +63,9 @@
                                max="{{ item.product.count }}"
                                onchange="updateQuantity('{{ item.product.id }}', this.value, 'update')">
                         <!-- Auto input max count for product -->
-<!--                        <input type="number" name="quantity" class="count-input" value="{{ item.quantity }}" min="1"-->
-<!--                               max="{{ item.product.count }}" oninput="checkMaxQuantity(this)">-->
+                        <!--                                                <input type="number" name="quantity" class="count-input" value="{{ item.quantity }}" min="1"-->
+                        <!--                                                       max="{{ item.product.count }}" oninput="checkMaxQuantity(this)">-->
                         <!-- end Auto input max count for product -->
-
                     </form>
                 </div>
                 <!-- end Input count field -->
@@ -138,7 +137,6 @@
 
 </div>
 <!-- end Cart -->
-
-<script src="{% static 'js/pages/cart_detail.ls'%}"></script>
+<script src="{% static 'js/pages/cart_detail.js'%}"></script>
 {% endblock %}
 
