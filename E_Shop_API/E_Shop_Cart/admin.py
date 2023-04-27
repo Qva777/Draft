@@ -3,14 +3,15 @@ from django.contrib import admin
 
 
 class ProductInline(admin.StackedInline):
-    """ отображение cart product в cart """
+    """ Display cart_product in cart """
     model = CartProduct
     extra = 1
 
 
 @admin.register(Cart)
 class CartAdmin(admin.ModelAdmin):
-    """ cart """
+    """ Register Cart model in admin panel """
+
     save_on_top = True
 
     inlines = [ProductInline]
