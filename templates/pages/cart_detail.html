@@ -1,12 +1,13 @@
 {% extends 'base.html' %}
 {% load static %}
+{% block title %}Shopping Cart{% endblock %}
 
 {% block content %}
 <link href="{% static 'css/pages/cart_detail.css' %}" rel="stylesheet">
 
 <!-- Cart -->
 <div class="CartContainer">
-
+    <div id="countdown-timer" style="display: none;"></div>
     <!-- Header -->
     <div class="Header">
         <h3 class="Heading">Shopping Cart</h3>
