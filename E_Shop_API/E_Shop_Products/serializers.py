@@ -8,7 +8,8 @@ class ProductListSerializers(serializers.ModelSerializer):
     # users = UserListSerializers(read_only=True, many=True)
     class Meta:
         model = Product
-        fields = ('id', 'name', 'description', 'photo', 'price', 'count', 'created_at', 'updated_at', 'active')
+        fields = '__all__'
+        # fields = ('id', 'name', 'description', 'price', 'count', 'created_at', 'updated_at', 'active')
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -18,13 +19,3 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = '__all__'
         # ['id', 'name', 'description', 'photo', 'price', 'count', 'created_at', 'updated_at', 'active', ]
-
-    def validate_count(self, value):
-        """ Validator for product count """
-        if value < 0:
-            raise serializers.ValidationError('Product count cannot be negative.')
-        elif value == 0:
-            self.instance.active = False
-        else:
-            self.instance.active = True
-        return value
