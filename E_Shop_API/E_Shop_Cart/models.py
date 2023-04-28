@@ -1,10 +1,15 @@
+import uuid
 from django.db import models
+from datetime import timedelta
+
+from E_Shop_config.tasks import delete_cart
 from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Products.models import Product
 
 
 class Cart(models.Model):
     """  Cart models/fields  """
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
     session_key = models.CharField(max_length=32, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,6 +29,15 @@ class Cart(models.Model):
             total += item.product.price * item.quantity
         return total
 
+    def __str__(self):
+        """String representation"""
+        return str(self.id)
+
+    #     celery
+    def schedule_deletion(self):
+        """Schedule the deletion of the cart"""
+        delete_cart.apply_async((str(self.id),), eta=self.created_at + timedelta(minutes=1))
+
 
 class CartProduct(models.Model):
     """  Cart models/fields  Product in cart """
@@ -33,6 +47,7 @@ class CartProduct(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
+        """String representation"""
         return self.product.name
 
     class Meta:
