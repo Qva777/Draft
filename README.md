@@ -48,3 +48,23 @@ Visa: 4242 4242 4242 4242
 Mastercard: 5105 1051 0510 5100
 American Express: 3782 822463 10005
 Discover: 6011 1111 1111 1117
+
+
+
+
+
+celery worker:
+celery -A E_Shop_config worker --loglevel=info
+
+
+celery beat:
+celery -A E_Shop_config beat --loglevel=info
+
+Redis:
+redis-server
+
+
+commit:
+git commit --date="2023-04-28T12:00:00" -m "Updated"
+                   year-month-day
+
