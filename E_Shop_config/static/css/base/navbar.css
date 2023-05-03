@@ -47,7 +47,7 @@
 }
 
 .scrollable-email {
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 body.search-field input {
