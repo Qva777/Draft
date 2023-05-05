@@ -1,4 +1,13 @@
 /* --------------------------- data field --------------------------- */
+.short_text {
+    top: 35%;
+    left: 50%;
+    font-size: 20px;
+    position: absolute;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
+
 .payment_text {
     top: 20%;
     left: 50%;
@@ -48,12 +57,19 @@
         font-size: 40px;
     }
 
+    .short_text {
+        top: 40%;
+        left: 50%;
+        font-size: 20px;
+    }
+
     .check-mark {
         top: 25%;
         width: 60px;
         height: 60px;
     }
 }
+
 
 @media only screen and (max-width: 394px) {
     .payment_text {
@@ -68,8 +84,14 @@
 
 /* --------------------------- Device theme --------------------------- */
 @media (prefers-color-scheme: light) {
+    .short_text {
+        color: #000000;
+    }
+
+
     .payment_text {
         color: #000000;
+
     }
 
     .back-home {
@@ -85,12 +107,17 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    .short_text {
+        color: #ffffff;
+    }
+
     .payment_text {
         color: #ffffff;
     }
 
     .back-home {
         background-color: #088c7a;
+
     }
 
     .back-home:hover {
