@@ -13,30 +13,29 @@ Including another URLconf
     1. Import the include(), function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin
 from django.conf.urls.static import static
-
 from django.conf import settings
+
+from django.contrib import admin
 from django.urls import path, include
 
-from E_Shop_Frontend.Products.views import ProductHomeListView
 from E_Shop_config.yasg import urlpatterns as doc_urls
+from E_Shop_Frontend.Products.views import ProductHomeListView
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
 urlpatterns = [
     # FRONTEND APPLICATION
     path('', include('E_Shop_Frontend.Users.urls')),
     path('', include('E_Shop_Frontend.Products.urls')),
-    # path('', include('E_Shop_Frontend.Cart.urls')),  #  ###############
+    path('', include('E_Shop_Frontend.Cart.urls')),
 
     # ADMIN PANEL
     path('admin/', admin.site.urls),
 
-    #  GOOGLE AUTH
+    #  GOOGLE OAUTH
     path('', include('allauth.urls')),
 
     # HOME PAGE
-    # path('', product_list, name='home'), # preparing to delete
     path('', ProductHomeListView.as_view(), name='home'),
 
     # API APPLICATION
