@@ -8,7 +8,7 @@ from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_Frontend.Cart.views import PaymentCartView
 from E_Shop_config.settings import BASE_DIR
 # payment cart -
-
+from django.db import models  # Add this import
 from rest_framework import status
 from rest_framework import generics
 from rest_framework import serializers
@@ -26,6 +26,7 @@ from rest_framework.response import Response
 from django.shortcuts import render, redirect
 from rest_framework import status
 from rest_framework.response import Response
+
 # from E_Shop_config.tasks import schedule_cart_deletion
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -42,15 +43,13 @@ class CartProductListAPIView(generics.ListAPIView):
             cart, _ = Cart.objects.get_or_create(user=user)
 
             #  celery
-            cart.schedule_deletion()  # is it correct ?
+            # cart.schedule_deletion()
 
-        else:
-            cart, _ = Cart.objects.get_or_create(session_key=session_key)
+        # else:
+        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
 
-            #  celery
-            cart.schedule_deletion()  # is it correct ?
-
-
+        #  celery
+        # cart.schedule_deletion()
         return cart.cart.all()
 
     def list(self, request, *args, **kwargs):
@@ -83,20 +82,46 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
             raise serializers.ValidationError('Product not found')
 
         user = self.request.user
-        session_key = self.request.session.session_key
+        # session_key = self.request.session.session_key
 
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
-        else:
-            cart, _ = Cart.objects.get_or_create(session_key=session_key)
+            # celery
+            # cart.schedule_deletion()
+        # else:
+        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
 
         try:
             cart_product = CartProduct.objects.get(cart=cart, product=product)
         except CartProduct.DoesNotExist:
-            raise serializers.ValidationError('Product not found in cart')
+            cart_product = CartProduct.objects.create(cart=cart, product=product)
 
         return cart_product
 
+    # def post(self, request, *args, **kwargs):
+    #     cart_product = self.get_object()
+    #
+    #     quantity = request.data.get('quantity', 1)
+    #
+    #     if not isinstance(quantity, int) or quantity < 1:
+    #         return Response({'error': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     if cart_product.product.count < quantity:
+    #         return Response({'error': 'Quantity exceeds available count'}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     # Check if the product is already in the cart
+    #     if cart_product.quantity > 0:
+    #         return Response({'error': 'Product already in cart'}, status=status.HTTP_400_BAD_REQUEST)
+    #
+    #     cart_product.quantity += quantity
+    #     cart_product.save()
+    #
+    #     serializer = self.get_serializer(cart_product)
+    #     response_data = {
+    #         'message': f'Product {cart_product.product.name} added to cart',
+    #         'data': serializer.data
+    #     }
+    #     return Response(response_data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
         cart_product = self.get_object()
 
@@ -105,10 +130,28 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
         if not isinstance(quantity, int) or quantity < 1:
             return Response({'error': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Check if cart already contains 10 products
+        print(f"Number of products in cart: {cart_product.cart.cart.count()}")
+        if cart_product.cart.cart.count() >= 10:
+            return Response({'error': 'Maximum limit of 10 products reached'}, status=status.HTTP_400_BAD_REQUEST)
+
         if cart_product.product.count < quantity:
             return Response({'error': 'Quantity exceeds available count'}, status=status.HTTP_400_BAD_REQUEST)
 
-        return self.update_cart_product_quantity(cart_product, quantity)
+        # Check if the product is already in the cart
+        if cart_product.quantity > 0:
+            return Response({'error': f'Product {cart_product.product.name} already in cart'},
+                            status=status.HTTP_400_BAD_REQUEST)
+
+        cart_product.quantity += quantity
+        cart_product.save()
+
+        serializer = self.get_serializer(cart_product)
+        response_data = {
+            'message': f'Product {cart_product.product.name} added to cart',
+            'data': serializer.data
+        }
+        return Response(response_data, status=status.HTTP_200_OK)
 
     def patch(self, request, *args, **kwargs):
         cart_product = self.get_object()
@@ -320,13 +363,9 @@ class PaymentCartAPIView(APIView, PaymentCartMixin):
 #         return Response({'url': checkout_session.url})
 
 
-
-
 # celery
 # from django.http import HttpResponse
 # from E_Shop_config.tasks import test_func
 # def test(request):
 #     test_func.delay()
 #     return HttpResponse("Done")
-
-
