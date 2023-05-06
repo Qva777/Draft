@@ -1,4 +1,7 @@
+from urllib.request import urlopen
+
 import stripe
+from E_Shop_API.E_Shop_Products.models import ProductImage
 from django.views import View
 from django.urls import reverse
 from django.conf import settings
@@ -17,12 +20,25 @@ class CartMixin:
     @staticmethod
     def get_cart(request):
         if request.user.is_authenticated:
-            return Cart.objects.get_or_create(user=request.user)[0]
+            # return Cart.objects.get_or_create(user=request.user)[0]
+
+            # #  celery
+            cart, _ = Cart.objects.get_or_create(user=request.user)
+            cart.schedule_deletion()  # Schedule deletion for authenticated users
+            return cart
+
+
+
         else:
             session_key = request.session.session_key
             if not session_key:
                 request.session.cycle_key()
-            return Cart.objects.get_or_create(session_key=session_key)[0]
+            # return Cart.objects.get_or_create(session_key=session_key)[0]
+
+            #  celery
+            cart, _ = Cart.objects.get_or_create(session_key=session_key)
+            cart.schedule_deletion()  # Schedule deletion for anonymous users
+            return cart
 
 
 class AddToCartView(View, CartMixin):
@@ -169,17 +185,121 @@ class ClearCartAndDeductProductsView(View):
         return redirect('payment_success')
 
 
-class PaymentSuccessView(View, CartMixin):
-    """ Successful payment cart """
+from django.shortcuts import render, redirect, reverse
 
-    @staticmethod
-    def get(request):
+from email.mime.image import MIMEImage
+# work
+import os
+import base64
+import uuid  # For generating a unique identifier for each image
+from django.conf import settings
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.views import View
+
+
+def send_inline_photo_email(user_email, email_context):
+    subject = 'Payment Confirmation'
+    html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
+    plain_message = strip_tags(html_message)
+
+    # Create the email message
+    email = EmailMultiAlternatives(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user_email])
+    email.attach_alternative(html_message, 'text/html')
+
+    # Attach product images to the email as inline content
+    products = email_context['products']
+    for product in products:
+        image_base64 = product['image_base64']
+        if image_base64:
+            email_image = MIMEImage(base64.b64decode(image_base64))
+            email_image.add_header('Content-ID', f'<inline_image_{product["id"]}>')
+            email.attach(email_image)
+
+    # Send the email
+    email.send()
+
+
+class PaymentSuccessView(View, CartMixin):
+    """Successful payment cart"""
+
+    def get(self, request):
         if 'checkout_session_id' in request.session and 'cart_id' in request.session:
             cart_id = request.session['cart_id']
+
+            # Get the email address of the current user
+            user_email = request.user.email
+
+            # Get the information about the user
+            user = request.user
+
+            # Get the total price of the purchases
+            cart = Cart.objects.get(id=cart_id)
+            total_price = cart.total_price
+
+            # Get the products purchased by the user
+            cart_products = CartProduct.objects.filter(cart_id=cart_id)
+            products = []
+            for cart_product in cart_products:
+                product = cart_product.product
+                first_photo = product.photos.first()  # Get the first photo of the product (if available)
+                image_path = first_photo.image.path if first_photo else None
+
+                products.append({
+                    'id': product.id,
+
+                    'name': product.name,
+                    'description': product.description,
+                    'count': cart_product.quantity,
+                    'price': product.price * cart_product.quantity,
+                    'image_path': image_path,
+                })
+
+            # Send the email
+            email_context = {
+                'user': user,
+                'email': user_email,
+                'total_price': total_price,
+                'products': products,
+            }
+
+            html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
+            plain_message = strip_tags(html_message)
+
+            # Create the email message
+            email = EmailMultiAlternatives(
+                'Payment Confirmation',
+                plain_message,
+                settings.DEFAULT_FROM_EMAIL,
+                [user_email]
+            )
+            email.attach_alternative(html_message, 'text/html')
+
+            # Attach product images to the email as inline images
+            # Attach product images to the email context
+            for product in products:
+                image_path = product['image_path']
+                if image_path:
+                    image_full_path = os.path.join(settings.MEDIA_ROOT, image_path)
+                    with open(image_full_path, 'rb') as f:
+                        image_data = f.read()
+                        image_base64 = base64.b64encode(image_data).decode()
+                        product['image_base64'] = image_base64
+                else:
+                    print(f"No image path found for product: {product['name']}")
+                    # If the product doesn't have an image, set image_base64 to None
+                    product['image_base64'] = None
+
+            # Send the email with inline photos
+            send_inline_photo_email(user_email, email_context)
+
+            # Clear the cart
             ClearCartAndDeductProductsView.clear_cart_and_deduct_products(cart_id)
             del request.session['checkout_session_id']
             del request.session['cart_id']
             request.session.modified = True
+
             return render(request, "pages/payment_success.html")
         else:
             return redirect(reverse('404'))
