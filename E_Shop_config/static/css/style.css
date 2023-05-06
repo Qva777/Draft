@@ -19,6 +19,7 @@ button {
     cursor: pointer;
     background: none;
 }
+
 /* --------------------------- end data --------------------------- */
 
 /* --------------------------- payment button animation --------------------------- */
@@ -41,6 +42,10 @@ button {
     transition: all 0.1s linear;
     background: rgb(38, 182, 38);
     font-family: "Roboto", sans-serif;
+}
+
+.payment_button:hover {
+    background: rgb(29, 126, 29);
 }
 
 .payment_button:hover span:nth-child(1) {
