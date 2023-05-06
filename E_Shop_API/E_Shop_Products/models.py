@@ -1,11 +1,11 @@
 import uuid
+
 from django.db import models
 from E_Shop_API.E_Shop_Products.validators import validate_negative
 
 
 class Product(models.Model):
     """Product model"""
-
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(verbose_name='Name', unique=True, max_length=64, blank=False)
     description = models.CharField(verbose_name='Description', max_length=255, blank=True)
