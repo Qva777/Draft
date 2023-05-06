@@ -1,19 +1,24 @@
 from django.shortcuts import get_object_or_404, redirect, render
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
 from django.core.paginator import Paginator
+from django.utils.html import strip_tags
 from django.http import JsonResponse
 from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse
 from django.db.models import Q
 
+import base64
 import random
 import stripe
 
 from django.views import View
 from django.views.generic import TemplateView
 
-from E_Shop_API.E_Shop_Products.models import Product
+from email.mime.image import MIMEImage
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
+from E_Shop_API.E_Shop_Products.models import Product, ProductImage
 
 # STRIPE KEY
 stripe.api_key = settings.STRIPE_SECRET_KEY
@@ -30,6 +35,9 @@ class BaseProductView(View):
                 cart = cart_queryset.first()
             else:
                 cart = Cart.objects.create(user=request.user)
+                # celery
+                cart.schedule_deletion()  # Schedule deletion for anonymous users
+
         else:
             session_key = request.session.session_key
             if not session_key:
@@ -39,6 +47,8 @@ class BaseProductView(View):
                 cart = cart_queryset.first()
             else:
                 cart = Cart.objects.create(session_key=session_key)
+                # celery
+                cart.schedule_deletion()  # Schedule deletion for anonymous users
         return cart
 
     def get_random_products(self):
@@ -95,6 +105,29 @@ class ProductHomeListView(BaseProductView):
         return render(request, 'pages/home.html', {'products': products})
 
 
+def send_inline_photo_email(user_email, email_context):
+    subject = 'Payment Confirmation'
+    html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
+    plain_message = strip_tags(html_message)
+
+    # Create the email message
+    email = EmailMultiAlternatives(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user_email])
+    email.attach_alternative(html_message, 'text/html')
+
+    # Attach the first product image to the email as inline content
+    products = email_context['products']
+    for product in products:
+        image_base64 = product.get('image_base64')
+        if image_base64:
+            email_image = MIMEImage(base64.b64decode(image_base64))
+            email_image.add_header('Content-ID', f'<inline_image_{product["id"]}>')
+            email.attach(email_image)
+            break  # Attach only the first image and then exit the loop
+
+    # Send the email
+    email.send()
+
+
 class PaymentView(BaseProductView):
     """ Detail views of product and Payment """
 
@@ -128,6 +161,7 @@ class PaymentView(BaseProductView):
         product = get_object_or_404(Product, id=product_id)
         token = request.POST.get("stripeToken")
         amount = int(product.price * 100)
+
         try:
             charge = stripe.Charge.create(
                 amount=amount,
@@ -140,6 +174,39 @@ class PaymentView(BaseProductView):
 
         product.count -= 1
         product.save()
+
+        # Get the email from the Stripe charge object
+        user_email = charge.source["name"]
+
+        # Get the product images associated with the product
+        product_images = ProductImage.objects.filter(product=product)
+
+        # Check if there are product images and include only the first image_base64
+        image_base64 = None
+        if product_images.exists():
+            first_image = product_images.first()
+            with open(first_image.image.path, "rb") as f:
+                image_base64 = base64.b64encode(f.read()).decode()
+
+        # Send the email after a successful payment
+        email_context = {
+            "product": product,
+            "user": request.user,
+            "total_price": product.price,
+            "products": [
+                {
+                    "id": product.id,
+                    "name": product.name,
+                    "description": product.description,
+                    "count": 1,
+                    "price": product.price,
+                    "image_base64": image_base64,
+                }
+            ],
+        }
+
+        # Call the email sending function
+        send_inline_photo_email(user_email, email_context)
 
         return render(request, "pages/payment_success.html")
 
