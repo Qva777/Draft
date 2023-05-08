@@ -1,5 +1,3 @@
-from django.http import JsonResponse
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
@@ -56,28 +54,10 @@ class ProductView(APIView):
         serializer = ProductSerializer(product)
         return Response(serializer.data)
 
-    def put(self, request, pk):
-        """ PUT Method product/<int:pk>/ """
-        product = Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            # Process and save the uploaded image
-            image = request.FILES.get('image')
-            if image:
-                product_image = ProductImage.objects.filter(product=product).first()
-                if product_image:
-                    product_image.image = image
-                    product_image.save()
-                else:
-                    ProductImage.objects.create(product=product, image=image)
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
-
-    def patch(self, request, pk):
-        """ PATCH Method product/<int:pk>/ """
-        product = Product.objects.get(pk=pk)
-        serializer = ProductSerializer(product, data=request.data, partial=True)
+    @staticmethod
+    def update_product(product, request):
+        """ Update mixin """
+        serializer = ProductSerializer(product, data=request.data, partial=True if request.method == 'PATCH' else False)
         if serializer.is_valid():
             serializer.save()
             # Process and save the uploaded image
@@ -90,7 +70,17 @@ class ProductView(APIView):
                 else:
                     ProductImage.objects.create(product=product, image=image)
             return Response(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, pk):
+        """ PUT Method product/<int:pk>/ """
+        product = Product.objects.get(pk=pk)
+        return self.update_product(product, request)
+
+    def patch(self, request, pk):
+        """ PATCH Method product/<int:pk>/ """
+        product = Product.objects.get(pk=pk)
+        return self.update_product(product, request)
 
     @staticmethod
     def delete(request, pk):
@@ -98,3 +88,40 @@ class ProductView(APIView):
         product = Product.objects.get(pk=pk)
         product.delete()
         return Response({'message': 'Product is deleted'}, status=204)
+
+    # @staticmethod
+    # def put(request, pk):
+    #     """ PUT Method product/<int:pk>/ """
+    #     product = Product.objects.get(pk=pk)
+    #     serializer = ProductSerializer(product, data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         # Process and save the uploaded image
+    #         image = request.FILES.get('image')
+    #         if image:
+    #             product_image = ProductImage.objects.filter(product=product).first()
+    #             if product_image:
+    #                 product_image.image = image
+    #                 product_image.save()
+    #             else:
+    #                 ProductImage.objects.create(product=product, image=image)
+    #         return JsonResponse(serializer.data)
+    #     return JsonResponse(serializer.errors, status=400)
+    #
+    # def patch(self, request, pk):
+    #     """ PATCH Method product/<int:pk>/ """
+    #     product = Product.objects.get(pk=pk)
+    #     serializer = ProductSerializer(product, data=request.data, partial=True)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         # Process and save the uploaded image
+    #         image = request.FILES.get('image')
+    #         if image:
+    #             product_image = ProductImage.objects.filter(product=product).first()
+    #             if product_image:
+    #                 product_image.image = image
+    #                 product_image.save()
+    #             else:
+    #                 ProductImage.objects.create(product=product, image=image)
+    #         return Response(serializer.data)
+    #     return JsonResponse(serializer.errors, status=400)

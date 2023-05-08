@@ -1,5 +1,4 @@
 import uuid
-
 from django.db import models
 from E_Shop_API.E_Shop_Products.validators import validate_negative
 
