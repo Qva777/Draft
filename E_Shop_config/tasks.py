@@ -13,6 +13,7 @@ from django.core.mail import send_mail, EmailMultiAlternatives
 
 # from E_Shop_config.settings import EMAIL_HOST_USER
 from E_Shop_API.E_Shop_Users.models import Clients
+from E_Shop_config.settings import EMAIL_HOST_USER
 
 
 @shared_task
@@ -60,14 +61,15 @@ def delete_cart(cart_id):
 
     try:
         cart = Cart.objects.get(id=cart_id)
-        if cart.created_at <= timezone.now() - timedelta(minutes=5):  # and models
+        if cart.created_at <= timezone.now() - timedelta(minutes=4):  # and models
             # if cart.created_at <= timezone.now() - timedelta(days=1):
 
             cart.delete()
             # print(f"Cart {cart_id} deleted.")
         else:
-            delete_cart.apply_async((cart_id,), eta=cart.created_at + timedelta(minutes=5))
+            delete_cart.apply_async((cart_id,), eta=cart.created_at + timedelta(minutes=4))
             # delete_cart.apply_async((cart_id,), eta=cart.created_at + timedelta(days=1))
 
     except Cart.DoesNotExist:
         print(f"Cart {cart_id} does not exist.")
+
