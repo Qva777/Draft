@@ -9,4 +9,3 @@ urlpatterns = [
 
     path('payment/', views.PaymentCartAPIView.as_view(), name='payment'),
 ]
-
