@@ -23,6 +23,11 @@
 }
 
 /* --------------------------- end registration --------------------------- */
+.messages {
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
 .form-group {
     text-align: center;
 }
@@ -147,9 +152,28 @@
     font-size: 12px;
 }
 
+.form-errors {
+    color: red;
+    margin-left: -27px;
+}
+
 .errorlist {
     color: #ef0909;
     margin-top: -44px;
+}
+
+.cule {
+    margin-top: -28px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.custom-forgot-password-link {
+    margin-top: 0px !important;
+    letter-spacing: 0px !important;
+    text-transform: none !important;
 }
 
 .form-group {
@@ -157,8 +181,10 @@
 }
 
 .login-box.error-message {
+    /*border-color: rgb(2 6 23);*/
+    /*box-shadow: 0 5px 19px rgb(255 0 78);*/
     border-color: rgb(2 6 23);
-    box-shadow: 0 5px 19px rgb(255 0 78);
+    box-shadow: 0 1px 19px 12px rgb(255 0 78);
 }
 
 /* --------------------------- end data field --------------------------- */
@@ -189,14 +215,20 @@
 
 /* --------------------------- Device theme --------------------------- */
 @media (prefers-color-scheme: light) {
+    .success-messages {
+        color: #01a127;
+    }
+
     .eye-icon {
         color: #000000;
         font-size: 1.3em;
     }
 
     .login-box {
+        /*background: rgb(255, 255, 255);*/
+        /*box-shadow: 0 5px 19px rgb(127 0 255);*/
         background: rgb(255, 255, 255);
-        box-shadow: 0 5px 19px rgb(127 0 255);
+        box-shadow: 0 1px 19px 10px rgb(127 0 255);
     }
 
     .login-box form a {
@@ -243,6 +275,10 @@
 }
 
 @media (prefers-color-scheme: dark) {
+    .success-messages {
+        color: #0aff44;
+    }
+
     .eye-icon {
         color: white;
         font-size: 1.3em;
