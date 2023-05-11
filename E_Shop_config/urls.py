@@ -41,7 +41,7 @@ urlpatterns = [
     # API APPLICATION
     path('api/', include('E_Shop_API.E_Shop_Users.urls')),
     path('api/', include('E_Shop_API.E_Shop_Products.urls')),
-    path('api/', include('E_Shop_API.E_Shop_Cart.urls')),  ################
+    path('api/', include('E_Shop_API.E_Shop_Cart.urls')),
 
     # DJOSER
     path('api/auth/', include('djoser.urls')),
