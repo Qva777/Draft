@@ -1,7 +1,3 @@
-# Create cart +
-# Patch cart +
-# delete cart +
-# detail cart +
 from audioop import reverse
 
 from E_Shop_API.E_Shop_Users.models import Clients
@@ -37,7 +33,7 @@ class CartProductListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        session_key = self.request.session.session_key
+        # session_key = self.request.session.session_key
 
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
@@ -87,7 +83,7 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
             # celery
-            # cart.schedule_deletion()
+            cart.schedule_deletion()
         # else:
         #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
 
@@ -182,8 +178,8 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
 
         return Response({'message': 'Product removed from cart'}, status=status.HTTP_200_OK)
 
-
-stripe.api_key = settings.STRIPE_SECRET_KEY
+#
+# stripe.api_key = settings.STRIPE_SECRET_KEY
 
 # class PaymentCartAPIView(APIView):
 #     """Processing the cart payment"""
@@ -273,8 +269,8 @@ class PaymentCartAPIView(APIView, PaymentCartMixin):
 
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
-        else:
-            cart, _ = Cart.objects.get_or_create(session_key=session_key)
+        # else:
+        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
 
         return cart
 
