@@ -42,7 +42,7 @@ class ProductListView(APIView):
 
 
 class ProductView(APIView):
-    """  """
+    """ GET/PUT/PATCH/DELETE Product """
     permission_classes = [permissions.IsAdminUser]
 
     @staticmethod
