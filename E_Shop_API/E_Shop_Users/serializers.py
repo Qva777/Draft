@@ -57,4 +57,3 @@ class SocialAppSerializer(serializers.ModelSerializer):
     class Meta:
         model = SocialApp
         fields = '__all__'
-        # fields = ['provider', 'name', 'client_id', 'secret', 'key']
