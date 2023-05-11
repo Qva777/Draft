@@ -8,7 +8,6 @@ from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Products.models import Product
 from E_Shop_API.E_Shop_Products.views import ProductCreateView, ProductListView
 
-
 # from E_Shop_API.E_Shop_Products.tests.helpers import create_admin_user, create_non_admin_user
 def create_admin_user():
     return Clients.objects.create_user(
