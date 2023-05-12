@@ -1,5 +1,2 @@
-from enum import Enum
-
-
-class ProductErrorMessages(Enum):
+class ProductErrorMessages:
     NEGATIVE_VALUE = "Quantity cannot be negative"
