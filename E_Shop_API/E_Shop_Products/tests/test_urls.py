@@ -1,4 +1,4 @@
-# python manage.py test E_Shop_API.E_Shop_Products.tests.tests_urls
+# python manage.py test E_Shop_API.E_Shop_Products.tests.test_urls
 from django.urls import reverse
 from django.test import TestCase
 
