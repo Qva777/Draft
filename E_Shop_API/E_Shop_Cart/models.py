@@ -11,15 +11,12 @@ class Cart(models.Model):
     """  Cart models/fields  """
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(Clients, on_delete=models.CASCADE, null=True, blank=True)
-    session_key = models.CharField(max_length=32, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def get_cart_owner(self):
         """ Returns the owner of the cart """
         if self.user:
             return self.user
-        else:
-            return self.session_key
 
     @property
     def total_price(self):
