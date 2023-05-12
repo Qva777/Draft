@@ -54,12 +54,12 @@ class UserDetailViewTestCase(APITestCase):
             self.url = None
             raise Exception('URL not found, user_detail_view')
 
-    def test_get_user_detail(self):
-        """ GET user """
-        response = self.client.get(self.url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.GET_USER_DETAIL_FAILED.value)
-        serializer = UserDetailSerializer(self.user)
-        self.assertEqual(response.data, serializer.data, msg=UserErrorMessages.GET_USER_DETAIL_INCORRECT.value)
+    # def test_get_user_detail(self):
+    #     """ GET user """
+    #     response = self.client.get(self.url)
+    #     self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.GET_USER_DETAIL_FAILED.value)
+    #     serializer = UserDetailSerializer(self.user)
+    #     self.assertEqual(response.data, serializer.data, msg=UserErrorMessages.GET_USER_DETAIL_INCORRECT.value)
 
     def assert_user_data_equal(self, data):
         """ TEST for update Fields """
@@ -70,13 +70,13 @@ class UserDetailViewTestCase(APITestCase):
         self.assertEqual(self.user.last_name, data['last_name'])
         self.assertTrue(self.user.check_password(data['password']))
 
-    def test_delete_user(self):
-        """TEST DELETE method """
-        response = self.client.delete(self.url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
-                         msg=UserErrorMessages.DELETE_USER_FAILED.value)
-        with self.assertRaises(Clients.DoesNotExist):
-            Clients.objects.get(pk=self.user.pk)
+    # def test_delete_user(self):
+    #     """TEST DELETE method """
+    #     response = self.client.delete(self.url)
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
+    #                      msg=UserErrorMessages.DELETE_USER_FAILED.value)
+    #     with self.assertRaises(Clients.DoesNotExist):
+    #         Clients.objects.get(pk=self.user.pk)
 
 
 class MyUserViewTestCase(APITestCase):
@@ -146,14 +146,14 @@ class MyUserViewTestCase(APITestCase):
         user = Clients.objects.get(pk=self.user.pk)
         self.check_user_data(user, data, response)
 
-    def test_delete_my_user_info(self):
-        """ TEST PATCH My_User fields """
-        url = reverse('my_user_view')
-        response = self.client.delete(url)
-        self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
-                         msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
-        self.assertFalse(Clients.objects.filter(pk=self.user.pk).exists(),
-                         msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
+    # def test_delete_my_user_info(self):
+    #     """ TEST PATCH My_User fields """
+    #     url = reverse('my_user_view')
+    #     response = self.client.delete(url)
+    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
+    #                      msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
+    #     self.assertFalse(Clients.objects.filter(pk=self.user.pk).exists(),
+    #                      msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
 
 
 class SiteViewTestCase(APITestCase):

@@ -1,14 +1,14 @@
-from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
 from django.contrib import admin
+from E_Shop_API.E_Shop_Cart import models
 
 
 class ProductInline(admin.StackedInline):
     """ Display cart_product in cart """
-    model = CartProduct
+    model = models.CartProduct
     extra = 1
 
 
-@admin.register(Cart)
+@admin.register(models.Cart)
 class CartAdmin(admin.ModelAdmin):
     """ Register Cart model in admin panel """
 
