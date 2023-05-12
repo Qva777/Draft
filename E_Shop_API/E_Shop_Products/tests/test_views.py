@@ -1,3 +1,4 @@
+# python manage.py test E_Shop_API.E_Shop_Products.tests.test_views
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APIRequestFactory, force_authenticate
