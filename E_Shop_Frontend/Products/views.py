@@ -209,3 +209,4 @@ class PaymentView(CartMixin, View):
             return redirect(reverse('404') + f'?error_message={error_message}')
 
         return render(request, "pages/payment_success.html")
+

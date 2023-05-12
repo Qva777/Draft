@@ -1,4 +1,5 @@
 from django.urls import path
+
 from E_Shop_Frontend.Products import views
 
 urlpatterns = [
@@ -10,4 +11,7 @@ urlpatterns = [
 
     # Buy one product
     path('product/<uuid:product_id>/pay/', views.PaymentView.as_view(), name='payment_pro'),
+
+
+
 ]
