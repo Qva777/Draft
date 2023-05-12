@@ -1,4 +1,5 @@
-# python manage.py test E_Shop_API.E_Shop_Products.tests.tests_validators
+# python manage.py test E_Shop_API.E_Shop_Products.tests.test_validators
+
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 
