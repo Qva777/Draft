@@ -1,16 +1,30 @@
-from urllib.request import urlopen
-
+# import stripe
+# from django.views import View
+# from django.conf import settings
+# from django.http import JsonResponse
+# from django.shortcuts import get_object_or_404
+# from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
+# from django.shortcuts import render, redirect, reverse
+# from email.mime.image import MIMEImage
+# import os
+# import base64
+# from django.conf import settings
+# from django.core.mail import EmailMultiAlternatives
+# from django.template.loader import render_to_string
+# from django.utils.html import strip_tags
+# from django.views import View
 import stripe
-from E_Shop_API.E_Shop_Products.models import ProductImage
+import base64
+import os
+from django.conf import settings
+from django.shortcuts import redirect, render, get_object_or_404
 from django.views import View
 from django.urls import reverse
-from django.conf import settings
-from django.http import JsonResponse
-
-from django.shortcuts import get_object_or_404, redirect, render
-from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
+from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
+from E_Shop_API.E_Shop_Products.models import Product
+from E_Shop_Frontend.Users.email_sender import EmailSender
 from django.http import HttpResponseRedirect
-from django.urls import reverse
+
 # STRIPE KEY
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -18,30 +32,29 @@ stripe.api_key = settings.STRIPE_SECRET_KEY
 class CartMixin:
     """ Mixin to get the cart based on user authentication """
 
-
-
     @staticmethod
     def get_cart(request):
         if request.user.is_authenticated:
-            # return Cart.objects.get_or_create(user=request.user)[0]
-
-            # #  celery
             cart, _ = Cart.objects.get_or_create(user=request.user)
-            cart.schedule_deletion()  # Schedule deletion for authenticated users
+            cart.schedule_deletion()  # Schedule deletion for authenticated users (celery)
             return cart
-        # else:
-        #     # Если пользователь не аутентифицирован, выполните перенаправление на страницу входа
-        #     login_url = reverse('login')  # Замените 'login' на имя вашего представления входа
-        #     return redirect(login_url)
-        #     session_key = request.session.session_key
-        #     if not session_key:
-        #         request.session.cycle_key()
-            # return Cart.objects.get_or_create(session_key=session_key)[0]
 
-            # #  celery
-            # cart, _ = Cart.objects.get_or_create(session_key=session_key)
-            # cart.schedule_deletion()  # Schedule deletion for anonymous users
-            # return cart
+
+class CartOperationMixin:
+    """ Mixin to perform common cart operations """
+
+    @staticmethod
+    def clear_cart_and_deduct_products(cart_id):
+        cart = Cart.objects.get(id=cart_id)
+        cart_products = CartProduct.objects.filter(cart=cart)
+
+        for cart_product in cart_products:
+            product = cart_product.product
+            product.count -= cart_product.quantity
+            product.save()
+
+        cart_products.delete()
+
 
 class AddToCartView(View, CartMixin):
     """ Add a product to the cart """
@@ -132,12 +145,14 @@ class PaymentCartView(View, CartMixin):
 
     def post(self, request):
         cart = self.get_cart(request)
+
         cart_products = CartProduct.objects.filter(cart=cart)
         line_items = []
         for cart_product in cart_products:
             product = cart_product.product
             if product.count < cart_product.quantity:
-                return JsonResponse({'error': 'The quantity of the product is more than the available amount'})
+                error_message = "Check your cart, the quantity of the product is more than the available amount"
+                return HttpResponseRedirect(reverse('404') + f'?error_message={error_message}')
 
             line_item = {
                 'price_data': {
@@ -170,91 +185,27 @@ class PaymentCartView(View, CartMixin):
         return redirect(checkout_session.url)
 
 
-class ClearCartAndDeductProductsView(View):
-    """ Clear the cart after successful payment """
-
-    @staticmethod
-    def clear_cart_and_deduct_products(cart_id):
-        cart = Cart.objects.get(id=cart_id)
-        cart_products = CartProduct.objects.filter(cart=cart)
-
-        for cart_product in cart_products:
-            product = cart_product.product
-            product.count -= cart_product.quantity
-            product.save()
-
-        cart_products.delete()
-
-    def post(self, request):
-        cart_id = request.POST.get('cart_id')
-        self.clear_cart_and_deduct_products(cart_id)
-        return redirect('payment_success')
-
-
-from django.shortcuts import render, redirect, reverse
-
-from email.mime.image import MIMEImage
-# work
-import os
-import base64
-import uuid  # For generating a unique identifier for each image
-from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.views import View
-
-
-def send_inline_photo_email(user_email, email_context):
-    subject = 'Payment Confirmation'
-    html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
-    plain_message = strip_tags(html_message)
-
-    # Create the email message
-    email = EmailMultiAlternatives(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user_email])
-    email.attach_alternative(html_message, 'text/html')
-
-    # Attach product images to the email as inline content
-    products = email_context['products']
-    for product in products:
-        image_base64 = product['image_base64']
-        if image_base64:
-            email_image = MIMEImage(base64.b64decode(image_base64))
-            email_image.add_header('Content-ID', f'<inline_image_{product["id"]}>')
-            email.attach(email_image)
-
-    # Send the email
-    email.send()
-
-
-class PaymentSuccessView(View, CartMixin):
+class PaymentSuccessView(View, CartOperationMixin):
     """Successful payment cart"""
 
     def get(self, request):
         if 'checkout_session_id' in request.session and 'cart_id' in request.session:
             cart_id = request.session['cart_id']
-
-            # Get the email address of the current user
             user_email = request.user.email
-
-            # Get the information about the user
             user = request.user
 
-            # Get the total price of the purchases
             cart = Cart.objects.get(id=cart_id)
             total_price = cart.total_price
-
-            # Get the products purchased by the user
             cart_products = CartProduct.objects.filter(cart_id=cart_id)
+
             products = []
             for cart_product in cart_products:
                 product = cart_product.product
-                first_photo = product.photos.first()  # Get the first photo of the product (if available)
+                first_photo = product.photos.first()
                 image_path = first_photo.image.path if first_photo else None
 
                 products.append({
                     'id': product.id,
-
                     'name': product.name,
                     'description': product.description,
                     'count': cart_product.quantity,
@@ -262,7 +213,6 @@ class PaymentSuccessView(View, CartMixin):
                     'image_path': image_path,
                 })
 
-            # Send the email
             email_context = {
                 'user': user,
                 'email': user_email,
@@ -270,20 +220,6 @@ class PaymentSuccessView(View, CartMixin):
                 'products': products,
             }
 
-            html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
-            plain_message = strip_tags(html_message)
-
-            # Create the email message
-            email = EmailMultiAlternatives(
-                'Payment Confirmation',
-                plain_message,
-                settings.DEFAULT_FROM_EMAIL,
-                [user_email]
-            )
-            email.attach_alternative(html_message, 'text/html')
-
-            # Attach product images to the email as inline images
-            # Attach product images to the email context
             for product in products:
                 image_path = product['image_path']
                 if image_path:
@@ -293,15 +229,12 @@ class PaymentSuccessView(View, CartMixin):
                         image_base64 = base64.b64encode(image_data).decode()
                         product['image_base64'] = image_base64
                 else:
-                    print(f"No image path found for product: {product['name']}")
-                    # If the product doesn't have an image, set image_base64 to None
                     product['image_base64'] = None
 
-            # Send the email with inline photos
-            send_inline_photo_email(user_email, email_context)
+            # send_inline_photo_email(user_email, email_context)
+            EmailSender.send_inline_photo_email(user_email, email_context)
 
-            # Clear the cart
-            ClearCartAndDeductProductsView.clear_cart_and_deduct_products(cart_id)
+            self.clear_cart_and_deduct_products(cart_id)
             del request.session['checkout_session_id']
             del request.session['cart_id']
             request.session.modified = True
@@ -309,3 +242,148 @@ class PaymentSuccessView(View, CartMixin):
             return render(request, "pages/payment_success.html")
         else:
             return redirect(reverse('404'))
+
+# def send_inline_photo_email(user_email, email_context):
+#     subject = 'Payment Confirmation'
+#     html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
+#     plain_message = strip_tags(html_message)
+#
+#     # Create the email message
+#     email = EmailMultiAlternatives(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user_email])
+#     email.attach_alternative(html_message, 'text/html')
+#
+#     # Attach product images to the email as inline content
+#     products = email_context['products']
+#     for product in products:
+#         image_base64 = product['image_base64']
+#         if image_base64:
+#             email_image = MIMEImage(base64.b64decode(image_base64))
+#             email_image.add_header('Content-ID', f'<inline_image_{product["id"]}>')
+#             email.attach(email_image)
+#
+#     # Send the email
+#     email.send()
+
+
+# class ClearCartAndDeductProductsView(View):
+#     """ Clear the cart after successful payment """
+#
+#     @staticmethod
+#     def clear_cart_and_deduct_products(cart_id):
+#         cart = Cart.objects.get(id=cart_id)
+#         cart_products = CartProduct.objects.filter(cart=cart)
+#
+#         for cart_product in cart_products:
+#             product = cart_product.product
+#             product.count -= cart_product.quantity
+#             product.save()
+#
+#         cart_products.delete()
+#
+#     def post(self, request):
+#         cart_id = request.POST.get('cart_id')
+#         self.clear_cart_and_deduct_products(cart_id)
+#         return redirect('payment_success')
+#
+#
+
+
+#
+#
+# class PaymentSuccessView(View, CartMixin):
+#     """Successful payment cart"""
+#
+#     def get(self, request):
+#         if 'checkout_session_id' in request.session and 'cart_id' in request.session:
+#             cart_id = request.session['cart_id']
+#
+#             # Get the email address of the current user
+#             user_email = request.user.email
+#
+#             # Get the information about the user
+#             user = request.user
+#
+#             # Get the total price of the purchases
+#             cart = Cart.objects.get(id=cart_id)
+#             total_price = cart.total_price
+#
+#             # Get the products purchased by the user
+#             cart_products = CartProduct.objects.filter(cart_id=cart_id)
+#             products = []
+#             for cart_product in cart_products:
+#                 product = cart_product.product
+#                 first_photo = product.photos.first()  # Get the first photo of the product (if available)
+#                 image_path = first_photo.image.path if first_photo else None
+#
+#                 products.append({
+#                     'id': product.id,
+#
+#                     'name': product.name,
+#                     'description': product.description,
+#                     'count': cart_product.quantity,
+#                     'price': product.price * cart_product.quantity,
+#                     'image_path': image_path,
+#                 })
+#
+#             # Send the email
+#             email_context = {
+#                 'user': user,
+#                 'email': user_email,
+#                 'total_price': total_price,
+#                 'products': products,
+#             }
+#
+#             html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
+#             plain_message = strip_tags(html_message)
+#
+#             # Create the email message
+#             email = EmailMultiAlternatives(
+#                 'Payment Confirmation',
+#                 plain_message,
+#                 settings.DEFAULT_FROM_EMAIL,
+#                 [user_email]
+#             )
+#             email.attach_alternative(html_message, 'text/html')
+#
+#             # Attach product images to the email as inline images
+#             # Attach product images to the email context
+#             for product in products:
+#                 image_path = product['image_path']
+#                 if image_path:
+#                     image_full_path = os.path.join(settings.MEDIA_ROOT, image_path)
+#                     with open(image_full_path, 'rb') as f:
+#                         image_data = f.read()
+#                         image_base64 = base64.b64encode(image_data).decode()
+#                         product['image_base64'] = image_base64
+#                 else:
+#                     print(f"No image path found for product: {product['name']}")
+#                     # If the product doesn't have an image, set image_base64 to None
+#                     product['image_base64'] = None
+#
+#             # Send the email with inline photos
+#             send_inline_photo_email(user_email, email_context)
+#
+#             # Clear the cart
+#             ClearCartAndDeductProductsView.clear_cart_and_deduct_products(cart_id)
+#             del request.session['checkout_session_id']
+#             del request.session['cart_id']
+#             request.session.modified = True
+#
+#             return render(request, "pages/payment_success.html")
+#         else:
+#             return redirect(reverse('404'))
+
+
+# class CartDetailView(View, CartMixin):
+#     """ Display the cart contents """
+#
+#     @login_required
+#     def get(self, request):
+#         cart = self.get_cart(request)
+#         cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
+#
+#         for cart_product in cart_products:
+#             if cart_product.product.count == 0 or cart_product.quantity > cart_product.product.count:
+#                 cart_product.delete()
+#
+#         return render(request, 'pages/cart_detail.html', {'cart': cart, 'cart_products': cart_products})
