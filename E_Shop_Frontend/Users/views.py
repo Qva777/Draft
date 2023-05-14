@@ -1,16 +1,153 @@
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import authenticate, login
-from django.contrib import messages
+from datetime import datetime, timedelta
+from functools import wraps
 
-from django.views import View
+from django.contrib import messages
+from django.contrib.auth import get_user_model, login, authenticate
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.sites.shortcuts import get_current_site
+from django.core.cache import cache
+from django.core.exceptions import ValidationError
+from django.shortcuts import render, redirect, get_object_or_404
+from django.template.loader import render_to_string
 from django.urls import reverse_lazy
-from django.shortcuts import redirect, render
+from django.utils.decorators import method_decorator
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
+from django.views import View
+from django.views.generic import TemplateView
+
+from E_Shop_API.E_Shop_Users.models import Clients
+from E_Shop_API.E_Shop_Users.validators import validate_password
+from E_Shop_API.E_Shop_Users.views import EmailThrottling
+from E_Shop_config.tasks import send_confirm_email
 from .forms import UserEditForm, UserRegistrationForm
 
 
+# test front
+
+
+# def throttle_activation_ email(view_func):
+#     def _wrapped_view(request, *args, **kwargs):
+#         # Check if the user is authenticated before accessing the email
+#         if request.user.is_authenticated:
+#             # Get the user's email address
+#             email = request.user.email
+#
+#             # Generate a unique cache key for the user's email
+#             cache_key = f"activation_email_{email}"
+#
+#             # Check if the email was sent recently
+#             last_sent_time = cache.get(cache_key)
+#             if last_sent_time:
+#                 time_elapsed = datetime.now() - last_sent_time
+#                 if time_elapsed < timedelta(minutes=1):
+#                     # messages.warning(request, 'Activation email can only be sent once per minute')
+#                     messages.warning(request, 'Letter can only be sent once per minute')
+#                     return redirect('home')
+#
+#             cache.set(cache_key, datetime.now(), timeout=120)
+#
+#         return view_func(request, *args, **kwargs)
+#
+#     return _wrapped_view
+
+
+
+# def throttle_activation_email(view_func):
+#     @wraps(view_func)
+#     def _wrapped_view(request, *args, **kwargs):
+#         if request.user.is_authenticated:
+#             email = request.user.email
+#             cache_key = f"activation_email_{email}"
+#             last_sent_time = cache.get(cache_key)
+#             if last_sent_time and (datetime.now() - last_sent_time) < timedelta(minutes=1):
+#                 messages.warning(request, 'Letter can only be sent once per minute')
+#                 return redirect('home')
+#             cache.set(cache_key, datetime.now(), timeout=120)
+#         return view_func(request, *args, **kwargs)
+#
+#     return _wrapped_view
+
+
+# class ResendConfirmationView(View):
+#     """ Resend activation email /resend_confirmation/ """
+#
+#     # @method_decorator(throttle_activation_email)
+#     def post(self, request):
+#         if request.method == 'POST':
+#             email = request.user.email
+#             user = get_object_or_404(get_user_model(), email=email)
+#             if not user.is_confirmed:
+#                 # Call the Celery task to send the activation email asynchronously
+#                 send_confirm_email.apply_async(args=[user.id, get_current_site(request).domain])
+#
+#                 messages.success(request, 'Confirm email sent. Please check your inbox')
+#
+#         return redirect('home')
+
+
+class ThrottleActivationEmail:
+    def __init__(self, timeout=60):
+        self.timeout = timeout
+
+    def __call__(self, view_func):
+        @wraps(view_func)
+        def _wrapped_view(request, *args, **kwargs):
+            if request.user.is_authenticated:
+                email = request.user.email
+                cache_key = f"activation_email_{email}"
+                last_sent_time = cache.get(cache_key)
+                if last_sent_time and (datetime.now() - last_sent_time) < timedelta(seconds=self.timeout):
+                    messages.warning(request, 'Email can only be sent once per minute')
+                    return redirect('home')
+                cache.set(cache_key, datetime.now(), timeout=self.timeout)
+            return view_func(request, *args, **kwargs)
+
+        return _wrapped_view
+
+@method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
+class ResendConfirmationView(View):
+    """ Resend activation email /resend_confirmation/ """
+
+    def post(self, request):
+        if request.method == 'POST':
+            email = request.user.email
+            user = get_object_or_404(get_user_model(), email=email)
+            if not user.is_confirmed:
+                # Call the Celery task to send the activation email asynchronously
+                send_confirm_email.apply_async(args=[user.id, get_current_site(request).domain])
+
+                messages.success(request, 'Confirmation email sent. Please check your inbox')
+
+        return redirect('home')
+
+
+
+class ConfirmAccountView(View):
+    """ Activate user account /confirm_account/ """
+
+    @staticmethod
+    def get(request, uid, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            user = None
+
+        if user and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.is_confirmed = True
+            user.save()
+        return redirect('home')
+
+
+@method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
 class RegistrationView(View):
     """ Registration new user /registration/ """
+
     form_class = UserRegistrationForm
     template_name = 'registration/registration.html'
     success_url = reverse_lazy('home')
@@ -18,20 +155,34 @@ class RegistrationView(View):
     def get(self, request):
         if request.user.is_authenticated:
             return redirect('home')
+
+        user_is_active = request.session.get('user_is_active', False)
         form = self.form_class()
+
+        if user_is_active:
+            form = None
+
         return render(request, self.template_name, {'form': form})
 
+    # @method_decorator(throttle_activation_email)
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
             user = form.save(commit=False)
-            user.is_active = True
             user.save()
-            # Login the new user
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password1')
-            user = authenticate(username=username, password=password)
-            login(request, user)
+
+            # Log in the new user
+            user = authenticate(request, email=form.cleaned_data.get('email'),
+                                password=form.cleaned_data.get('password1'))
+            if user is not None:
+                login(request, user)  # Log in the user
+
+            # Call the resend_confirmation view to send the activation email
+
+            resend_confirmation_view = ResendConfirmationView()
+
+            resend_confirmation_view.post(request)
+
             return redirect(self.success_url)
         return render(request, self.template_name, {'form': form})
 
@@ -42,7 +193,7 @@ class UserLoginView(View):
     form_class = AuthenticationForm
 
     def get(self, request):
-        if request.user.is_authenticated:  # Проверяем, аутентифицирован ли пользователь
+        if request.user.is_authenticated:
             return redirect('home')
         form = self.form_class()
         return render(request, self.template_name, {'form': form})
@@ -95,3 +246,119 @@ class DeletePhotoView(LoginRequiredMixin, View):
         user.photo.delete()
         user.save()
         return redirect('user_profile')
+
+
+# class ForgotPassword(TemplateView):
+#     template_name = 'registration/forgot_password.html'
+#
+#     def get(self, request, *args, **kwargs):
+#         if request.user.is_authenticated:
+#             return redirect('home')
+#         return super().get(request, *args, **kwargs)
+#
+#     def post(self, request, *args, **kwargs):
+#         email = request.POST.get('email')
+#         try:
+#             user = Clients.objects.get(email=email)
+#         except Clients.DoesNotExist:
+#             return render(request, self.template_name, {'form_errors': True})
+#
+#         # Check if the email was sent recently
+#         # last_sent_time = cache.get(f"password_reset_email_{email}")
+#         # if last_sent_time:
+#         #     time_elapsed = datetime.now() - last_sent_time
+#         #     if time_elapsed < timedelta(minutes=1):
+#         #         messages.warning(request, "Password reset email can only be sent once per minute")
+#         #         return redirect(request.path)
+#
+#         # Generate a password reset link using the request's absolute URL
+#         reset_link = request.build_absolute_uri(
+#             f"/reset_password/?user={user.id}")  # Replace with your actual reset URL path
+#
+#         # Render the email template using the reset_link
+#         email_html = render_to_string('email_templates/reset_message.html', {'reset_link': reset_link})
+#
+#         # Send the password reset email to the user
+#         subject = 'Password Reset Request'
+#         from_email = settings.EMAIL_HOST_USER
+#         recipient_list = [user.email]
+#         send_mail(subject, '', from_email, recipient_list, html_message=email_html)
+#
+#         # Store the current time in cache
+#         cache.set(f"password_reset_email_{email}", datetime.now(), timeout=60)  # 60 seconds = 1 minute
+#
+#         # Redirect the user to a page indicating that the reset email has been sent
+#         messages.success(request, 'Password reset link has been sent to your email')
+#         return redirect(request.path)
+class ForgotPassword(TemplateView):
+    template_name = 'registration/forgot_password.html'
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            return redirect('home')
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        email = request.POST.get('email')
+        try:
+            user = Clients.objects.get(email=email)
+        except Clients.DoesNotExist:
+            return render(request, self.template_name, {'form_errors': True})
+
+        reset_link = request.build_absolute_uri(
+            f"/reset_password/?user={user.id}")
+
+        cache_key = f"password_reset_email_{email}"
+        if not EmailThrottling.send_email_with_throttling(
+                email,
+                'Password Reset Request',
+                render_to_string('email_templates/reset_message.html', {'reset_link': reset_link}),
+                cache_key
+        ):
+            messages.warning(request, "Password reset email can only be sent once per minute")
+            return redirect(request.path)
+
+        messages.success(request, 'Password reset link has been sent to your email')
+        return redirect(request.path)
+
+
+class PasswordReset(View):
+    template_name = 'registration/reset_password.html'
+
+    def get(self, request, *args, **kwargs):
+        # Check if the user exists with the provided user ID (from the reset link)
+        user_id = request.GET.get('user')
+        try:
+            user = Clients.objects.get(pk=user_id)
+            request.session['reset_user_id'] = user_id
+            return render(request, self.template_name)
+        except Clients.DoesNotExist:
+            # Redirect to an error page or show an error message
+            return redirect('404')
+
+    def post(self, request, *args, **kwargs):
+        new_password = request.POST.get('new_password')
+        confirm_password = request.POST.get('confirm_password')
+        form_errors = []
+
+        if new_password != confirm_password:
+            form_errors.append("Passwords do not match.")
+
+        try:
+            validate_password(new_password)  # Validate the new password
+        except ValidationError as e:
+            form_errors.extend(e.messages)
+
+        if form_errors:
+            return render(request, self.template_name, {'form_errors': form_errors})
+
+        try:
+            user_id = request.session.get('reset_user_id')
+            user = Clients.objects.get(pk=user_id)
+        except Clients.DoesNotExist:
+            return redirect('404')
+
+        user.password = make_password(new_password)  # Hash the new password before saving
+        user.save()
+        del request.session['reset_user_id']  # Clear the session variable after password reset
+        return redirect('home')  # Create a new URL and view for this page
