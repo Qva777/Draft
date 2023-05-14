@@ -93,9 +93,6 @@ class ProductHomeListView(BaseProductView):
         return render(request, 'pages/home.html', {'products': products})
 
 
-
-
-
 class CancelProduct(TemplateView):
     """ View for rendering an error page """
     template_name = 'pages/not_found.html'
