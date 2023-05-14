@@ -23,7 +23,7 @@ from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Users.validators import validate_password
 from E_Shop_API.E_Shop_Users.views import EmailThrottling
 from E_Shop_config.tasks import send_confirm_email
-from .forms import UserEditForm, UserRegistrationForm
+from E_Shop_Frontend.Users.forms import UserEditForm, UserRegistrationForm
 
 
 class ThrottleActivationEmail:
