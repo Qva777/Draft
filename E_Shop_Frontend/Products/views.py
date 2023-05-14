@@ -4,7 +4,6 @@ from django.contrib import messages
 from django.conf import settings
 from django.urls import reverse
 from django.db.models import Q
-
 import base64
 import random
 import stripe
