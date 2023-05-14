@@ -1,3 +1,6 @@
+import email
+from datetime import datetime, timedelta
+
 from allauth.socialaccount.models import SocialApp
 from django.contrib.sites.models import Site
 from django.http import JsonResponse
@@ -6,9 +9,53 @@ from rest_framework import permissions, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateAPIView
+from django.contrib.auth import get_user_model
+from django.utils.decorators import method_decorator
+from django.core.mail import send_mail
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.urls import reverse
+from django.conf import settings
+from rest_framework import status
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from E_Shop_API.E_Shop_Users import serializers
+# views.py
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+# serializers.py
+from django.shortcuts import redirect
+
+from rest_framework import serializers
+from django.core.mail import send_mail
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.cache import cache
+
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.contrib import messages
+from django.conf import settings
+from .models import Clients
+from django.shortcuts import get_object_or_404
+from django.core.cache import cache
+from E_Shop_API.E_Shop_Users.serializers import SocialAppSerializer, SiteSerializer, UserDetailSerializer, \
+    MyUserSerializer, ActivationRequestSerializer
 from E_Shop_API.E_Shop_Users.models import Clients
+# from E_Shop_Frontend.Users.views import throttle_activation_email
+from django.core.cache import cache
+from django.core.mail import send_mail
+from django.template.loader import render_to_string
+from django.utils import timezone
+from datetime import timedelta
 
 
 class UserDetailView(APIView):
@@ -19,14 +66,14 @@ class UserDetailView(APIView):
     def get(request, pk):
         """ GET Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = serializers.UserDetailSerializer(user)
+        serializer = UserDetailSerializer(user)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, pk):
         """ PUT Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = serializers.MyUserSerializer(user, data=request.data)
+        serializer = MyUserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -35,7 +82,7 @@ class UserDetailView(APIView):
     def patch(request, pk):
         """ PATCH Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = serializers.MyUserSerializer(user, data=request.data, partial=True)
+        serializer = MyUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -69,14 +116,14 @@ class MyUserView(APIView):
         """ GET Method user 'auth/users/me/' """
         get_user = self.request.user
         user = Clients.objects.get(pk=get_user.pk)
-        serializer = serializers.UserDetailSerializer(user)
+        serializer = UserDetailSerializer(user)
         return JsonResponse(serializer.data)
 
     def put(self, request):
         """ PUT Method user 'auth/users/me/' """
         get_user = self.request.user
         user = Clients.objects.get(pk=get_user.pk)
-        serializer = serializers.MyUserSerializer(user, data=request.data)
+        serializer = MyUserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -86,7 +133,7 @@ class MyUserView(APIView):
         """ PATCH Method user 'auth/users/me/' """
         get_user = self.request.user
         user = Clients.objects.get(pk=get_user.pk)
-        serializer = serializers.MyUserSerializer(get_user, data=request.data, partial=True)
+        serializer = MyUserSerializer(get_user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
@@ -108,7 +155,7 @@ class SiteView(RetrieveUpdateAPIView):
     permission_classes = [permissions.IsAdminUser, ]
 
     queryset = Site.objects.all()
-    serializer_class = serializers.SiteSerializer
+    serializer_class = SiteSerializer
     lookup_field = 'pk'
 
     def update(self, request, *args, **kwargs):
@@ -117,7 +164,7 @@ class SiteView(RetrieveUpdateAPIView):
         site.domain = request.data.get('domain')
         site.name = request.data.get('name')
         site.save()
-        return Response(serializers.SiteSerializer(site).data)
+        return Response(SiteSerializer(site).data)
 
 
 class SelectSocialApplicationView(APIView):
@@ -129,7 +176,7 @@ class SelectSocialApplicationView(APIView):
         """ Retrieve a social app by ID """
         try:
             social_app = SocialApp.objects.get(pk=pk)
-            serializer = serializers.SocialAppSerializer(social_app)
+            serializer = SocialAppSerializer(social_app)
             return Response(serializer.data)
         except SocialApp.DoesNotExist:
             return Response({"error": "Social application with id {} does not exist".format(pk)})
@@ -137,8 +184,239 @@ class SelectSocialApplicationView(APIView):
     @staticmethod
     def post(request, pk):
         """ Create a social app with provided data """
-        serializer = serializers.SocialAppSerializer(data=request.data)
+        serializer = SocialAppSerializer(data=request.data)
         if serializer.is_valid():
             social_app = serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
+
+
+#### new code
+# class ActivationRequestSerializer(serializers.Serializer):
+#     email = serializers.EmailField()
+
+
+def send_email_with_throttling(email_address, subject, html_message, cache_key, timeout=60):
+    last_sent_time = cache.get(cache_key)
+
+    if last_sent_time:
+        time_elapsed = timezone.now() - last_sent_time
+        if time_elapsed < timedelta(minutes=1):
+            return False  # Throttle the email
+
+    send_mail(subject, '', settings.EMAIL_HOST_USER, [email_address], html_message=html_message)
+    cache.set(cache_key, timezone.now(), timeout=timeout)
+    return True
+
+
+class ActivateUserView(APIView):
+    """ Function which activate user """
+
+    @staticmethod
+    def get(request):
+        get_email = request.GET.get('email')
+        try:
+            user = Clients.objects.get(email=get_email)
+            user.is_active = True
+            user.save()
+            return redirect('home')
+        except Clients.DoesNotExist:
+            return redirect('404')
+
+
+class SendActivationView(APIView):
+    def post(self, request):
+        serializer = ActivationRequestSerializer(data=request.data)
+        if serializer.is_valid():
+            email = serializer.validated_data['email']
+
+            client = get_user_model()
+            if not client.objects.filter(email=email).exists():
+                return Response({'error': 'Email not found in the database'}, status=status.HTTP_404_NOT_FOUND)
+            activation_link = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
+            cache_key = f"activation_email_{email}"
+            if not send_email_with_throttling(
+                    email,
+                    'Activation Letter',
+                    render_to_string('email_templates/activation_email.html', {'activation_link': activation_link}),
+                    cache_key
+            ):
+                return Response({'error': 'Activation email can only be sent once per minute.'},
+                                status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+            return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ForgotPasswordAPI(APIView):
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        try:
+            user = Clients.objects.get(email=email)
+        except Clients.DoesNotExist:
+            return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Generate a password reset link using the request's absolute URL
+        reset_link = request.build_absolute_uri(
+            f"/reset_password/?user={user.id}")
+
+        cache_key = f"password_reset_email_{email}"
+        if not send_email_with_throttling(
+                email,
+                'Password Reset Request',
+                render_to_string('email_templates/reset_message.html', {'reset_link': reset_link}),
+                cache_key
+        ):
+            return Response({'error': 'Password reset email can only be sent once per minute.'},
+                            status=status.HTTP_429_TOO_MANY_REQUESTS)
+
+        return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
+
+# def send_activation_email(to_email, activation_link):
+#     subject = 'Activate Your Account'
+#     html_message = render_to_string('email_templates/activation_email.html', {'activation_link': activation_link})
+#     plain_message = strip_tags(html_message)
+#     from_email = settings.EMAIL_HOST_USER
+#     send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
+
+# def send_email_with_throttling(email, subject, html_message, cache_key, timeout=60):
+#     last_sent_time = cache.get(cache_key)
+#
+#     if last_sent_time:
+#         time_elapsed = timezone.now() - last_sent_time
+#         if time_elapsed < timedelta(minutes=1):
+#             return False  # Throttle the email
+#
+#     send_mail(subject, '', settings.EMAIL_HOST_USER, [email], html_message=html_message)
+#     cache.set(cache_key, timezone.now(), timeout=timeout)
+#     return True
+
+
+# class SendActivationView(APIView):
+#     """ Send Activation letter on email """
+#
+#     def post(self, request):
+#         serializer = ActivationRequestSerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#
+#             # Check if the email exists in the database
+#             client = get_user_model()
+#             if not client.objects.filter(email=email).exists():
+#                 return Response({'error': 'Email not found in the database'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Check if the email was sent recently
+#             last_sent_time = cache.get(f"activation_email_{email}")
+#             if last_sent_time:
+#                 time_elapsed = datetime.now() - last_sent_time
+#                 if time_elapsed < timedelta(minutes=1):
+#                     return Response({'error': 'Activation email can only be sent once per minute.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+#
+#             # Generate the activation URL using the request object
+#             activation_url = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
+#             send_activation_email(email, activation_url)
+#
+#             # Store the current time in cache
+#             cache.set(f"activation_email_{email}", datetime.now(), timeout=60)  # 60 seconds = 1 minute
+#
+#             return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+# class ForgotPasswordAPI(APIView):
+#     def post(self, request, *args, **kwargs):
+#         email = request.data.get('email')
+#
+#         # Check if the email was sent recently
+#         last_sent_time = cache.get(f"password_reset_email_{email}")
+#         if last_sent_time:
+#             time_elapsed = datetime.now() - last_sent_time
+#             if time_elapsed < timedelta(minutes=1):
+#                 return Response({'error': 'Password reset email can only be sent once per minute.'}, status=status.HTTP_429_TOO_MANY_REQUESTS)
+#
+#         try:
+#             user = Clients.objects.get(email=email)
+#         except Clients.DoesNotExist:
+#             return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#
+#         # Generate a password reset link using the request's absolute URL
+#         reset_link = request.build_absolute_uri(
+#             f"/reset_password/?user={user.id}")
+#
+#         # Render the email template using the reset_link
+#         email_html = render_to_string('email_templates/reset_message.html', {'reset_link': reset_link})
+#
+#         # Send the password reset email to the user
+#         subject = 'Password Reset Request'
+#         from_email = settings.EMAIL_HOST_USER
+#         recipient_list = [user.email]
+#         send_mail(subject, '', from_email, recipient_list, html_message=email_html)
+#
+#         # Store the current time in cache
+#         cache.set(f"password_reset_email_{email}", datetime.now(), timeout=60)  # 60 seconds = 1 minute
+#
+#         return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
+
+
+# class SendActivationView(APIView):
+#     """ Send Activation letter on email """
+#
+# @staticmethod
+# def post(request):
+#     serializer = ActivationRequestSerializer(data=request.data)
+#     if serializer.is_valid():
+#         email = serializer.validated_data['email']
+#
+#         # Generate the activation URL using the request object
+#         activation_url = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
+#         send_activation_email(email, activation_url)
+#         # send_activation_email(email, activation_link)
+#         return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
+#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class SendActivationView(APIView):
+#     """ Send Activation letter on email """
+#
+#     def post(self, request):
+#         serializer = ActivationRequestSerializer(data=request.data)
+#         if serializer.is_valid():
+#             email = serializer.validated_data['email']
+#
+#             # Check if the email exists in the database
+#             client = get_user_model()
+#             if not client.objects.filter(email=email).exists():
+#                 return Response({'error': 'Email not found in the database'}, status=status.HTTP_404_NOT_FOUND)
+#
+#             # Generate the activation URL using the request object
+#             activation_url = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
+#             send_activation_email(email, activation_url)
+#
+#             return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
+#         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+# class ForgotPasswordAPI(APIView):
+#     def post(self, request, *args, **kwargs):
+#         email = request.data.get('email')
+#         try:
+#             user = Clients.objects.get(email=email)
+#         except Clients.DoesNotExist:
+#             return Response({'error': 'User with this email does not exist'}, status=status.HTTP_404_NOT_FOUND)
+#
+#
+#         # Generate a password reset link using the request's absolute URL
+#         reset_link = request.build_absolute_uri(
+#             f"/reset_password/?user={user.id}")  # Замените на ваш реальный путь сброса пароля
+#
+#         # Render the email template using the reset_link
+#         email_html = render_to_string('email_templates/reset_message.html', {'reset_link': reset_link})
+#
+#         # Send the password reset email to the user
+#         subject = 'Password Reset Request'
+#         from_email = settings.EMAIL_HOST_USER
+#         recipient_list = [user.email]
+#         send_mail(subject, '', from_email, recipient_list, html_message=email_html)
+#
+#         return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
