@@ -1,61 +1,93 @@
-import email
-from datetime import datetime, timedelta
+from datetime import timedelta
 
-from allauth.socialaccount.models import SocialApp
+from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
+from django.core.cache import cache
+from django.core.mail import send_mail
 from django.http import JsonResponse
+from django.shortcuts import redirect
+from django.template.loader import render_to_string
+from django.urls import reverse
+from django.utils import timezone
 
 from rest_framework import permissions, status
-from rest_framework.views import APIView
-from rest_framework.response import Response
 from rest_framework.generics import RetrieveUpdateAPIView
-from django.contrib.auth import get_user_model
-from django.utils.decorators import method_decorator
-from django.core.mail import send_mail
-from django.contrib.auth.tokens import default_token_generator
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.utils.encoding import force_bytes
-from django.urls import reverse
-from django.conf import settings
-from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-# views.py
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-
-# serializers.py
-from django.shortcuts import redirect
-
-from rest_framework import serializers
-from django.core.mail import send_mail
-from django.conf import settings
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.core.cache import cache
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.contrib import messages
-from django.conf import settings
-from .models import Clients
-from django.shortcuts import get_object_or_404
-from django.core.cache import cache
-from E_Shop_API.E_Shop_Users.serializers import SocialAppSerializer, SiteSerializer, UserDetailSerializer, \
-    MyUserSerializer, ActivationRequestSerializer
+from allauth.socialaccount.models import SocialApp
+from E_Shop_API.E_Shop_Users import serializers
 from E_Shop_API.E_Shop_Users.models import Clients
-# from E_Shop_Frontend.Users.views import throttle_activation_email
-from django.core.cache import cache
-from django.core.mail import send_mail
-from django.template.loader import render_to_string
-from django.utils import timezone
-from datetime import timedelta
+
+
+# class from send_email_with_ throttling
+# def send_email_with_throttling(email_address, subject, html_message, cache_key, timeout=60):
+#     last_sent_time = cache.get(cache_key)
+#
+#     if last_sent_time:
+#         time_elapsed = timezone.now() - last_sent_time
+#         if time_elapsed < timedelta(minutes=1):
+#             return False  # Throttle the email
+#
+#     send_mail(subject, '', settings.EMAIL_HOST_USER, [email_address], html_message=html_message)
+#     cache.set(cache_key, timezone.now(), timeout=timeout)
+#     return True
+
+class EmailThrottling:
+    @staticmethod
+    def send_email_with_throttling(email_address, subject, html_message, cache_key, timeout=60):
+        last_sent_time = cache.get(cache_key)
+
+        if last_sent_time:
+            time_elapsed = timezone.now() - last_sent_time
+            if time_elapsed < timedelta(minutes=1):
+                return False  # Throttle the email
+
+        send_mail(subject, '', settings.EMAIL_HOST_USER, [email_address], html_message=html_message)
+        cache.set(cache_key, timezone.now(), timeout=timeout)
+        return True
+
+
+class MyUserView(APIView):
+    """ Information about my user 'auth/users/me' """
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        """ GET Method user 'auth/users/me/' """
+        get_user = self.request.user
+        user = Clients.objects.get(pk=get_user.pk)
+        serializer = serializers.UserDetailSerializer(user)
+        return JsonResponse(serializer.data)
+
+    def put(self, request):
+        """ PUT Method user 'auth/users/me/' """
+        get_user = self.request.user
+        user = Clients.objects.get(pk=get_user.pk)
+        serializer = serializers.MyUserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return JsonResponse(serializer.data)
+        return JsonResponse(serializer.errors, status=400)
+
+    def patch(self, request):
+        """ PATCH Method user 'auth/users/me/' """
+        get_user = self.request.user
+        user = Clients.objects.get(pk=get_user.pk)
+        serializer = serializers.MyUserSerializer(get_user, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+
+    @classmethod
+    def delete(cls, request):
+        """ HIDE Method user 'auth/users/me/' """
+        user = request.user
+        if user.is_active:
+            user.is_active = False
+            user.save()
+            return Response({'message': 'User deactivated'}, status=status.HTTP_200_OK)
+        return Response({'message': 'User is already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class UserDetailView(APIView):
@@ -66,14 +98,14 @@ class UserDetailView(APIView):
     def get(request, pk):
         """ GET Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = UserDetailSerializer(user)
+        serializer = serializers.UserDetailSerializer(user)
         return Response(serializer.data)
 
     @staticmethod
     def put(request, pk):
         """ PUT Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = MyUserSerializer(user, data=request.data)
+        serializer = serializers.MyUserSerializer(user, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -82,7 +114,7 @@ class UserDetailView(APIView):
     def patch(request, pk):
         """ PATCH Method user/<int:pk>/ """
         user = Clients.objects.get(pk=pk)
-        serializer = MyUserSerializer(user, data=request.data, partial=True)
+        serializer = serializers.MyUserSerializer(user, data=request.data, partial=True)
         if serializer.is_valid():
             serializer.save()
             return JsonResponse(serializer.data)
@@ -108,105 +140,30 @@ class UserDetailView(APIView):
         return Response({'message': 'User is already active'}, status=status.HTTP_400_BAD_REQUEST)
 
 
-class MyUserView(APIView):
-    """ Information about my user 'auth/users/me' """
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request):
-        """ GET Method user 'auth/users/me/' """
-        get_user = self.request.user
-        user = Clients.objects.get(pk=get_user.pk)
-        serializer = UserDetailSerializer(user)
-        return JsonResponse(serializer.data)
-
-    def put(self, request):
-        """ PUT Method user 'auth/users/me/' """
-        get_user = self.request.user
-        user = Clients.objects.get(pk=get_user.pk)
-        serializer = MyUserSerializer(user, data=request.data)
+class SendActivationView(APIView):
+    # @staticmethod
+    def post(self, request):
+        serializer = serializers.ActivationRequestSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data)
-        return JsonResponse(serializer.errors, status=400)
+            email = serializer.validated_data['email']
 
-    def patch(self, request):
-        """ PATCH Method user 'auth/users/me/' """
-        get_user = self.request.user
-        user = Clients.objects.get(pk=get_user.pk)
-        serializer = MyUserSerializer(get_user, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
+            client = get_user_model()
+            if not client.objects.filter(email=email).exists():
+                return Response({'error': 'Email not found in the database'}, status=status.HTTP_404_NOT_FOUND)
+            activation_link = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
+            cache_key = f"activation_email_{email}"
+            if not EmailThrottling.send_email_with_throttling(
+                    email,
+                    'Activation Letter',
+                    render_to_string('email_templates/activation_email.html', {'activation_link': activation_link}),
+                    cache_key
+            ):
+                return Response({'error': 'Activation email can only be sent once per minute.'},
+                                status=status.HTTP_429_TOO_MANY_REQUESTS)
 
-    @classmethod
-    def delete(cls, request):
-        """ HIDE Method user 'auth/users/me/' """
-        user = request.user
-        if user.is_active:
-            user.is_active = False
-            user.save()
-            return Response({'message': 'User deactivated'}, status=status.HTTP_200_OK)
-        return Response({'message': 'User is already deactivated'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
 
-
-# GOOGLE OAUTH PROVIDER
-class SiteView(RetrieveUpdateAPIView):
-    """ Domain site """
-    permission_classes = [permissions.IsAdminUser, ]
-
-    queryset = Site.objects.all()
-    serializer_class = SiteSerializer
-    lookup_field = 'pk'
-
-    def update(self, request, *args, **kwargs):
-        """ Update site """
-        site = Site.objects.get(pk=kwargs['pk'])
-        site.domain = request.data.get('domain')
-        site.name = request.data.get('name')
-        site.save()
-        return Response(SiteSerializer(site).data)
-
-
-class SelectSocialApplicationView(APIView):
-    """ GOOGLE OAUTH PROVIDER """
-    permission_classes = [permissions.IsAdminUser, ]
-
-    @staticmethod
-    def get(request, pk):
-        """ Retrieve a social app by ID """
-        try:
-            social_app = SocialApp.objects.get(pk=pk)
-            serializer = SocialAppSerializer(social_app)
-            return Response(serializer.data)
-        except SocialApp.DoesNotExist:
-            return Response({"error": "Social application with id {} does not exist".format(pk)})
-
-    @staticmethod
-    def post(request, pk):
-        """ Create a social app with provided data """
-        serializer = SocialAppSerializer(data=request.data)
-        if serializer.is_valid():
-            social_app = serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=400)
-
-
-#### new code
-# class ActivationRequestSerializer(serializers.Serializer):
-#     email = serializers.EmailField()
-
-
-def send_email_with_throttling(email_address, subject, html_message, cache_key, timeout=60):
-    last_sent_time = cache.get(cache_key)
-
-    if last_sent_time:
-        time_elapsed = timezone.now() - last_sent_time
-        if time_elapsed < timedelta(minutes=1):
-            return False  # Throttle the email
-
-    send_mail(subject, '', settings.EMAIL_HOST_USER, [email_address], html_message=html_message)
-    cache.set(cache_key, timezone.now(), timeout=timeout)
-    return True
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class ActivateUserView(APIView):
@@ -224,31 +181,6 @@ class ActivateUserView(APIView):
             return redirect('404')
 
 
-class SendActivationView(APIView):
-    def post(self, request):
-        serializer = ActivationRequestSerializer(data=request.data)
-        if serializer.is_valid():
-            email = serializer.validated_data['email']
-
-            client = get_user_model()
-            if not client.objects.filter(email=email).exists():
-                return Response({'error': 'Email not found in the database'}, status=status.HTTP_404_NOT_FOUND)
-            activation_link = request.build_absolute_uri(reverse('activate_user') + f'?email={email}')
-            cache_key = f"activation_email_{email}"
-            if not send_email_with_throttling(
-                    email,
-                    'Activation Letter',
-                    render_to_string('email_templates/activation_email.html', {'activation_link': activation_link}),
-                    cache_key
-            ):
-                return Response({'error': 'Activation email can only be sent once per minute.'},
-                                status=status.HTTP_429_TOO_MANY_REQUESTS)
-
-            return Response({'message': 'Activation link sent to your email'}, status=status.HTTP_200_OK)
-
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
 class ForgotPasswordAPI(APIView):
     def post(self, request, *args, **kwargs):
         email = request.data.get('email')
@@ -262,7 +194,7 @@ class ForgotPasswordAPI(APIView):
             f"/reset_password/?user={user.id}")
 
         cache_key = f"password_reset_email_{email}"
-        if not send_email_with_throttling(
+        if not EmailThrottling.send_email_with_throttling(
                 email,
                 'Password Reset Request',
                 render_to_string('email_templates/reset_message.html', {'reset_link': reset_link}),
@@ -273,6 +205,48 @@ class ForgotPasswordAPI(APIView):
 
         return Response({'message': 'Password reset link has been sent to your email'}, status=status.HTTP_200_OK)
 
+
+# GOOGLE OAUTH PROVIDER
+class SiteView(RetrieveUpdateAPIView):
+    """ Domain site """
+    permission_classes = [permissions.IsAdminUser, ]
+
+    queryset = Site.objects.all()
+    serializer_class = serializers.SiteSerializer
+    lookup_field = 'pk'
+
+    def update(self, request, *args, **kwargs):
+        """ Update site """
+        site = Site.objects.get(pk=kwargs['pk'])
+        site.domain = request.data.get('domain')
+        site.name = request.data.get('name')
+        site.save()
+        return Response(serializers.SiteSerializer(site).data)
+
+
+class SelectSocialApplicationView(APIView):
+    """ GOOGLE OAUTH PROVIDER """
+    permission_classes = [permissions.IsAdminUser, ]
+
+    @staticmethod
+    def get(request, pk):
+        """ Retrieve a social app by ID """
+        try:
+            social_app = SocialApp.objects.get(pk=pk)
+            serializer = serializers.SocialAppSerializer(social_app)
+            return Response(serializer.data)
+        except SocialApp.DoesNotExist:
+            return Response({"error": "Social application with id {} does not exist".format(pk)})
+
+    @staticmethod
+    def post(request, pk):
+        """ Create a social app with provided data """
+        serializer = serializers.SocialAppSerializer(data=request.data)
+        if serializer.is_valid():
+            social_app = serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
 # def send_activation_email(to_email, activation_link):
 #     subject = 'Activate Your Account'
 #     html_message = render_to_string('email_templates/activation_email.html', {'activation_link': activation_link})
@@ -281,7 +255,7 @@ class ForgotPasswordAPI(APIView):
 #     send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
 
 
-# def send_email_with_throttling(email, subject, html_message, cache_key, timeout=60):
+# def send_email_with_ throttling(email, subject, html_message, cache_key, timeout=60):
 #     last_sent_time = cache.get(cache_key)
 #
 #     if last_sent_time:
