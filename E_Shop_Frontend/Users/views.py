@@ -26,69 +26,6 @@ from E_Shop_config.tasks import send_confirm_email
 from .forms import UserEditForm, UserRegistrationForm
 
 
-# test front
-
-
-# def throttle_activation_ email(view_func):
-#     def _wrapped_view(request, *args, **kwargs):
-#         # Check if the user is authenticated before accessing the email
-#         if request.user.is_authenticated:
-#             # Get the user's email address
-#             email = request.user.email
-#
-#             # Generate a unique cache key for the user's email
-#             cache_key = f"activation_email_{email}"
-#
-#             # Check if the email was sent recently
-#             last_sent_time = cache.get(cache_key)
-#             if last_sent_time:
-#                 time_elapsed = datetime.now() - last_sent_time
-#                 if time_elapsed < timedelta(minutes=1):
-#                     # messages.warning(request, 'Activation email can only be sent once per minute')
-#                     messages.warning(request, 'Letter can only be sent once per minute')
-#                     return redirect('home')
-#
-#             cache.set(cache_key, datetime.now(), timeout=120)
-#
-#         return view_func(request, *args, **kwargs)
-#
-#     return _wrapped_view
-
-
-
-# def throttle_activation_email(view_func):
-#     @wraps(view_func)
-#     def _wrapped_view(request, *args, **kwargs):
-#         if request.user.is_authenticated:
-#             email = request.user.email
-#             cache_key = f"activation_email_{email}"
-#             last_sent_time = cache.get(cache_key)
-#             if last_sent_time and (datetime.now() - last_sent_time) < timedelta(minutes=1):
-#                 messages.warning(request, 'Letter can only be sent once per minute')
-#                 return redirect('home')
-#             cache.set(cache_key, datetime.now(), timeout=120)
-#         return view_func(request, *args, **kwargs)
-#
-#     return _wrapped_view
-
-
-# class ResendConfirmationView(View):
-#     """ Resend activation email /resend_confirmation/ """
-#
-#     # @method_decorator(throttle_activation_email)
-#     def post(self, request):
-#         if request.method == 'POST':
-#             email = request.user.email
-#             user = get_object_or_404(get_user_model(), email=email)
-#             if not user.is_confirmed:
-#                 # Call the Celery task to send the activation email asynchronously
-#                 send_confirm_email.apply_async(args=[user.id, get_current_site(request).domain])
-#
-#                 messages.success(request, 'Confirm email sent. Please check your inbox')
-#
-#         return redirect('home')
-
-
 class ThrottleActivationEmail:
     def __init__(self, timeout=60):
         self.timeout = timeout
@@ -108,6 +45,7 @@ class ThrottleActivationEmail:
 
         return _wrapped_view
 
+
 @method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
 class ResendConfirmationView(View):
     """ Resend activation email /resend_confirmation/ """
@@ -123,7 +61,6 @@ class ResendConfirmationView(View):
                 messages.success(request, 'Confirmation email sent. Please check your inbox')
 
         return redirect('home')
-
 
 
 class ConfirmAccountView(View):
@@ -248,48 +185,6 @@ class DeletePhotoView(LoginRequiredMixin, View):
         return redirect('user_profile')
 
 
-# class ForgotPassword(TemplateView):
-#     template_name = 'registration/forgot_password.html'
-#
-#     def get(self, request, *args, **kwargs):
-#         if request.user.is_authenticated:
-#             return redirect('home')
-#         return super().get(request, *args, **kwargs)
-#
-#     def post(self, request, *args, **kwargs):
-#         email = request.POST.get('email')
-#         try:
-#             user = Clients.objects.get(email=email)
-#         except Clients.DoesNotExist:
-#             return render(request, self.template_name, {'form_errors': True})
-#
-#         # Check if the email was sent recently
-#         # last_sent_time = cache.get(f"password_reset_email_{email}")
-#         # if last_sent_time:
-#         #     time_elapsed = datetime.now() - last_sent_time
-#         #     if time_elapsed < timedelta(minutes=1):
-#         #         messages.warning(request, "Password reset email can only be sent once per minute")
-#         #         return redirect(request.path)
-#
-#         # Generate a password reset link using the request's absolute URL
-#         reset_link = request.build_absolute_uri(
-#             f"/reset_password/?user={user.id}")  # Replace with your actual reset URL path
-#
-#         # Render the email template using the reset_link
-#         email_html = render_to_string('email_templates/reset_message.html', {'reset_link': reset_link})
-#
-#         # Send the password reset email to the user
-#         subject = 'Password Reset Request'
-#         from_email = settings.EMAIL_HOST_USER
-#         recipient_list = [user.email]
-#         send_mail(subject, '', from_email, recipient_list, html_message=email_html)
-#
-#         # Store the current time in cache
-#         cache.set(f"password_reset_email_{email}", datetime.now(), timeout=60)  # 60 seconds = 1 minute
-#
-#         # Redirect the user to a page indicating that the reset email has been sent
-#         messages.success(request, 'Password reset link has been sent to your email')
-#         return redirect(request.path)
 class ForgotPassword(TemplateView):
     template_name = 'registration/forgot_password.html'
 
