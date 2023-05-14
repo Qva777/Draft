@@ -12,7 +12,6 @@ import stripe
 from django.views import View
 from django.views.generic import TemplateView
 
-from email.mime.image import MIMEImage
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
 from E_Shop_API.E_Shop_Products.models import Product
 from E_Shop_Frontend.Cart.views import CartMixin
