@@ -47,41 +47,6 @@ class ThrottleActivationEmail:
 
 
 @method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
-class ResendConfirmationView(View):
-    """ Resend activation email /resend_confirmation/ """
-
-    def post(self, request):
-        if request.method == 'POST':
-            email = request.user.email
-            user = get_object_or_404(get_user_model(), email=email)
-            if not user.is_confirmed:
-                # Call the Celery task to send the activation email asynchronously
-                send_confirm_email.apply_async(args=[user.id, get_current_site(request).domain])
-
-                messages.success(request, 'Confirmation email sent. Please check your inbox')
-
-        return redirect('home')
-
-
-class ConfirmAccountView(View):
-    """ Activate user account /confirm_account/ """
-
-    @staticmethod
-    def get(request, uid, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uid))
-            user = get_user_model().objects.get(pk=uid)
-        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
-            user = None
-
-        if user and default_token_generator.check_token(user, token):
-            user.is_active = True
-            user.is_confirmed = True
-            user.save()
-        return redirect('home')
-
-
-@method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
 class RegistrationView(View):
     """ Registration new user /registration/ """
 
@@ -145,44 +110,6 @@ class UserLoginView(View):
                 login(request, user)
                 return redirect('home')
         return render(request, self.template_name, {'form': form})
-
-
-class EditProfileView(LoginRequiredMixin, View):
-    """ Edit the user's profile """
-    template_name = 'pages/user_profile.html'
-    form_class = UserEditForm
-    success_url = 'user_profile'
-    login_url = 'login'
-
-    def get(self, request):
-        form = self.form_class(instance=request.user)
-        return render(request, self.template_name, {'form': form})
-
-    def post(self, request):
-        form = self.form_class(request.POST, request.FILES, instance=request.user)
-        if form.is_valid():
-            # Validate the current password
-            new_password = form.cleaned_data.get('new_password')
-            if new_password:
-                request.user.set_password(new_password)
-
-            # Save the rest of the form fields
-            form.save()
-            return redirect(self.success_url)
-        else:
-            messages.error(request, 'There was an error updating your profile.')
-            return render(request, self.template_name, {'form': form})
-
-
-class DeletePhotoView(LoginRequiredMixin, View):
-    """ Delete the user's profile photo """
-
-    @staticmethod
-    def post(request):
-        user = request.user
-        user.photo.delete()
-        user.save()
-        return redirect('user_profile')
 
 
 class ForgotPassword(TemplateView):
@@ -257,3 +184,76 @@ class PasswordReset(View):
         user.save()
         del request.session['reset_user_id']  # Clear the session variable after password reset
         return redirect('home')  # Create a new URL and view for this page
+
+
+@method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
+class ResendConfirmationView(View):
+    """ Resend activation email /resend_confirmation/ """
+
+    def post(self, request):
+        if request.method == 'POST':
+            email = request.user.email
+            user = get_object_or_404(get_user_model(), email=email)
+            if not user.is_confirmed:
+                # Call the Celery task to send the activation email asynchronously
+                send_confirm_email.apply_async(args=[user.id, get_current_site(request).domain])
+
+                messages.success(request, 'Confirmation email sent. Please check your inbox')
+
+        return redirect('home')
+
+
+class ConfirmAccountView(View):
+    """ Activate user account /confirm_account/ """
+
+    @staticmethod
+    def get(request, uid, token):
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = get_user_model().objects.get(pk=uid)
+        except (TypeError, ValueError, OverflowError, get_user_model().DoesNotExist):
+            user = None
+
+        if user and default_token_generator.check_token(user, token):
+            user.is_active = True
+            user.is_confirmed = True
+            user.save()
+        return redirect('home')
+
+
+class EditProfileView(LoginRequiredMixin, View):
+    """ Edit the user's profile """
+    template_name = 'pages/user_profile.html'
+    form_class = UserEditForm
+    success_url = 'user_profile'
+    login_url = 'login'
+
+    def get(self, request):
+        form = self.form_class(instance=request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request):
+        form = self.form_class(request.POST, request.FILES, instance=request.user)
+        if form.is_valid():
+            # Validate the current password
+            new_password = form.cleaned_data.get('new_password')
+            if new_password:
+                request.user.set_password(new_password)
+
+            # Save the rest of the form fields
+            form.save()
+            return redirect(self.success_url)
+        else:
+            messages.error(request, 'There was an error updating your profile.')
+            return render(request, self.template_name, {'form': form})
+
+
+class DeletePhotoView(LoginRequiredMixin, View):
+    """ Delete the user's profile photo """
+
+    @staticmethod
+    def post(request):
+        user = request.user
+        user.photo.delete()
+        user.save()
+        return redirect('user_profile')
