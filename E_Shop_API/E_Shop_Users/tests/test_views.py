@@ -1,6 +1,5 @@
+# python manage.py test E_Shop_API.E_Shop_Users.tests.test_views
 import json
-from .settings_module import *
-
 from rest_framework import status
 from rest_framework.test import APITestCase
 
@@ -9,8 +8,9 @@ from django.urls import reverse, NoReverseMatch
 from allauth.socialaccount.models import SocialApp
 
 from E_Shop_API.E_Shop_Users.models import Clients
-from E_Shop_API.E_Shop_Users.serializers import UserDetailSerializer, SiteSerializer
-from E_Shop_API.E_Shop_Users.tests.enums.user_enums import UserErrorMessages
+from E_Shop_API.E_Shop_Users.serializers import SiteSerializer
+from E_Shop_API.E_Shop_Users.tests.settings_module import django
+from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_admin_user, create_basic_user
 
 django.setup()  # DJANGO_SETTINGS_MODULE
 
@@ -26,40 +26,17 @@ def get_user_data():
     }
 
 
-def get_user_data_invalid():
-    """ TESTS DATA """
-    return {
-        'username': 'Test',
-        'email': 'newemail@test.com',
-        'first_name': 'New_test_name',
-        'last_name': 'New_test_surname',
-        'password': 'Password_without_numbers'
-    }
-
-
 class UserDetailViewTestCase(APITestCase):
     """ TESTCASE User Detail View get/put/patch/delete """
 
     def setUp(self):
         """ TEST Field """
-        self.user = Clients.objects.create(
-            username='test',
-            first_name='Test_name',
-            last_name='Test_last_name',
-            email='testuser@test.com',
-            password='Justatest1')
+        self.user = create_basic_user()
         try:
             self.url = reverse('user_detail_view', kwargs={'pk': self.user.pk})
         except NoReverseMatch:
             self.url = None
             raise Exception('URL not found, user_detail_view')
-
-    # def test_get_user_detail(self):
-    #     """ GET user """
-    #     response = self.client.get(self.url)
-    #     self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.GET_USER_DETAIL_FAILED.value)
-    #     serializer = UserDetailSerializer(self.user)
-    #     self.assertEqual(response.data, serializer.data, msg=UserErrorMessages.GET_USER_DETAIL_INCORRECT.value)
 
     def assert_user_data_equal(self, data):
         """ TEST for update Fields """
@@ -70,33 +47,20 @@ class UserDetailViewTestCase(APITestCase):
         self.assertEqual(self.user.last_name, data['last_name'])
         self.assertTrue(self.user.check_password(data['password']))
 
-    # def test_delete_user(self):
-    #     """TEST DELETE method """
-    #     response = self.client.delete(self.url)
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
-    #                      msg=UserErrorMessages.DELETE_USER_FAILED.value)
-    #     with self.assertRaises(Clients.DoesNotExist):
-    #         Clients.objects.get(pk=self.user.pk)
-
 
 class MyUserViewTestCase(APITestCase):
     """ TESTCASE CRUD my user 'auth/users/me' """
 
     def setUp(self):
         """ TEST Field """
-        self.user = Clients.objects.create_user(
-            username='test',
-            first_name='Test_name',
-            last_name='Test_last_name',
-            email='testuser@test.com',
-            password='Justatest1')
+        self.user = create_basic_user()
         self.client.force_login(self.user)
 
     def test_get_my_user_info(self):
         """ TEST GET MY_USER information """
         url = reverse('my_user_view')
         response = self.client.get(url)
-        self.assertEqual(response.status_code, 200, msg=UserErrorMessages.GET_USER_DETAIL_FAILED.value)
+        self.assertEqual(response.status_code, 200)
         response_content = response.content.decode('utf-8')
         response_data = json.loads(response_content)
         self.assertEqual(response_data['email'], self.user.email)
@@ -129,7 +93,7 @@ class MyUserViewTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
         data = get_user_data()
         response = self.client.put(reverse("my_user_view"), data=data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.UPDATE_USER_INVALID.value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Check that user details have been updated
         user = Clients.objects.get(pk=self.user.pk)
@@ -140,20 +104,11 @@ class MyUserViewTestCase(APITestCase):
         self.client.force_authenticate(user=self.user)
         data = get_user_data()
         response = self.client.patch(reverse("my_user_view"), data=data, format="json")
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.UPDATE_USER_INVALID.value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
         # Check that user details have been updated
         user = Clients.objects.get(pk=self.user.pk)
         self.check_user_data(user, data, response)
-
-    # def test_delete_my_user_info(self):
-    #     """ TEST PATCH My_User fields """
-    #     url = reverse('my_user_view')
-    #     response = self.client.delete(url)
-    #     self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT,
-    #                      msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
-    #     self.assertFalse(Clients.objects.filter(pk=self.user.pk).exists(),
-    #                      msg=UserErrorMessages.USER_DETAIL_NOT_DELETED.value)
 
 
 class SiteViewTestCase(APITestCase):
@@ -163,13 +118,7 @@ class SiteViewTestCase(APITestCase):
         """ Create an admin user and authenticate as an admin for test setup """
         Site.objects.filter(domain='example.com').delete()
         self.site = Site.objects.create(name='example.com', domain='example.com')
-        self.admin_user = Clients.objects.create_user(
-            first_name='Admin',
-            last_name='Admin',
-            email='admin+1@gmail.com',
-            username='admin',
-            password='Justatest1',
-            is_staff=True)
+        self.admin_user = create_admin_user()
 
     def test_update_site(self):
         """ Test updating a site """
@@ -177,12 +126,11 @@ class SiteViewTestCase(APITestCase):
         url = reverse('site_detail', kwargs={'pk': self.site.pk})
         self.client.force_authenticate(user=self.admin_user)
         response = self.client.put(url, data=data)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.GOOGLE_UPDATE_FAILED.value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.site.refresh_from_db()
-        self.assertEqual(self.site.name, data['name'], msg=UserErrorMessages.GOOGLE_SITE_NAME_FAILED.value)
-        self.assertEqual(self.site.domain, data['domain'], msg=UserErrorMessages.GOOGLE_SITE_DOMAIN_FAILED.value)
-        self.assertEqual(response.data, SiteSerializer(self.site).data,
-                         msg=UserErrorMessages.GOOGLE_CREATE_PROVIDER_FAILED.value)
+        self.assertEqual(self.site.name, data['name'])
+        self.assertEqual(self.site.domain, data['domain'])
+        self.assertEqual(response.data, SiteSerializer(self.site).data)
 
 
 class SelectSocialApplicationViewTestCase(APITestCase):
@@ -190,13 +138,7 @@ class SelectSocialApplicationViewTestCase(APITestCase):
 
     def setUp(self):
         """ Create an admin user and authenticate as an admin for test setup """
-        self.admin_user = Clients.objects.create_user(
-            first_name='Admin',
-            last_name='Admin',
-            email='admin+1@gmail.com',
-            username='admin',
-            password='Justatest1',
-            is_staff=True)
+        self.admin_user = create_admin_user()
         self.client.force_authenticate(user=self.admin_user)
 
     def test_get_social_app(self):
@@ -204,7 +146,7 @@ class SelectSocialApplicationViewTestCase(APITestCase):
         social_app = SocialApp.objects.create(name='Test App', client_id='abc123', provider='google')
         url = reverse('select_social_application', kwargs={'pk': social_app.pk})
         response = self.client.get(url)
-        self.assertEqual(response.status_code, status.HTTP_200_OK, msg=UserErrorMessages.GOOGLE_ID_FAILED.value)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_post_social_app(self):
         """ Test creating a social app with invalid data """
@@ -212,5 +154,4 @@ class SelectSocialApplicationViewTestCase(APITestCase):
         social_app = SocialApp.objects.create(provider='google')
         url = reverse('select_social_application', kwargs={'pk': social_app.pk})
         response = self.client.post(url, data=data)
-        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST,
-                         msg=UserErrorMessages.GOOGLE_CREATE_PROVIDER_FAILED.value)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
