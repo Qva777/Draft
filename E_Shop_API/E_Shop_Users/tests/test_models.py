@@ -1,6 +1,8 @@
-from .settings_module import *
+# python manage.py test E_Shop_API.E_Shop_Users.tests.test_models
 from django.test import TestCase
 from E_Shop_API.E_Shop_Users.models import Clients
+from E_Shop_API.E_Shop_Users.tests.settings_module import django
+from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_basic_user, create_admin_user
 
 django.setup()  # DJANGO_SETTINGS_MODULE
 
@@ -13,31 +15,17 @@ class ClientsModelTest(TestCase):
 
     def test_create_user(self):
         """ Create a new user and check if all fields are correct """
-        user = Clients.objects.create_user(
-            username="Test",
-            first_name="Test_Name",
-            last_name="Test_Surname",
-            email="test+1@test.com",
-            password="ValidPasswordWith1",
-            birth_date="1990-01-01"
-        )
-        self.assertEqual(user.username, "Test")
-        self.assertEqual(user.first_name, "Test_Name")
-        self.assertEqual(user.last_name, "Test_Surname")
-        self.assertEqual(user.email, "test+1@test.com")
-        self.assertTrue(user.check_password("ValidPasswordWith1"))
-        self.assertEqual(str(user.birth_date), "1990-01-01")
+        user = create_basic_user()
+        self.assertEqual(user.username, "User")
+        self.assertEqual(user.first_name, "User")
+        self.assertEqual(user.last_name, "User")
+        self.assertEqual(user.email, "user@gmail.com")
+        self.assertTrue(user.check_password("UserPass123"))
+        self.assertIsNone(user.birth_date)
         self.assertFalse(user.disabled)
 
-    def test_create_superuser(self):
+    def test_create_admin(self):
         """ Test creating a new superuser """
-        superuser = Clients.objects.create_superuser(
-            first_name="Super",
-            last_name="User",
-            email="super.user@example.com",
-            username="superuser",
-            password="ValidPasswordWith1Capital",
-            birth_date="1990-01-01"
-        )
-        self.assertTrue(superuser.is_staff)
-        self.assertTrue(superuser.is_superuser)
+        admin = create_admin_user()
+        self.assertTrue(admin.is_staff)
+        self.assertTrue(admin.is_superuser)
