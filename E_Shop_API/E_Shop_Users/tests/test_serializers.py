@@ -1,15 +1,14 @@
-from .enums.user_enums import UserErrorMessages
-from .settings_module import *
-from datetime import date
+# python manage.py test E_Shop_API.E_Shop_Users.tests.test_serializers
 from django.test import TestCase
 from django.contrib.sites.models import Site
+from django.contrib.auth.hashers import check_password
 
 from rest_framework.test import APITestCase
-from E_Shop_API.E_Shop_Users import serializers
-from E_Shop_API.E_Shop_Users.models import Clients
-
 from allauth.socialaccount.models import SocialApp
-from django.contrib.auth.hashers import check_password
+
+from E_Shop_API.E_Shop_Users import serializers
+from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_basic_user
+from E_Shop_API.E_Shop_Users.tests.settings_module import django
 
 django.setup()
 
@@ -19,34 +18,25 @@ class UserDetailSerializerTest(TestCase):
 
     def setUp(self):
         """ Set up a user object for use in tests """
-        self.user = Clients.objects.create_user(
-            username='test',
-            first_name='Test',
-            last_name='Test',
-            email='test@test.com',
-            password='Password1',
-            birth_date=date(1990, 1, 1),
-        )
+        self.user = create_basic_user()
 
     def test_serializer_returns_correct_values(self):
         """ Test that UserDetailSerializer returns the correct values """
         serializer = serializers.UserDetailSerializer(instance=self.user)
         expected_data = {
             'id': self.user.id,
-            'username': 'test',
-            'first_name': 'Test',
-            'last_name': 'Test',
-            'email': 'test@test.com',
-            'birth_date': '1990-01-01',
+            'username': 'User',
+            'first_name': 'User',
+            'last_name': 'User',
+            'email': 'user@gmail.com',
+            'birth_date': None,
             'photo': None,
             'disabled': False,
-            # 'created_at': serializer.data['created_at'],
-            # 'updated_at': serializer.data['updated_at']
             'created_at': serializer.data.get('created_at'),
             'updated_at': serializer.data.get('updated_at')
         }
         expected_data['id'] = str(expected_data['id'])
-        self.assertEqual(serializer.data, expected_data, msg=UserErrorMessages.SERIALIZER_RETURNS_ERROR.value)
+        self.assertEqual(serializer.data, expected_data)
 
 
 class MyUserSerializerTestCase(TestCase):
@@ -54,13 +44,7 @@ class MyUserSerializerTestCase(TestCase):
 
     def setUp(self):
         """ Set up a client object for use in tests """
-        self.client = Clients.objects.create(
-            username="test",
-            first_name="Test",
-            last_name="Test",
-            email="test@test.com",
-            password="Password1"
-        )
+        self.client = create_basic_user()
 
     def test_missing_password(self):
         """ Test that an empty password field is not accepted """
@@ -73,8 +57,8 @@ class MyUserSerializerTestCase(TestCase):
             'password': '',
         }
         serializer = serializers.MyUserSerializer(instance=self.client, data=data, partial=True)
-        self.assertFalse(serializer.is_valid(), msg=UserErrorMessages.SERIALIZER_EMPTY_PASSWORD.value)
-        self.assertIn('password', serializer.errors, msg=UserErrorMessages.SERIALIZER_FIELD.value)
+        self.assertFalse(serializer.is_valid())
+        self.assertIn('password', serializer.errors)
 
     def test_valid_data(self):
         """ Test that serializer accepts valid data and saves to database """
@@ -87,20 +71,20 @@ class MyUserSerializerTestCase(TestCase):
             'birth_date': '1990-01-01',
         }
         serializer = serializers.MyUserSerializer(instance=self.client, data=data, partial=True)
-        self.assertTrue(serializer.is_valid(), msg=UserErrorMessages.SERIALIZER_VALID_DATA.value)
+        self.assertTrue(serializer.is_valid())
         user = serializer.save()
-        self.assertTrue(check_password(data['password'], user.password), msg=UserErrorMessages.SERIALIZER_PASSWORD)
+        self.assertTrue(check_password(data['password'], user.password))
 
 
 class SiteSerializerTestCase(TestCase):
     """ Test SiteSerializer """
 
     def test_site_serializer(self):
-        """Test that SiteSerializer correctly updates a site instance."""
+        """ Test that SiteSerializer correctly updates a site instance """
         site = Site.objects.create(domain='test_site.com', name='Test Site')
         data = {'domain': 'new_test_site.com', 'name': 'New Test Site'}
         serializer = serializers.SiteSerializer(instance=site, data=data, partial=True)
-        self.assertTrue(serializer.is_valid(), msg=UserErrorMessages.SERIALIZER_VALID_DATA.value)
+        self.assertTrue(serializer.is_valid())
         updated_site = serializer.save()
         self.assertEqual(updated_site.domain, data['domain'])
         self.assertEqual(updated_site.name, data['name'])
@@ -129,7 +113,7 @@ class SocialAppSerializerTestCase(APITestCase):
             'key': 'key',
         }
         serializer = serializers.SocialAppSerializer(data=data)
-        self.assertTrue(serializer.is_valid(), msg=UserErrorMessages.SERIALIZER_VALID_DATA.value)
+        self.assertTrue(serializer.is_valid())
         social_app = serializer.save()
         self.assertEqual(social_app.provider, data['provider'])
         self.assertEqual(social_app.name, data['name'])
@@ -150,7 +134,7 @@ class SocialAppSerializerTestCase(APITestCase):
         new_name = 'Google'
         data = {'provider': new_provider, 'name': new_name}
         serializer = serializers.SocialAppSerializer(instance=self.social_app, data=data, partial=True)
-        self.assertTrue(serializer.is_valid(), msg=UserErrorMessages.SERIALIZER_VALID_DATA.value)
+        self.assertTrue(serializer.is_valid())
         social_app = serializer.save()
         self.assertEqual(social_app.provider, new_provider)
         self.assertEqual(social_app.name, new_name)
