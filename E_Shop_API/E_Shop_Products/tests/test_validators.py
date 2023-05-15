@@ -1,10 +1,8 @@
 # python manage.py test E_Shop_API.E_Shop_Products.tests.test_validators
-
 from django.test import TestCase
 from django.core.exceptions import ValidationError
-
 from E_Shop_API.E_Shop_Products.validators import validate_negative
-from E_Shop_API.E_Shop_Products.tests.ErrorMessage.product_enums import ProductErrorMessages
+from E_Shop_API.E_Shop_Users.tests.helpers.error_messages import ErrorMessages
 
 
 class ValidatorsTestCase(TestCase):
@@ -25,5 +23,5 @@ class ValidatorsTestCase(TestCase):
         with self.assertRaises(ValidationError) as cm:
             validate_negative(-10)
 
-        expected_error_message = [ProductErrorMessages.NEGATIVE_VALUE]
+        expected_error_message = [ErrorMessages.NEGATIVE_VALUE]
         self.assertEqual(cm.exception.messages, expected_error_message)
