@@ -1,32 +1,13 @@
 # python manage.py test E_Shop_API.E_Shop_Products.tests.test_views
 from django.urls import reverse
 from rest_framework import status
-from rest_framework.test import APIRequestFactory, force_authenticate
-from rest_framework.test import APITestCase
+from rest_framework.test import APITestCase, APIRequestFactory, force_authenticate
 
 from django.test import TestCase
-from E_Shop_API.E_Shop_Users.models import Clients
 from E_Shop_API.E_Shop_Products.models import Product
 from E_Shop_API.E_Shop_Products.views import ProductCreateView, ProductListView
 
-
-# from E_Shop_API.E_Shop_Products.tests.helpers import create_admin_user, create_non_admin_user
-def create_admin_user():
-    return Clients.objects.create_user(
-        username="admin",
-        email='admin@gmail.com',
-        password='AdminPass123',
-        is_staff=True
-    )
-
-
-def create_non_admin_user():
-    return Clients.objects.create_user(
-        username="username",
-        email='user@gmail.com',
-        password='UserPass123',
-        is_staff=False
-    )
+from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_admin_user, create_basic_user
 
 
 class ProductCreateViewTestCase(TestCase):
@@ -34,7 +15,7 @@ class ProductCreateViewTestCase(TestCase):
     def setUpTestData(cls):
         cls.factory = APIRequestFactory()
         cls.admin_user = create_admin_user()
-        cls.non_admin_user = create_non_admin_user()
+        cls.non_admin_user = create_basic_user()
 
     def create_product(self, user, status_code, expected_count):
         url = reverse('create_product')
@@ -55,7 +36,7 @@ class ProductListViewTestCase(TestCase):
     def setUp(self):
         self.factory = APIRequestFactory()
         self.admin_user = create_admin_user()
-        self.non_admin_user = create_non_admin_user()
+        self.non_admin_user = create_basic_user()
 
     def test_product_list_admin(self):
         url = reverse('all_product')
@@ -86,7 +67,7 @@ class ProductViewTestCase(APITestCase):
 
     def test_get_product_non_admin(self):
         url = reverse('product_detail', args=[self.product.id])
-        self.client.force_authenticate(user=create_non_admin_user())
+        self.client.force_authenticate(user=create_basic_user())
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
@@ -115,6 +96,6 @@ class ProductViewTestCase(APITestCase):
 
     def test_delete_product_non_admin(self):
         url = reverse('product_detail', args=[self.product.id])
-        self.client.force_authenticate(user=create_non_admin_user())
+        self.client.force_authenticate(user=create_basic_user())
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
