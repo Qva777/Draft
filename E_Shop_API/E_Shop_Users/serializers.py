@@ -2,10 +2,11 @@ from .models import Clients
 from rest_framework import serializers
 from django.contrib.auth.password_validation import validate_password
 
-from django.contrib.sites.models import Site  # google
+from django.contrib.sites.models import Site        # google
 from allauth.socialaccount.models import SocialApp  # google
 
 
+# USER
 class UserDetailSerializer(serializers.ModelSerializer):
     """Return fields in  GET user detail """
     id = serializers.CharField(read_only=True)
@@ -36,6 +37,12 @@ class MyUserSerializer(serializers.ModelSerializer):
         return user
 
 
+class ActivationRequestSerializer(serializers.Serializer):
+    """ Activation account """
+    email = serializers.EmailField()
+
+
+# GOOGLE
 class SiteSerializer(serializers.ModelSerializer):
     """ Change your domain """
 
