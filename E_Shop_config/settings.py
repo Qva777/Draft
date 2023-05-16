@@ -235,3 +235,18 @@ SIMPLE_JWT = {
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
+
+# # Пул подключений к Redis (рекомендуется)
+# Укажите хост и порт вашего Redis-сервера
+CELERY_BROKER_URL = 'redis://localhost:6379/0'
+CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+
+# Пример настроек почты для Gmail SMTP
+# https://myaccount.google.com/apppasswords
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'chat.gpt9080@gmail.com'
+EMAIL_HOST_PASSWORD = 'wzmchwfjtvjdqfdm'
