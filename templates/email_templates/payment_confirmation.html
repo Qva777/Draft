@@ -72,6 +72,10 @@
 
         .confirmation-no-image {
             font-size: 18px;
+            margin-top: 117px;
+            margin-right: 43px;
+            margin-left: 42px;
+            text-align: center;
         }
 
         .confirmation-product-details {
@@ -144,7 +148,7 @@
         {% if product.image_base64 %}
         <img src="cid:inline_image_{{ product.id }}" alt="{{ product.name }}" class="confirmation-image">
         {% else %}
-        <p class="confirmation-no-image">No image available for this product.</p>
+        <p class="confirmation-no-image">No image available <br>for this product</p>
         {% endif %}
 
         <div class="confirmation-product-details">
