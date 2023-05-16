@@ -42,7 +42,7 @@
         </div>
         <div class="user-box">
             <input type="date" name="birth_date" value="{{ user.birth_date|date:'Y-m-d' }}"
-                   min="1930-01-01" required/>
+                   min="1970-01-01" required/>
             {% if form.birth_date.errors %}
             <p class="messages">{{ form.birth_date.errors }}</p>
             {% endif %}
