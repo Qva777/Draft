@@ -305,7 +305,53 @@ class CancelProduct(TemplateView):
 # купить корзину получить емаил, почистить код
 # купить корзину получить емаил, почистить код (API)
 # покрыть тестами
-
+import base64
+# class PaymentProcessor:
+#     @staticmethod
+#     def process_payment(product, token, request):
+#         amount = int(product.price * 100)
+#
+#         if product.count <= 0:
+#             error_message = "Product is out of stock."
+#             return False, error_message
+#
+#         try:
+#             charge = stripe.Charge.create(
+#                 amount=amount,
+#                 currency="usd",
+#                 source=token,
+#                 description=product.name,
+#             )
+#         except stripe.error.CardError as e:
+#             return False, e.user_message
+#
+#         # Reduce the product count only after a successful Stripe charge
+#         product.count -= 1
+#         product.save()
+#
+#         # Get the email from the Stripe charge object
+#         user_email = charge.source["name"]
+#
+#         # Send the email after a successful payment
+#
+#         email_context = {
+#             "product": product,
+#             "user": request.user,
+#             "total_price": product.price,
+#             "products": [
+#                 {
+#                     "id": product.id,
+#                     "name": product.name,
+#                     "description": product.description,
+#                     "count": 1,
+#                     "price": product.price,
+#
+#                 }
+#             ],
+#         }
+#         EmailSender.send_inline_photo_email(user_email, email_context)
+#
+#         return True, None
 class PaymentProcessor:
     @staticmethod
     def process_payment(product, token, request):
@@ -332,6 +378,13 @@ class PaymentProcessor:
         # Get the email from the Stripe charge object
         user_email = charge.source["name"]
 
+        # Convert the product image to base64
+        product_image_base64 = None
+        if product.photos.exists():
+            product_image = product.photos.first().image
+            with open(product_image.path, "rb") as image_file:
+                product_image_base64 = base64.b64encode(image_file.read()).decode()
+
         # Send the email after a successful payment
         email_context = {
             "product": product,
@@ -344,13 +397,13 @@ class PaymentProcessor:
                     "description": product.description,
                     "count": 1,
                     "price": product.price,
+                    "image_base64": product_image_base64,
                 }
             ],
         }
         EmailSender.send_inline_photo_email(user_email, email_context)
 
         return True, None
-
 
 class PaymentView(CartMixin, View):
     """ Detail views of product and Payment """
