@@ -9,13 +9,16 @@ from django.http import JsonResponse
 
 from django.shortcuts import get_object_or_404, redirect, render
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
-
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 # STRIPE KEY
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class CartMixin:
     """ Mixin to get the cart based on user authentication """
+
+
 
     @staticmethod
     def get_cart(request):
@@ -26,25 +29,26 @@ class CartMixin:
             cart, _ = Cart.objects.get_or_create(user=request.user)
             cart.schedule_deletion()  # Schedule deletion for authenticated users
             return cart
-
-
-
-        else:
-            session_key = request.session.session_key
-            if not session_key:
-                request.session.cycle_key()
+        # else:
+        #     # Если пользователь не аутентифицирован, выполните перенаправление на страницу входа
+        #     login_url = reverse('login')  # Замените 'login' на имя вашего представления входа
+        #     return redirect(login_url)
+        #     session_key = request.session.session_key
+        #     if not session_key:
+        #         request.session.cycle_key()
             # return Cart.objects.get_or_create(session_key=session_key)[0]
 
-            #  celery
-            cart, _ = Cart.objects.get_or_create(session_key=session_key)
-            cart.schedule_deletion()  # Schedule deletion for anonymous users
-            return cart
-
+            # #  celery
+            # cart, _ = Cart.objects.get_or_create(session_key=session_key)
+            # cart.schedule_deletion()  # Schedule deletion for anonymous users
+            # return cart
 
 class AddToCartView(View, CartMixin):
     """ Add a product to the cart """
 
     def get(self, request, product_id):
+        if not request.user.is_authenticated:
+            return redirect('login')  # Ред
         cart = self.get_cart(request)
         product = get_object_or_404(Product, id=product_id)
 
@@ -111,6 +115,8 @@ class CartDetailView(View, CartMixin):
     """ Display the cart contents """
 
     def get(self, request):
+        if not request.user.is_authenticated:
+            return redirect('login')  #
         cart = self.get_cart(request)
         cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
 
