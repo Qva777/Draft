@@ -113,6 +113,7 @@ class UserLoginView(View):
 
 
 class ForgotPassword(TemplateView):
+    """ Send letter Forgot Password """
     template_name = 'registration/forgot_password.html'
 
     def get(self, request, *args, **kwargs):
@@ -145,6 +146,7 @@ class ForgotPassword(TemplateView):
 
 
 class PasswordReset(View):
+    """ Handles the password reset process """
     template_name = 'registration/reset_password.html'
 
     def get(self, request, *args, **kwargs):
@@ -155,7 +157,6 @@ class PasswordReset(View):
             request.session['reset_user_id'] = user_id
             return render(request, self.template_name)
         except Clients.DoesNotExist:
-            # Redirect to an error page or show an error message
             return redirect('404')
 
     def post(self, request, *args, **kwargs):
@@ -167,7 +168,7 @@ class PasswordReset(View):
             form_errors.append("Passwords do not match.")
 
         try:
-            validate_password(new_password)  # Validate the new password
+            validate_password(new_password)
         except ValidationError as e:
             form_errors.extend(e.messages)
 
@@ -183,14 +184,15 @@ class PasswordReset(View):
         user.password = make_password(new_password)  # Hash the new password before saving
         user.save()
         del request.session['reset_user_id']  # Clear the session variable after password reset
-        return redirect('home')  # Create a new URL and view for this page
+        return redirect('home')
 
 
 @method_decorator(ThrottleActivationEmail(timeout=60), name='dispatch')
 class ResendConfirmationView(View):
-    """ Resend activation email /resend_confirmation/ """
+    """ Resend confirmation email /resend_confirmation/ """
 
-    def post(self, request):
+    @staticmethod
+    def post(request):
         if request.method == 'POST':
             email = request.user.email
             user = get_object_or_404(get_user_model(), email=email)
@@ -204,7 +206,7 @@ class ResendConfirmationView(View):
 
 
 class ConfirmAccountView(View):
-    """ Activate user account /confirm_account/ """
+    """ Confirm user account /confirm_account/ """
 
     @staticmethod
     def get(request, uid, token):
