@@ -1,6 +1,7 @@
 pip freeze > requirements.txt <br>
 check
 <hr>
+
 <h4>dumpdata and loaddata:</h4>
 makemigrations
 migrate
