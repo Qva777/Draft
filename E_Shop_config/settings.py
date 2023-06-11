@@ -12,9 +12,8 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 import os
 from pathlib import Path
 from datetime import timedelta
-
-# from celery.schedules import crontab
 from dotenv import load_dotenv
+
 load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -52,6 +51,7 @@ INSTALLED_APPS = [
     # INSTALLED LIBRARY:
     'djoser',
     # 'celery',
+    "django_celery_beat",
     'coreapi',
     'drf_yasg',
 
@@ -112,7 +112,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
 
     # my anonim user
     # 'E_Shop_API.E_Shop_Users.views.AnonymousSessionMiddleware',
@@ -235,14 +234,12 @@ SIMPLE_JWT = {
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
-
-# # Пул подключений к Redis (рекомендуется)
-# Укажите хост и порт вашего Redis-сервера
+#  Redis
+# host and port Redis-sever
 CELERY_BROKER_URL = 'redis://localhost:6379/0'
 CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
-
-# Пример настроек почты для Gmail SMTP
+#  gmail settings Gmail SMTP
 # https://myaccount.google.com/apppasswords
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
@@ -250,3 +247,13 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'chat.gpt9080@gmail.com'
 EMAIL_HOST_PASSWORD = 'wzmchwfjtvjdqfdm'
+
+# from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'send_new_user_notification': {
+        'task': 'E_Shop_config.tasks.send_new_user_notification',
+        # 'schedule': timedelta(seconds=60),  # Schedule the task for midnight every day
+        'schedule': timedelta(days=1),  # Schedule the task for midnight every day
+    },
+}
