@@ -248,12 +248,10 @@ EMAIL_USE_TLS = True
 EMAIL_HOST_USER = 'chat.gpt9080@gmail.com'
 EMAIL_HOST_PASSWORD = 'wzmchwfjtvjdqfdm'
 
-# from celery.schedules import crontab
-
+# Send new user registration notification
 CELERY_BEAT_SCHEDULE = {
     'send_new_user_notification': {
         'task': 'E_Shop_config.tasks.send_new_user_notification',
-        # 'schedule': timedelta(seconds=60),  # Schedule the task for midnight every day
-        'schedule': timedelta(days=1),  # Schedule the task for midnight every day
+        'schedule': timedelta(days=1),
     },
 }
