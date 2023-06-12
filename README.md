@@ -65,11 +65,12 @@ redis-server
 
 
 commit:
-git commit --date="2023-06-11T12:00:00" -m "Updated"
+git commit --date="2023-06-12T12:00:00" -m "Updated"
                    year-month-day
 
 
 
 отменить последний коммит сохранив данные  
 git reset --soft HEAD~1
+
 
