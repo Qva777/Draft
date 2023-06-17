@@ -265,4 +265,3 @@ class PaymentSuccessView(View, CartOperationMixin):
 #     email.send()
 
 
-
