@@ -265,27 +265,6 @@ class PaymentSuccessView(View, CartOperationMixin):
 #     email.send()
 
 
-# class ClearCartAndDeductProductsView(View):
-#     """ Clear the cart after successful payment """
-#
-#     @staticmethod
-#     def clear_cart_and_deduct_products(cart_id):
-#         cart = Cart.objects.get(id=cart_id)
-#         cart_products = CartProduct.objects.filter(cart=cart)
-#
-#         for cart_product in cart_products:
-#             product = cart_product.product
-#             product.count -= cart_product.quantity
-#             product.save()
-#
-#         cart_products.delete()
-#
-#     def post(self, request):
-#         cart_id = request.POST.get('cart_id')
-#         self.clear_cart_and_deduct_products(cart_id)
-#         return redirect('payment_success')
-#
-#
 
 
 
