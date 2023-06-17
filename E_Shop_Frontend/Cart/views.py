@@ -373,17 +373,3 @@ class PaymentSuccessView(View, CartOperationMixin):
 #         else:
 #             return redirect(reverse('404'))
 
-
-# class CartDetailView(View, CartMixin):
-#     """ Display the cart contents """
-#
-#     @login_required
-#     def get(self, request):
-#         cart = self.get_cart(request)
-#         cart_products = CartProduct.objects.filter(cart=cart).order_by('-created_at')
-#
-#         for cart_product in cart_products:
-#             if cart_product.product.count == 0 or cart_product.quantity > cart_product.product.count:
-#                 cart_product.delete()
-#
-#         return render(request, 'pages/cart_detail.html', {'cart': cart, 'cart_products': cart_products})
