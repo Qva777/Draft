@@ -74,7 +74,6 @@ git commit --date="2023-06-14T12:00:00" -m "Updated"
 git reset --soft HEAD~1
 
 
-git commit --date="2023-06-18T12:00:00" -m "Updated"
 git commit --date="2023-06-19T12:00:00" -m "Updated"
 git commit --date="2023-06-20T12:00:00" -m "Updated"
 git commit --date="2023-06-21T12:00:00" -m "Updated"
