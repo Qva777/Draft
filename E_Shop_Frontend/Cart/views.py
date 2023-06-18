@@ -243,23 +243,3 @@ class PaymentSuccessView(View, CartOperationMixin):
         else:
             return redirect(reverse('404'))
 
-# def send_inline_photo_email(user_email, email_context):
-#     subject = 'Payment Confirmation'
-#     html_message = render_to_string('email_templates/payment_confirmation.html', email_context)
-#     plain_message = strip_tags(html_message)
-#
-#     # Create the email message
-#     email = EmailMultiAlternatives(subject, plain_message, settings.DEFAULT_FROM_EMAIL, [user_email])
-#     email.attach_alternative(html_message, 'text/html')
-#
-#     # Attach product images to the email as inline content
-#     products = email_context['products']
-#     for product in products:
-#         image_base64 = product['image_base64']
-#         if image_base64:
-#             email_image = MIMEImage(base64.b64decode(image_base64))
-#             email_image.add_header('Content-ID', f'<inline_image_{product["id"]}>')
-#             email.attach(email_image)
-#
-#     # Send the email
-#     email.send()
