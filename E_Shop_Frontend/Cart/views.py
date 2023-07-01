@@ -242,3 +242,4 @@ class PaymentSuccessView(View, CartOperationMixin):
             return render(request, "pages/payment_success.html")
         else:
             return redirect(reverse('404'))
+
