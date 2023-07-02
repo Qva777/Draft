@@ -244,4 +244,3 @@ class PaymentSuccessView(View, CartOperationMixin):
             return redirect(reverse('404'))
 
 
-
