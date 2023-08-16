@@ -8,8 +8,8 @@ from django.urls import reverse
 
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
 from E_Shop_API.E_Shop_Products.models import Product
+from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_basic_user
 from E_Shop_Frontend.Products.views import EmailSender, PaymentProcessor
-from E_Shop_API.E_Shop_Users.models import Clients
 
 
 class TestHelpers(TestCase):
@@ -164,17 +164,15 @@ class PaymentViewTestCase(TestHelpers):
 
     def setUp(self):
         """ Set up for payment view tests """
-        self.user = Clients.objects.create_user(username='testuser', password='testpass', email="eeefs@gmail.com")
+        self.user = create_basic_user()
         self.product = Product.objects.create(name='Test Product', price=10, count=1)
         self.cart = Cart.objects.create(user=self.user)
         self.cart_product = CartProduct.objects.create(cart=self.cart, product=self.product)
 
     def test_get_payment_page(self):
         """ Test getting the payment page """
-        self.client.login(username='testuser', password='testpass')
-
+        self.client.login(username='User', password='UserPass123')
         stripe_token = self.generate_stripe_token()
-
         response = self.client.post(reverse('payment_pro', args=[self.product.id]), {'stripeToken': stripe_token})
 
         self.assertEqual(response.status_code, 200)
