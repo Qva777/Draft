@@ -73,3 +73,4 @@ git commit --date="2023-08-09T12:00:00" -m "Updated"
 отменить последний коммит сохранив данные  
 git reset --soft HEAD~1
 
+
