@@ -1,18 +1,3 @@
-# import stripe
-# from django.views import View
-# from django.conf import settings
-# from django.http import JsonResponse
-# from django.shortcuts import get_object_or_404
-# from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
-# from django.shortcuts import render, redirect, reverse
-# from email.mime.image import MIMEImage
-# import os
-# import base64
-# from django.conf import settings
-# from django.core.mail import EmailMultiAlternatives
-# from django.template.loader import render_to_string
-# from django.utils.html import strip_tags
-# from django.views import View
 import stripe
 import base64
 import os
@@ -231,7 +216,6 @@ class PaymentSuccessView(View, CartOperationMixin):
                 else:
                     product['image_base64'] = None
 
-            # send_inline_photo_email(user_email, email_context)
             EmailSender.send_inline_photo_email(user_email, email_context)
 
             self.clear_cart_and_deduct_products(cart_id)
