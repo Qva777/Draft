@@ -50,6 +50,10 @@
     overflow-y: auto;
 }
 
+.scrollable-email::-webkit-scrollbar {
+    width: 6px;
+}
+
 body.search-field input {
     color: var(--text-color);
 }
@@ -320,6 +324,7 @@ i, .searchToggle i {
     .nav-links li:nth-child(3) {
         display: none;
     }
+
     .desktop-hidden {
         display: none;
     }
