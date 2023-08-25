@@ -7,7 +7,7 @@ from django.test import TestCase
 from django.urls import reverse
 
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct
-from E_Shop_API.E_Shop_Products.models import Product
+from E_Shop_API.E_Shop_Products.tests.helpers.test_helpers import create_product
 from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_basic_user
 from E_Shop_Frontend.Products.views import EmailSender, PaymentProcessor
 
@@ -37,13 +37,7 @@ class SearchViewTest(TestCase):
 
     def setUp(self):
         """ Set up for search view tests """
-        self.product = Product.objects.create(
-            name='Test Product',
-            description='This is a test product description.',
-            count=10,
-            price=19.99,
-            active=True,
-        )
+        self.product = create_product()
 
     def test_search_view_with_results(self):
         """ Test search view with results """
@@ -79,20 +73,7 @@ class ProductHomeListViewTest(TestCase):
 
     def setUp(self):
         """ Set up for product home list view tests """
-        self.product1 = Product.objects.create(
-            name='Product 1',
-            description='Description for Product 1',
-            count=5,
-            price=10.99,
-            active=True,
-        )
-        self.product2 = Product.objects.create(
-            name='Product with Stock',
-            description='Description for Product with Stock',
-            count=10,
-            price=15.99,
-            active=True,
-        )
+        self.product = create_product()
 
     def test_product_home_list_view_with_stock(self):
         """ Test product home list view with stock """
@@ -165,7 +146,8 @@ class PaymentViewTestCase(TestHelpers):
     def setUp(self):
         """ Set up for payment view tests """
         self.user = create_basic_user()
-        self.product = Product.objects.create(name='Test Product', price=10, count=1)
+        self.product = create_product()
+
         self.cart = Cart.objects.create(user=self.user)
         self.cart_product = CartProduct.objects.create(cart=self.cart, product=self.product)
 
