@@ -49,31 +49,27 @@ INSTALLED_APPS = [
     'E_Shop_Frontend.Users.apps.UserConfig',
     'E_Shop_Frontend.Products.apps.ProductsConfig',
     # INSTALLED LIBRARY:
-    'djoser',
-    # 'celery',
-    "django_celery_beat",
-    'coreapi',
-    'drf_yasg',
-
-    # 'coverage', # count of tests
+    "django_celery_beat",  # scheduler
+    'djoser',              # authorization
+    'coreapi',             # API
+    'drf_yasg',            # Swagger
     'rest_framework',
     'rest_framework.authtoken',
-    # google
+    # GOOGLE
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'django.contrib.sites',
-
-    # url
-    # 'django_extensions',
-
+    # TOOLS
+    'coverage',  # percentage of tests
 ]
 AUTH_USER_MODEL = 'E_Shop_Users.Clients'
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
 # Google Providers:
 SITE_ID = 1
 SOCIALACCOUNT_LOGIN_ON_GET = True
@@ -93,9 +89,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 10,
     'DATETIME_FORMAT': "%Y-%m-%d %H:%M",
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     'rest_framework.permissions.IsAuthenticated',
-    # ],
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.TokenAuthentication',
         'rest_framework.authentication.BasicAuthentication',
@@ -112,9 +105,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    # my anonim user
-    # 'E_Shop_API.E_Shop_Users.views.AnonymousSessionMiddleware',
 ]
 
 ROOT_URLCONF = 'E_Shop_config.urls'
