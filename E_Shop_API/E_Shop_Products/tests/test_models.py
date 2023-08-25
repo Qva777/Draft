@@ -2,18 +2,15 @@
 from django.test import TestCase
 from django.core.exceptions import ValidationError
 from E_Shop_API.E_Shop_Products.models import Product, ProductImage
+from E_Shop_API.E_Shop_Products.tests.helpers.test_helpers import create_product
 
 
 class ProductModelTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """ Create a Product instance for testing """
-        cls.product = Product.objects.create(
-            name='Test Product',
-            description='Test description',
-            price=10.0,
-            count=20,
-        )
+        cls.product = create_product()
+
 
     def test_name_label(self):
         """ Test if the name field's verbose_name is 'Name' """
@@ -46,12 +43,8 @@ class ProductImageModelTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         """ Create a Product and ProductImage instances for testing """
-        cls.product = Product.objects.create(
-            name='Test Product',
-            description='Test description',
-            price=10.0,
-            count=20,
-        )
+        cls.product = create_product()
+
         cls.product_image = ProductImage.objects.create(
             product=cls.product,
             image='static/img/bin.png',
