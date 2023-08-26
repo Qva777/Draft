@@ -9,7 +9,6 @@ def create_admin_user():
         email='admin@gmail.com',
         username='admin',
         password='AdminPass123',
-        # birth_date=date(1990, 1, 1),
         is_staff=True,
         is_superuser=True,
     )
@@ -23,7 +22,6 @@ def create_basic_user():
         last_name='User',
         email='user@gmail.com',
         password='UserPass123',
-        # birth_date=date(1990, 1, 1),
         is_staff=False,
         is_superuser=False,
     )
