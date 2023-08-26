@@ -11,7 +11,6 @@ class ProductModelTestCase(TestCase):
         """ Create a Product instance for testing """
         cls.product = create_product()
 
-
     def test_name_label(self):
         """ Test if the name field's verbose_name is 'Name' """
         field_label = self.product._meta.get_field('name').verbose_name
