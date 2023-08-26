@@ -19,7 +19,7 @@ class CartAdmin(admin.ModelAdmin):
     list_display_links = ("user", "total_price", "created_at")
 
     def total_price(self, obj):
-        """Return the total price of all products in the cart"""
+        """ Return the total price of all products in the cart """
         return '{:.1f}'.format(obj.total_price)
 
     total_price.admin_order_field = 'total_price'
