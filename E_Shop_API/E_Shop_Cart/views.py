@@ -1,30 +1,28 @@
-from audioop import reverse
+import stripe
 
-from E_Shop_API.E_Shop_Users.models import Clients
-from E_Shop_Frontend.Cart.views import PaymentCartView
-from E_Shop_config.settings import BASE_DIR
-# payment cart -
-from django.db import models  # Add this import
-from rest_framework import status
-from rest_framework import generics
-from rest_framework import serializers
+from django.conf import settings
+from django.urls import reverse
+
+from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics, serializers, status
 
 from E_Shop_API.E_Shop_Cart.models import Cart, CartProduct, Product
 from E_Shop_API.E_Shop_Cart.serializers import CartProductSerializer
 
-import stripe
-from django.http import JsonResponse
-import stripe
-from django.conf import settings
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from django.shortcuts import render, redirect
-from rest_framework import status
-from rest_framework.response import Response
-
-# from E_Shop_config.tasks import schedule_cart_deletion
 stripe.api_key = settings.STRIPE_SECRET_KEY
+
+
+class CartMixin:
+    """ Mixin to get the cart based on user authentication """
+
+    @staticmethod
+    def get_cart(request):
+        user = request.user
+        if user.is_authenticated:
+            cart, _ = Cart.objects.get_or_create(user=user)
+            cart.schedule_deletion()  # Schedule deletion for authenticated users (celery)
+            return cart
 
 
 class CartProductListAPIView(generics.ListAPIView):
@@ -32,25 +30,11 @@ class CartProductListAPIView(generics.ListAPIView):
     serializer_class = CartProductSerializer
 
     def get_queryset(self):
-        user = self.request.user
-        # session_key = self.request.session.session_key
-
-        if user.is_authenticated:
-            cart, _ = Cart.objects.get_or_create(user=user)
-
-            #  celery
-            # cart.schedule_deletion()
-
-        # else:
-        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
-
-        #  celery
-        # cart.schedule_deletion()
+        cart = self.get_cart()
         return cart.cart.all()
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-
         serializer = self.get_serializer(queryset, many=True)
         cart_total_price = self.calculate_cart_total_price(queryset)
 
@@ -63,6 +47,13 @@ class CartProductListAPIView(generics.ListAPIView):
     def calculate_cart_total_price(cart_products):
         total_price = sum(cart_product.subtotal() for cart_product in cart_products)
         return total_price
+
+    def get_cart(self):
+        user = self.request.user
+        if user.is_authenticated:
+            cart, _ = Cart.objects.get_or_create(user=user)
+            cart.schedule_deletion()  # celery
+            return cart
 
 
 class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
@@ -78,14 +69,7 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
             raise serializers.ValidationError('Product not found')
 
         user = self.request.user
-        # session_key = self.request.session.session_key
-
-        if user.is_authenticated:
-            cart, _ = Cart.objects.get_or_create(user=user)
-            # celery
-            cart.schedule_deletion()
-        # else:
-        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
+        cart = self.get_cart(user)
 
         try:
             cart_product = CartProduct.objects.get(cart=cart, product=product)
@@ -94,30 +78,6 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
 
         return cart_product
 
-    # def post(self, request, *args, **kwargs):
-    #     cart_product = self.get_object()
-    #
-    #     quantity = request.data.get('quantity', 1)
-    #
-    #     if not isinstance(quantity, int) or quantity < 1:
-    #         return Response({'error': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     if cart_product.product.count < quantity:
-    #         return Response({'error': 'Quantity exceeds available count'}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     # Check if the product is already in the cart
-    #     if cart_product.quantity > 0:
-    #         return Response({'error': 'Product already in cart'}, status=status.HTTP_400_BAD_REQUEST)
-    #
-    #     cart_product.quantity += quantity
-    #     cart_product.save()
-    #
-    #     serializer = self.get_serializer(cart_product)
-    #     response_data = {
-    #         'message': f'Product {cart_product.product.name} added to cart',
-    #         'data': serializer.data
-    #     }
-    #     return Response(response_data, status=status.HTTP_200_OK)
     def post(self, request, *args, **kwargs):
         cart_product = self.get_object()
 
@@ -126,15 +86,12 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
         if not isinstance(quantity, int) or quantity < 1:
             return Response({'error': 'Invalid quantity'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if cart already contains 10 products
-        print(f"Number of products in cart: {cart_product.cart.cart.count()}")
-        if cart_product.cart.cart.count() >= 10:
+        if self.is_cart_full(cart_product.cart):
             return Response({'error': 'Maximum limit of 10 products reached'}, status=status.HTTP_400_BAD_REQUEST)
 
         if cart_product.product.count < quantity:
             return Response({'error': 'Quantity exceeds available count'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if the product is already in the cart
         if cart_product.quantity > 0:
             return Response({'error': f'Product {cart_product.product.name} already in cart'},
                             status=status.HTTP_400_BAD_REQUEST)
@@ -178,190 +135,80 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
 
         return Response({'message': 'Product removed from cart'}, status=status.HTTP_200_OK)
 
-#
-# stripe.api_key = settings.STRIPE_SECRET_KEY
-
-# class PaymentCartAPIView(APIView):
-#     """Processing the cart payment"""
-#
-#     def get_cart(self, request):
-#         user = request.user
-#         session_key = request.session.session_key
-#
-#         if user.is_authenticated:
-#             cart, _ = Cart.objects.get_or_create(user=user)
-#         else:
-#             cart, _ = Cart.objects.get_or_create(session_key=session_key)
-#
-#         return cart
-#
-#     def post(self, request):
-#         cart = self.get_cart(request)
-#         cart_products = CartProduct.objects.filter(cart=cart)
-#         line_items = []
-#         for cart_product in cart_products:
-#             product = cart_product.product
-#             if product.count < cart_product.quantity:
-#                 return Response({'error': 'The quantity of the product is more than the available amount'})
-#
-#             line_item = {
-#                 'price_data': {
-#                     'currency': 'usd',
-#                     'product_data': {
-#                         'name': product.name,
-#                         'description': product.description,
-#                     },
-#                     'unit_amount': int(product.price * 100),
-#                 },
-#                 'quantity': cart_product.quantity,
-#             }
-#             line_items.append(line_item)
-#
-#         checkout_session = stripe.checkout.Session.create(
-#             payment_method_types=['card'],
-#             line_items=line_items,
-#             mode='payment',
-#             success_url=request.build_absolute_uri(reverse('payment_success')),
-#             cancel_url=request.build_absolute_uri(reverse('404')),
-#             metadata={
-#                 'cart_id': str(cart.id)
-#             }
-#         )
-#
-#         request.session['checkout_session_id'] = checkout_session.id
-#         request.session['cart_id'] = str(cart.id)
-#         request.session.modified = True
-#
-#         return Response({'url': checkout_session.url})
-
-from django.urls import reverse_lazy
-
-
-class PaymentCartMixin:
+    @staticmethod
+    def is_cart_full(cart):
+        return cart.cart.count() >= 10
 
     @staticmethod
-    def create_line_item(cart_product):
-        product = cart_product.product
-        if product.count < cart_product.quantity:
-            return {'error': 'The quantity of the product is more than the available amount'}
-
-        line_item = {
-            'price_data': {
-                'currency': 'usd',
-                'product_data': {
-                    'name': product.name,
-                    'description': product.description,
-                },
-                'unit_amount': int(product.price * 100),
-            },
-            'quantity': cart_product.quantity,
-        }
-        return line_item
+    def get_cart(user):
+        if user.is_authenticated:
+            cart, _ = Cart.objects.get_or_create(user=user)
+            cart.schedule_deletion()
+            return cart
 
 
-class PaymentCartAPIView(APIView, PaymentCartMixin):
-    """Processing the cart payment"""
+class PaymentCartAPIView(APIView):
+    """ Processing the cart payment """
 
     @staticmethod
     def get_cart(request):
         user = request.user
-        session_key = request.session.session_key
 
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
-        # else:
-        #     cart, _ = Cart.objects.get_or_create(session_key=session_key)
-
-        return cart
+            cart.schedule_deletion()  # Schedule deletion for authenticated users (celery)
+            return cart
+        return None
 
     def post(self, request):
         cart = self.get_cart(request)
+
+        if cart is None:
+            return Response({'error': 'User is not authenticated'}, status=status.HTTP_401_UNAUTHORIZED)
+
         cart_products = CartProduct.objects.filter(cart=cart)
-        line_items = [self.create_line_item(cart_product) for cart_product in cart_products]
-        error_item = next((item for item in line_items if 'error' in item), None)
-        if error_item:
-            return Response(error_item)
+        line_items = self.create_line_items(cart_products)
 
         checkout_session = stripe.checkout.Session.create(
             payment_method_types=['card'],
             line_items=line_items,
             mode='payment',
-            success_url=request.build_absolute_uri(reverse_lazy('payment_success')),
-            cancel_url=request.build_absolute_uri(reverse_lazy('404')),
+            success_url=request.build_absolute_uri(reverse('payment_success')),
+            cancel_url=request.build_absolute_uri(reverse('404')),
             metadata={
                 'cart_id': str(cart.id)
             }
         )
 
-        request.session['checkout_session_id'] = checkout_session.id
-        request.session['cart_id'] = str(cart.id)
-        request.session.modified = True
+        self.update_session_data(request, cart, checkout_session)
 
         return Response({'url': checkout_session.url})
 
-# class PaymentCartMixin:
-#     def create_line_item(self, cart_product):
-#         product = cart_product.product
-#         if product.count < cart_product.quantity:
-#             return {'error': 'The quantity of the product is more than the available amount'}
-#
-#         line_item = {
-#             'price_data': {
-#                 'currency': 'usd',
-#                 'product_data': {
-#                     'name': product.name,
-#                     'description': product.description,
-#                 },
-#                 'unit_amount': int(product.price * 100),
-#             },
-#             'quantity': cart_product.quantity,
-#         }
-#         return line_item
-#
-# from django.urls import reverse_lazy
-# class PaymentCartAPIView(APIView, PaymentCartMixin):
-#     """Processing the cart payment"""
-#
-#     def get_cart(self, request):
-#         user = request.user
-#         session_key = request.session.session_key
-#
-#         if user.is_authenticated:
-#             cart, _ = Cart.objects.get_or_create(user=user)
-#         else:
-#             cart, _ = Cart.objects.get_or_create(session_key=session_key)
-#
-#         return cart
-#
-#     def post(self, request):
-#         cart = self.get_cart(request)
-#         cart_products = CartProduct.objects.filter(cart=cart)
-#         line_items = [self.create_line_item(cart_product) for cart_product in cart_products]
-#         error_item = next((item for item in line_items if 'error' in item), None)
-#         if error_item:
-#             return Response(error_item)
-#
-#         checkout_session = stripe.checkout.Session.create(
-#             payment_method_types=['card'],
-#             line_items=line_items,
-#             mode='payment',
-#             success_url=request.build_absolute_uri(reverse_lazy('payment_success')),
-#             cancel_url=request.build_absolute_uri(reverse_lazy('404')),
-#             metadata={
-#                 'cart_id': str(cart.id)
-#             }
-#         )
-#
-#         request.session['checkout_session_id'] = checkout_session.id
-#         request.session['cart_id'] = str(cart.id)
-#         request.session.modified = True
-#
-#         return Response({'url': checkout_session.url})
+    @staticmethod
+    def create_line_items(cart_products):
+        line_items = []
+        for cart_product in cart_products:
+            product = cart_product.product
+            if product.count < cart_product.quantity:
+                return Response({'error': 'The quantity of the product is more than the available amount'})
 
+            line_item = {
+                'price_data': {
+                    'currency': 'usd',
+                    'product_data': {
+                        'name': product.name,
+                        'description': product.description,
+                    },
+                    'unit_amount': int(product.price * 100),
+                },
+                'quantity': cart_product.quantity,
+            }
+            line_items.append(line_item)
 
-# celery
-# from django.http import HttpResponse
-# from E_Shop_config.tasks import test_func
-# def test(request):
-#     test_func.delay()
-#     return HttpResponse("Done")
+        return line_items
+
+    @staticmethod
+    def update_session_data(request, cart, checkout_session):
+        request.session['checkout_session_id'] = checkout_session.id
+        request.session['cart_id'] = str(cart.id)
+        request.session.modified = True
