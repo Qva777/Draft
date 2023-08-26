@@ -66,7 +66,6 @@ class RegistrationView(View):
 
         return render(request, self.template_name, {'form': form})
 
-    # @method_decorator(throttle_activation_email)
     def post(self, request):
         form = self.form_class(request.POST, request.FILES)
         if form.is_valid():
