@@ -20,19 +20,19 @@ class Cart(models.Model):
 
     @property
     def total_price(self):
-        """Calculate the total price of all products in the cart"""
+        """ Calculate the total price of all products in the cart """
         total = 0
         for item in self.cart.all():
             total += item.product.price * item.quantity
         return total
 
     def __str__(self):
-        """String representation"""
+        """ String representation """
         return str(self.id)
 
     #     celery
     def schedule_deletion(self):
-        """Schedule the deletion of the cart"""
+        """ Schedule the deletion of the cart (celery)"""
         delete_cart.apply_async((str(self.id),), eta=self.created_at + timedelta(minutes=1))
 
 
