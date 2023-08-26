@@ -1,19 +1,15 @@
 # python manage.py test E_Shop_API.E_Shop_Cart.tests.test_views
 from django.urls import reverse
-from django.test import TestCase
-
 from rest_framework import status
 from rest_framework.test import APIClient
+from django.test import TestCase
+from rest_framework.test import APIRequestFactory
 
 from E_Shop_API.E_Shop_Cart.models import Cart, Product, CartProduct
 from E_Shop_API.E_Shop_Cart.serializers import CartProductSerializer
 from E_Shop_API.E_Shop_Cart.views import CartProductListAPIView
-from E_Shop_API.E_Shop_Users.models import Clients
+from E_Shop_API.E_Shop_Products.tests.helpers.test_helpers import create_product
 from E_Shop_API.E_Shop_Users.tests.helpers.test_helpers import create_basic_user
-
-from rest_framework import generics
-from rest_framework.response import Response
-from rest_framework import status
 
 
 class CartProductViewAPITestCase(TestCase):
@@ -25,7 +21,8 @@ class CartProductViewAPITestCase(TestCase):
         self.user = create_basic_user()
 
         self.cart = Cart.objects.create(user=self.user)
-        self.product = Product.objects.create(name='Test Product', count=20, price=10.0)
+        self.product = create_product()
+
         self.client.force_authenticate(user=self.user)
 
     def tearDown(self):
@@ -89,37 +86,9 @@ class CartProductViewAPITestCase(TestCase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
 
-#  new code updated
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APIClient
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APIClient
-
-from django.test import TestCase
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APIClient
-
-from django.test import TestCase
-from django.contrib.auth.models import User
-from rest_framework.test import APIClient
-from rest_framework import status
-
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from django.contrib.auth.models import User
-
-from django.test import TestCase
-from rest_framework.test import APIRequestFactory
-from django.contrib.auth.models import User
-
-
 class CartProductListAPIViewTestCase(TestCase):
     def setUp(self):
+        """ Set up the test environment """
         self.factory = APIRequestFactory()
         self.user = create_basic_user()
         self.cart = Cart.objects.create(user=self.user)
@@ -129,58 +98,44 @@ class CartProductListAPIViewTestCase(TestCase):
         self.cart_product2 = CartProduct.objects.create(product=self.product2, cart=self.cart, quantity=1)
 
     def test_cart_product_list_api_view(self):
-        # Создайте запрос
+        """ Test the cart product list API view with valid data """
         url = '/cart/'
         request = self.factory.get(url)
         request.user = self.user
 
-        # Вызовите API view
         response = CartProductListAPIView.as_view()(request)
-
-        # Проверьте, что ответ имеет код 200 OK
         self.assertEqual(response.status_code, 200)
 
-        # Проверьте, что данные в ответе правильно сериализованы
-        # expected_data = CartProductSerializer([self.product1, self.product2], many=True).data
         expected_data = CartProductSerializer([self.cart_product1, self.cart_product2], many=True).data
-
         expected_data.append({"total_cart_price": 35.0})
         self.assertEqual(response.data, expected_data)
 
     def test_cart_product_list_api_view_invalid_product(self):
-        # Создайте запрос с аутентифицированным пользователем и недопустимым продуктом в корзине
+        """ Test the cart product list API view with an invalid product """
         url = '/cart/'
         request = self.factory.get(url)
         request.user = self.user
 
-        # Создайте действительный продукт, который существует в базе данных
-        valid_product = Product.objects.create(name='Valid Product', price=20, count=3)
+        valid_product = create_product()
 
-        # Измените продукт в корзине на созданный действительный продукт
         self.cart_product1.product = valid_product
         self.cart_product1.save()
 
-        # Вызовите API view
         response = CartProductListAPIView.as_view()(request)
 
-        # Проверьте, что ответ имеет код 200 OK и включает созданный продукт
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data) - 1, 2)  # Ожидается два продукта в корзине, исключая "total_cart_price"
+        self.assertEqual(len(response.data) - 1, 2)
 
     def test_cart_product_list_api_view_empty_cart(self):
-        # Создайте запрос с аутентифицированным пользователем и пустой корзиной
+        """ Test the cart product list API view with an empty cart """
         url = '/cart/'
         request = self.factory.get(url)
         request.user = self.user
 
-        # Очистите корзину пользователя
-        self.cart.cart.all().delete()  # Используйте метод delete() для удаления всех продуктов
+        self.cart.cart.all().delete()
 
-        # Вызовите API view
         response = CartProductListAPIView.as_view()(request)
 
-        # Проверьте, что ответ имеет код 200 OK и пустой список продуктов
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(len(response.data), 1)  # Ожидается только поле "total_cart_price"
+        self.assertEqual(len(response.data), 1)
 
-    # Другие тесты оставьте без изменений
