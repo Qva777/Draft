@@ -25,37 +25,6 @@ class CartMixin:
             return cart
 
 
-class CartProductListAPIView(generics.ListAPIView):
-    """ List of Products in Cart """
-    serializer_class = CartProductSerializer
-
-    def get_queryset(self):
-        cart = self.get_cart()
-        return cart.cart.all()
-
-    def list(self, request, *args, **kwargs):
-        queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        cart_total_price = self.calculate_cart_total_price(queryset)
-
-        response_data = serializer.data
-        response_data.append({"total_cart_price": cart_total_price})
-
-        return Response(response_data, status=status.HTTP_200_OK)
-
-    @staticmethod
-    def calculate_cart_total_price(cart_products):
-        total_price = sum(cart_product.subtotal() for cart_product in cart_products)
-        return total_price
-
-    def get_cart(self):
-        user = self.request.user
-        if user.is_authenticated:
-            cart, _ = Cart.objects.get_or_create(user=user)
-            cart.schedule_deletion()  # celery
-            return cart
-
-
 class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generics.DestroyAPIView):
     """ API view for adding, updating, and deleting products in the cart """
     serializer_class = CartProductSerializer
@@ -144,6 +113,37 @@ class CartProductAPIView(generics.CreateAPIView, generics.UpdateAPIView, generic
         if user.is_authenticated:
             cart, _ = Cart.objects.get_or_create(user=user)
             cart.schedule_deletion()
+            return cart
+
+
+class CartProductListAPIView(generics.ListAPIView):
+    """ List of Products in Cart """
+    serializer_class = CartProductSerializer
+
+    def get_queryset(self):
+        cart = self.get_cart()
+        return cart.cart.all()
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        cart_total_price = self.calculate_cart_total_price(queryset)
+
+        response_data = serializer.data
+        response_data.append({"total_cart_price": cart_total_price})
+
+        return Response(response_data, status=status.HTTP_200_OK)
+
+    @staticmethod
+    def calculate_cart_total_price(cart_products):
+        total_price = sum(cart_product.subtotal() for cart_product in cart_products)
+        return total_price
+
+    def get_cart(self):
+        user = self.request.user
+        if user.is_authenticated:
+            cart, _ = Cart.objects.get_or_create(user=user)
+            cart.schedule_deletion()  # celery
             return cart
 
 
