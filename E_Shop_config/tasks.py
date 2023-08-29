@@ -20,7 +20,6 @@ def send_confirm_email(user_id, domain):
     """ Send confirm letter """
     user = get_user_model().objects.get(pk=user_id)
     mail_subject = 'Confirm Your Account'
-
     # Render the HTML content of the email template
     message_html = render_to_string('email_templates/confirm_email.html', {
         'user': user,
