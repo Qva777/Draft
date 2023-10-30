@@ -13,7 +13,6 @@ services:
     environment:
       - POSTGRES_HOST=postgres
       - DOCKERIZED=true
-
     volumes:
       - .:/app
 
