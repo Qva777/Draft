@@ -21,9 +21,6 @@ services:
     image: postgres:latest
     container_name: postgres-container
     environment:
-#      - POSTGRES_DB=${POSTGRES_DB}
-#      - POSTGRES_USER=${POSTGRES_USER}
-#      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${DB_NAME}
       - POSTGRES_USER=${DB_USER}
       - POSTGRES_PASSWORD=${DB_PASSWORD}
@@ -54,8 +51,6 @@ services:
       - django
     environment:
       - DJANGO_SETTINGS_MODULE=E_Shop_config.settings
-#      - CELERY_BROKER_URL=redis://redis:6379/0
-#      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - POSTGRES_HOST=postgres
       - DOCKERIZED=true
 
@@ -69,15 +64,5 @@ services:
       - django
     environment:
       - DJANGO_SETTINGS_MODULE=E_Shop_config.settings
-#      - CELERY_BROKER_URL=redis://redis:6379/0
-#      - CELERY_RESULT_BACKEND=redis://redis:6379/0
       - POSTGRES_HOST=postgres
       - DOCKERIZED=true
-
-
-
-
-
-
-
-
