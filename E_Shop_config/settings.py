@@ -132,39 +132,13 @@ WSGI_APPLICATION = 'E_Shop_config.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
-
-# Local DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': os.getenv('DB_ENGINE'),
-#         'NAME': os.getenv('DB_NAME'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': os.getenv('DB_PORT'),
-#     }
-# }
-
-
-# Docker Container DB
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'e_shop_db',
-#         'USER': 'postgres',
-#         'PASSWORD': 'lolpop88',
-#         'HOST': 'postgres',
-#         'PORT': 5432,
-#     }
-# }
-
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),  # local  work with both
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
         'PORT': os.getenv('DB_PORT'),
     }
 }
@@ -252,14 +226,7 @@ SIMPLE_JWT = {
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
-#  Redis Local
-# CELERY_BROKER_URL = 'redis://localhost:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
-
-# Redis Docker
-# CELERY_BROKER_URL = 'redis://redis-container:6379/0'
-# CELERY_RESULT_BACKEND = 'redis://redis-container:6379/0'
-
+#  Redis
 if os.environ.get('DOCKERIZED', False):
     # docker environment
     CELERY_BROKER_URL = 'redis://redis-container:6379/0'
