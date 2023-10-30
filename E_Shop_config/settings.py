@@ -15,7 +15,6 @@ from datetime import timedelta
 from dotenv import load_dotenv
 
 load_dotenv()
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,12 +25,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECRET_KEY = os.environ.get('SECRET_KEY', "123")  # for create container
 SECRET_KEY = os.getenv('SECRET_KEY')  # for run server
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG')
+DEBUG = int(os.getenv('DEBUG', 0))
 
 ALLOWED_HOSTS = ['*']
 
 # Application definition
-
 INSTALLED_APPS = [
     # Default:
     'django.contrib.admin',
@@ -40,27 +38,32 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
     # My API apps:
     'E_Shop_API.E_Shop_Cart.apps.EShopCartConfig',
     'E_Shop_API.E_Shop_Users.apps.EShopUsersConfig',
     'E_Shop_API.E_Shop_Products.apps.EShopProductsConfig',
+
     # My Frontend apps:
     'E_Shop_Frontend.Cart.apps.CartConfig',
     'E_Shop_Frontend.Users.apps.UserConfig',
     'E_Shop_Frontend.Products.apps.ProductsConfig',
+
     # INSTALLED LIBRARY:
     "django_celery_beat",  # scheduler
-    'djoser',              # authorization
-    'coreapi',             # API
-    'drf_yasg',            # Swagger
+    'djoser',  # authorization
+    'coreapi',  # API
+    'drf_yasg',  # Swagger
     'rest_framework',
     'rest_framework.authtoken',
+
     # GOOGLE
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
     'django.contrib.sites',
+
     # TOOLS
     'coverage',  # percentage of tests
 ]
@@ -130,13 +133,38 @@ WSGI_APPLICATION = 'E_Shop_config.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
+# Local DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': os.getenv('DB_ENGINE'),
+#         'NAME': os.getenv('DB_NAME'),
+#         'USER': os.getenv('DB_USER'),
+#         'PASSWORD': os.getenv('DB_PASSWORD'),
+#         'HOST': os.getenv('DB_HOST'),
+#         'PORT': os.getenv('DB_PORT'),
+#     }
+# }
+
+
+# Docker Container DB
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#         'NAME': 'e_shop_db',
+#         'USER': 'postgres',
+#         'PASSWORD': 'lolpop88',
+#         'HOST': 'postgres',
+#         'PORT': 5432,
+#     }
+# }
+
 DATABASES = {
     'default': {
         'ENGINE': os.getenv('DB_ENGINE'),
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': os.getenv('DB_HOST'),
+        'HOST': os.getenv('POSTGRES_HOST', 'localhost'),  # local  work with both
         'PORT': os.getenv('DB_PORT'),
     }
 }
@@ -224,9 +252,22 @@ SIMPLE_JWT = {
 STRIPE_PUBLIC_KEY = os.getenv('STRIPE_PUBLIC_KEY')
 STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
 
-#  Redis
-CELERY_BROKER_URL = 'redis://localhost:6379/0'
-CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+#  Redis Local
+# CELERY_BROKER_URL = 'redis://localhost:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
+
+# Redis Docker
+# CELERY_BROKER_URL = 'redis://redis-container:6379/0'
+# CELERY_RESULT_BACKEND = 'redis://redis-container:6379/0'
+
+if os.environ.get('DOCKERIZED', False):
+    # docker environment
+    CELERY_BROKER_URL = 'redis://redis-container:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://redis-container:6379/0'
+else:
+    # local environment
+    CELERY_BROKER_URL = 'redis://localhost:6379/0'
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/0'
 
 #  Settings Gmail SMTP
 # https://myaccount.google.com/apppasswords
@@ -241,6 +282,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 CELERY_BEAT_SCHEDULE = {
     'send_new_user_notification': {
         'task': 'E_Shop_config.tasks.send_new_user_notification',
-        'schedule': timedelta(days=1),
+        'schedule': timedelta(minutes=1),
     },
 }
