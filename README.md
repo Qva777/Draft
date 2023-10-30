@@ -1,3 +1,46 @@
+1 manual install
+  - create venv
+  - install requirements
+  - create .env
+  - create postgres db
+  - migrate
+  - fixtures 
+            python commands.py
+            apply manually
+            python3 manage.py loaddata My_fixtures/my_products_data.json
+            python3 manage.py loaddata My_fixtures/my_users_data.json
+            
+  - run 3 commands
+  - postman(run google configuration)
+  - run tests
+
+2 using docker
+  - create .env
+  - docker-compose up
+  - docker exec -it django-container bash
+  - migrate
+  - fixtures
+  - localhost:5050 create db
+  - localhost(5050):
+        register Server
+        in connection set:
+        host: postgres-container
+        username: postgres
+        password: your_password
+  - postman (run google configuration) 
+
+3 postman
+  - install environment 
+  - install data 
+  - set data 
+  - run google configuration 
+
+4 about 
+  - description 
+  - photos
+  - try link(hosting)
+
+5 подсказки
 ```
 python manage.py dumpdata E_Shop_Products --indent 4 > mydemodata.json
 
@@ -66,45 +109,3 @@ chmod 1777 /tmp
 docker exec -it django-container bash
 
 
-
-
-
-
-1 manual install
-  - create venv
-  - install requirements
-  - create .env
-  - create postgres db
-  - migrate
-  - fixtures
-  - run 3 commands
-  - postman(run google configuration)
-  - run tests
-
-2 using docker
-  - create .env
-  - docker-compose up
-  - docker exec -it django-container bash
-  - migrate
-  - fixtures
-  - localhost:5050 create db
-  - localhost(5050):
-        register Server
-        in connection set:
-        host: postgres-container
-        username: postgres
-        password: your_password
-  - postman (run google configuration) 
-
-3 postman
-  - install environment 
-  - install data 
-  - set data 
-  - run google configuration 
-
-4 about 
-  - description 
-  - photos
-  - try link(hosting)
-
-5 подсказки
