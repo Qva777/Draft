@@ -20,13 +20,13 @@
 <h4><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h4>
 <h4><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h4>
 <h4><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h4>
-<h4 name="headers"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h4>
+<h4 name="1-4"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h4>
 
 ```
 http://localhost:8000
 ```
 
-<h4><b>1.5</b> Select <i>"Social application"</i></h4>
+<h4 name="1-5"><b>1.5</b> Select <i>"Social application"</i></h4>
 <p>
 To integrate the <i>"Social application"</i> with your project, follow these steps:
 </p>
@@ -151,8 +151,8 @@ Go to Postman installation
 
 
 Go to Postman installation
-[• <b>1.4</b> Configure "Change Sites"](#headers)
-[• <b>1.5</b> Configure "Social application"](#headers)  
+[• <b>1.4</b> Configure "Change Sites"](#1-4)
+[• <b>1.5</b> Configure "Social application"](#1-5)  
 </details>
 <!-- END MANUAL -->
 
