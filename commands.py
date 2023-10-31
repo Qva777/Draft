@@ -13,7 +13,7 @@ django.setup()
 
 def copy_images():
     # Define source and target directories
-    fixtures_dir = Path('photos')
+    fixtures_dir = Path('My_fixtures/photos')
     target_dir = Path(settings.MEDIA_ROOT) / 'photos'
 
     # Create target directory if it doesn't exist
@@ -38,4 +38,4 @@ copy_images()
 
 # Load fixture data for products and users
 load_fixture('my_products_data')
-# load_fixture('my_users_data')
+load_fixture('my_users_data')
