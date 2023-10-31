@@ -43,7 +43,7 @@
 5 подсказки
 ```
 python manage.py dumpdata E_Shop_Products --indent 4 > mydemodata.json
-
+python manage.py dumpdata E_Shop_Users --indent 4 > my_users_data.json
 ```
 
 
@@ -109,3 +109,11 @@ chmod 1777 /tmp
 docker exec -it django-container bash
 
 
+
+
+user admin :
+            admin@gmail.com
+            Testpass1
+basic user : 
+            user@gmail.com
+            Testpass1
