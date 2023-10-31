@@ -222,6 +222,7 @@
     .eye-icon {
         color: #000000;
         font-size: 1.3em;
+        cursor: pointer;
     }
 
     .login-box {
@@ -282,6 +283,7 @@
     .eye-icon {
         color: white;
         font-size: 1.3em;
+        cursor: pointer;
     }
 
     .login-box {
