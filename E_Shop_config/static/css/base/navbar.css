@@ -12,6 +12,7 @@
 .search_img {
     height: 25px;
     margin-right: 10px;
+    cursor: pointer;
 }
 
 .logo_e_shop {
@@ -28,6 +29,7 @@
     height: 50px;
     object-fit: cover;
     border-radius: 50%;
+    cursor: pointer;
 }
 
 .user-info h3 {
