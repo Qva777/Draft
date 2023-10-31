@@ -1,27 +1,56 @@
 # E_Shop &middot; [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](http://makeapullrequest.com)
 
 [<img src="E_Shop_config/static/img/logo_dark.png" width="230" height="130">](#)
-
+<!-- ABOUT -->
 > E_Shop is an innovative online store with two color themes (light/dark) for user convenience.
 > Administrators have the ability to create products and manage them effectively.
 > Users can easily add products to the cart, select the required quantity, and also use the implemented payment system
 > for
 > convenience during shopping.
 > The simple and intuitive interface ensures ease of use for all users.
+<!-- END ABOUT -->
 
 <hr>
 
 <h1>📍How to install: </h1>
 
-<details><summary><h1>📮How to connect Postman:</h1></summary><br/>
+<!-- POSTMAN -->
+<details><summary><h2>📮Connect to Postman:</h2></summary><br/>
 
-- <h3>Import <b><i>"Postman Collections"</i></b> folder into Postman</h3>
-- <h3>Set the environment settings <b><i>"User Data e_shop"</i></b></h3>
-- <h3>The <b><i>"E_Shop_API"</i></b> collection contains requests</h3>
+<h4><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h4>
+<h4><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h4>
+<h4><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h4>
+<h4 name="headers"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h4>
+
+```
+http://localhost:8000
+```
+
+<h4><b>1.5</b> Select <i>"Social application"</i></h4>
+<p>
+To integrate the <i>"Social application"</i> with your project, follow these steps:
+</p>
+<ul>
+    <li>Visit <a href="https://console.cloud.google.com/welcome" target="_blank">Google Cloud Console</a> and CREATE PROJECT</li>
+    <li>Navigate to <a href="https://console.cloud.google.com/apis/credentials" target="_blank">APIs & Services > Credentials</a></li>
+    <li>Click on <b>"Create Credentials"</b> and choose <b>"OAuth client ID"</b></li>
+    <li>Specify the application type as <b>"Web application"</b></li>
+    <li>Set the name of your client (e.g., "Social App Client")</li>
+    <li>Under <b>"Authorized redirect URIs,"</b> add the appropriate redirect URI for your application</li>
+    <li>Click <b>"Create"</b> to generate your OAuth client ID and client secret</li>
+</ul>
+<p>
+Once created, copy and securely store the generated <b>Client ID</b> and <b>Client secret</b>.
+</p>
+<pre>
+    Client ID: Your_Client_ID
+    Client secret: Your_Client_Secret
+</pre>
 </details>
+<!-- END POSTMAN -->
 
-
-<details><summary><h2>⬇Manual start:</h2></summary><br>
+<!-- MANUAL -->
+<details><summary><h2>🔧Manual Installation:</h2></summary><br>
 <h3>Connect venv:</h3> 
 
 ```
@@ -113,19 +142,24 @@ celery -A E_Shop_config worker --loglevel=info
 celery -A E_Shop_config beat --loglevel=info
 ```
 
-<h3>Use Postman Collections:</h3>
-To configure, go to the Google Configuration, select <b>"Change Sites"</b> and install the <b>"Social application"</b>.
+<h3>Use the following steps for configuration:</h3>
 <pre>
-E_Shop_API.postman_collection.json
-User Data e_shop.postman_environment.json
+Go to Postman installation
+• <b>1.4</b> Configure <i>"Change Sites"</i>
+• <b>1.5</b> Configure <i>"Social application"</i>
 </pre>
 
+
+Go to Postman installation
+[• <b>1.4</b> Configure "Change Sites"](#headers)
+[• <b>1.5</b> Configure "Social application"](#headers)  
 </details>
+<!-- END MANUAL -->
 
+<!-- Docker -->
+<details><summary><h2>🐳Connect to Docker Compose:</h2></summary><br/>
 
-<details><summary><h2>🐳How to connect Docker Compose:</h2></summary><br/>
-
-<h3>Create Your .env:</h3>
+<h3>Create Your .env and set correct values:</h3>
 
 ```
 # Django configuration
@@ -176,34 +210,78 @@ python manage.py migrate
 python commands.py
 ```
 
-<h3>Use Postman Collections:</h3>
-To configure, go to the Google Configuration, select <b>"Change Sites"</b> and install the <b>"Social application"</b>.
+<h3>Use the following steps for configuration:</h3>
 <pre>
-E_Shop_API.postman_collection.json
-User Data e_shop.postman_environment.json
+Go to Postman installation
+• <b>1.4</b> Configure <i>"Change Sites"</i>
+• <b>1.5</b> Configure <i>"Social application"</i>
 </pre>
 
+
 </details>
+<!-- END Docker -->
 
 <hr>
 <h1>📂Detail information about project</h1>
 
-try link(hosting)
+<h3><a href="#">Try the link to the website</a></h3>
 
-<details><summary><h1>Additional Information</h1></summary><br/>
-        test card
-            Visa: 4242 4242 4242 4242
-            Mastercard: 5105 1051 0510 5100
-            American Express: 3782 822463 10005
-            Discover: 6011 1111 1111 1117
+<details><summary><h1>📚Additional Information</h1></summary><br/>
 
-<p>
-<b>user admin :</b> <br>
-        admin@gmail.com
-Testpass1 <br>
-<b>basic user :</b> <br>
-user@gmail.com <br>
-Testpass1</p>
+<h3>Connect to Stripe</h3>
+<p>1. Go to the Stripe registration page and create your profile:</p>
+<a href="https://dashboard.stripe.com/login"><b>Sign up for Stripe</b></a>
+
+<p>2. Confirm your account.</p>
+
+<p>3. Navigate to the following link to obtain your API keys and <b>copy</b> them:</p>
+<a href="https://dashboard.stripe.com/test/apikeys"><b>Stripe API Keys</b></a>
+
+<p>4. Past to your .env:</p>
+<pre>
+STRIPE_PUBLIC_KEY=Publishable key
+STRIPE_SECRET_KEY=Secret key
+</pre>
+
+<h4>Test Cards:</h4>
+<ul>
+    <li>Visa: 4242 4242 4242 4242</li>
+    <li>Mastercard: 5105 1051 0510 5100</li>
+    <li>American Express: 3782 822463 10005</li>
+    <li>Discover: 6011 1111 1111 1117</li>
+</ul>
+
+<h3>Connect to Google SMTP</h3>
+<p>1. Create app password at the following link:</p>
+<a href="https://myaccount.google.com/apppasswords">Google App Passwords</a>
+
+<p>2. Set the following in your settings:</p>
+<pre>
+EMAIL_HOST_USER=example@gmail.com
+EMAIL_HOST_PASSWORD=example_code
+</pre>
+
+<h4>User Credentials:</h4>
+<h4 style="text-align: center;">Admin:</h4>
+
+```
+admin@gmail.com
+```
+
+```
+Testpass1
+```
+
+<h4 style="text-align: center;">Basic User:</h4>
+
+```
+user@gmail.com
+```
+
+```
+Testpass1
+```
+
 </details>
 
 <details><summary><h1>📂Screenshots</h1></summary><br/>
@@ -319,3 +397,7 @@ chmod 1777 /tmp
 
 зайти в контейнер
 docker exec -it django-container bash
+
+ssh -R 80:localhost:8000 serveo.net
+
+ssh -o ServerAliveInterval=60 -R QvaShquai.serveo.net:80:localhost:8000 serveo.net
