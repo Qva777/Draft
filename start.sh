@@ -18,7 +18,3 @@ python commands.py
 # Start server
 echo "Starting server"
 python manage.py runserver 0.0.0.0:8000
-
-
-
-git commit --date="2023-11-01T12:00:00" -m "Created sh installation file"
