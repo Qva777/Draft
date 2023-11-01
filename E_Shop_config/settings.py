@@ -249,6 +249,6 @@ EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 CELERY_BEAT_SCHEDULE = {
     'send_new_user_notification': {
         'task': 'E_Shop_config.tasks.send_new_user_notification',
-        'schedule': timedelta(minutes=1),
+        'schedule': timedelta(days=1),
     },
 }
