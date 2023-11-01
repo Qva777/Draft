@@ -159,6 +159,8 @@ celery -A E_Shop_config beat --loglevel=info
 <h3>3.1 Create Your .env and set correct values:</h3>
 
 ```
+echo "Creating .env file..."
+cat <<EOL > .env
 # Django configuration
 SECRET_KEY=your_secret_key
 DEBUG=1  # Set 1 or 0 
@@ -181,6 +183,7 @@ STRIPE_SECRET_KEY=sk_key
 # Settings Gmail SMTP
 EMAIL_HOST_USER=your@gmail.com
 EMAIL_HOST_PASSWORD=your_email_password
+EOL
 ```
 
 <h3>3.2 UP Docker-compose:</h3>
@@ -233,7 +236,7 @@ python commands.py
 <h3>⚠️<a href="#">Try the link to the website</a> - (coming soon)⚠️</h3>
 
 <!-- ADDITIONAL INFORMATION -->
-<details><summary><h1>📚Additional Information</h1></summary><br/>
+<details><summary><h2>📚Additional Information</h2></summary><br/>
 
 <h3>Connect to Stripe</h3>
 <p>1. Go to the Stripe registration page and create your profile:</p>
@@ -294,7 +297,7 @@ Testpass1
 
 <!-- SCREENSHOTS -->
 <details>
-  <summary><h1>📸Screenshots</h1></summary>
+  <summary><h2>📸Screenshots</h2></summary>
   <br/>
   <p>Explore the visual journey of our E-Shop with these captivating screenshots:</p>
   <div style="text-align: center;">
@@ -312,7 +315,7 @@ Testpass1
 
 <!-- TIPS -->
 <details>
-  <summary><h1>🤓Tips</h1></summary>
+  <summary><h2>🤓Tips</h2></summary>
 
 <!-- LOCAL TUNNEL -->
 <h3>Expose Localhost to the Internet using Serveo:</h3>
