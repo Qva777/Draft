@@ -212,7 +212,7 @@ python commands.py
 [• <b>1.4</b> Configure "Change Sites"](#1-4)
 <br>
 [• <b>1.5</b> Configure "Social application"](#1-5)
-
+<br>
 <h3>3.7 Localhost Database Setup:</h3>
 <i>Create a database on localhost:5050</i>
 
