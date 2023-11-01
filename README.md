@@ -17,16 +17,16 @@
 <!-- POSTMAN -->
 <details><summary><h2>📮Connect to Postman:</h2></summary><br/>
 
-<h4><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h4>
-<h4><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h4>
-<h4><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h4>
-<h4 name="1-4"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h4>
+<h3><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h3>
+<h3><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h3>
+<h3><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h3>
+<h3 name="1-4"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h3>
 
 ```
 http://localhost:8000
 ```
 
-<h4 name="1-5"><b>1.5</b> Select <i>"Social application"</i></h4>
+<h3 name="1-5"><b>1.5</b> Select <i>"Social application"</i></h3>
 <p>
 To integrate the <i>"Social application"</i> with your project, follow these steps:
 </p>
@@ -51,13 +51,13 @@ Once created, copy and securely store the generated <b>Client ID</b> and <b>Clie
 
 <!-- MANUAL -->
 <details><summary><h2>🔧Manual Installation:</h2></summary><br>
-<h3>Connect venv:</h3> 
+<h3> 2.1 Connect venv:</h3> 
 
 ```
 python3 -m venv venv
 ```
 
-<h3>Activate it:</h3>
+<h3>2.2 Activate it:</h3>
 <i>For Windows</i>
 
 ``` 
@@ -70,13 +70,13 @@ python3 -m venv venv
 source venv/bin/activate 
 ```
 
-<h3>Install libraries:</h3>
+<h3>2.3 Install libraries:</h3>
 
 ```
 pip install -r requirements.txt
 ```
 
-<h3>Create Your .env:</h3>
+<h3>2.4 Create Your .env:</h3>
 
 ```
 # Django configuration
@@ -103,26 +103,26 @@ EMAIL_HOST_USER=your@gmail.com
 EMAIL_HOST_PASSWORD=your_email_password
 ```
 
-<h3>Create PostgreSQ DB: </h3>
+<h3>2.5 Create PostgreSQ DB: </h3>
 <i>Server > Data Bases > Create DB and give name</i>
 
 ```
 e_shop_db
 ```
 
-<h3>Apply migrations:</h3>
+<h3>2.6 Apply migrations:</h3>
 
 ```
 python manage.py migrate
 ```
 
-<h3>Install fixtures:</h3>
+<h3>2.7 Install fixtures:</h3>
 
 ```
 python commands.py
 ```
 
-<h3>Run Commands:</h3>
+<h3>2.8 Run Commands:</h3>
 
 <i>Runserver:</i>
 
@@ -142,24 +142,20 @@ celery -A E_Shop_config worker --loglevel=info
 celery -A E_Shop_config beat --loglevel=info
 ```
 
-<h3>Use the following steps for configuration:</h3>
-<pre>
-Go to Postman installation
-• <b>1.4</b> Configure <i>"Change Sites"</i>
-• <b>1.5</b> Configure <i>"Social application"</i>
-</pre>
-
-
-Go to Postman installation
+<h3>2.9 Use the following steps for configuration:</h3>
+<i>Go to Postman installation</i>
+<br>
 [• <b>1.4</b> Configure "Change Sites"](#1-4)
-[• <b>1.5</b> Configure "Social application"](#1-5)  
+<br>
+[• <b>1.5</b> Configure "Social application"](#1-5)
+
 </details>
 <!-- END MANUAL -->
 
-<!-- Docker -->
+<!-- DOCKER -->
 <details><summary><h2>🐳Connect to Docker Compose:</h2></summary><br/>
 
-<h3>Create Your .env and set correct values:</h3>
+<h3>3.1 Create Your .env and set correct values:</h3>
 
 ```
 # Django configuration
@@ -186,46 +182,56 @@ EMAIL_HOST_USER=your@gmail.com
 EMAIL_HOST_PASSWORD=your_email_password
 ```
 
-<h3>UP Docker-compose:</h3>
+<h3>3.2 UP Docker-compose:</h3>
 
 ```
 docker-compose up
 ```
 
-<h3>Login to the container console:</h3>
+<h3>3.3 Login to the container console:</h3>
 
 ```
 docker exec -it django-container bash
 ```
 
-<h3>Apply migrations:</h3>
+<h3>3.4 Apply migrations:</h3>
 
 ```
 python manage.py migrate
 ```
 
-<h3>Install fixtures:</h3>
+<h3>3.5 Install fixtures:</h3>
 
 ```
 python commands.py
 ```
 
-<h3>Use the following steps for configuration:</h3>
-<pre>
-Go to Postman installation
-• <b>1.4</b> Configure <i>"Change Sites"</i>
-• <b>1.5</b> Configure <i>"Social application"</i>
-</pre>
+<h3>3.6 Use the following steps for configuration:</h4>
+<i>Go to Postman installation</i>
+<br>
+[• <b>1.4</b> Configure "Change Sites"](#1-4)
+<br>
+[• <b>1.5</b> Configure "Social application"](#1-5)
 
+<h3>3.7 Localhost Database Setup:</h3>
+<i>Create a database on localhost:5050</i>
+
+- Open localhost:5050 in your browser.
+- Register the server.
+- In the connection settings:
+    - Host: postgres-container
+    - Username: postgres
+    - Password: your_password
+    -
 
 </details>
-<!-- END Docker -->
+<!-- END DOCKER -->
 
 <hr>
 <h1>📂Detail information about project</h1>
+<h3><a href="#">Try the link to the website</a> - (coming soon)</h3>
 
-<h3><a href="#">Try the link to the website</a></h3>
-
+<!-- ADDITIONAL INFORMATION -->
 <details><summary><h1>📚Additional Information</h1></summary><br/>
 
 <h3>Connect to Stripe</h3>
@@ -261,7 +267,7 @@ EMAIL_HOST_USER=example@gmail.com
 EMAIL_HOST_PASSWORD=example_code
 </pre>
 
-<h4>User Credentials:</h4>
+<h3>User Credentials:</h4>
 <h4 style="text-align: center;">Admin:</h4>
 
 ```
@@ -283,121 +289,137 @@ Testpass1
 ```
 
 </details>
+<!-- END ADDITIONAL INFORMATION -->
 
-<details><summary><h1>📂Screenshots</h1></summary><br/>
-- photo 1
-- photo 2
-- photo 3
-- photo 4
+<!-- SCREENSHOTS -->
+<details>
+  <summary><h1>📸Screenshots</h1></summary>
+  <br/>
+  <p>Explore the visual journey of our E-Shop with these captivating screenshots:</p>
+  <div style="text-align: center;">
+    <img src="E_Shop_config/static/img/Preview_dark.png" alt="Dark Mode Preview" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px;"/>
+    <br/>
+    <p><i>Experience the allure of our Dark Mode.</i></p>
+    <img src="E_Shop_config/static/img/Preview_light.png" alt="Light Mode Preview" style="max-width: 100%; border-radius: 8px;"/>
+    <br/>
+    <p><i>Embrace the elegance of our Light Mode.</i></p>
+  </div>
 </details>
+<!-- END SCREENSHOTS -->
 
 
 
+<!-- TIPS -->
+<details>
+  <summary><h1>🤓Tips</h1></summary>
+
+<!-- LOCAL TUNNEL -->
+<h3>Expose Localhost to the Internet using Serveo:</h3>
+
+```
+ssh -R 80:localhost:8000 serveo.net
+```
+
+```
+ssh -o ServerAliveInterval=60 -R QvaShquai.serveo.net:80:localhost:8000 serveo.net
+```
+
+<!-- END LOCAL TUNNEL -->
 
 
-1 manual install
-
-- create venv
-- install requirements
-- create .env
-- create postgres db
-- migrate
-- fixtures
-  python commands.py
-  apply manually
-  python3 manage.py loaddata My_fixtures/my_products_data.json
-  python3 manage.py loaddata My_fixtures/my_users_data.json
-
-- run 3 commands celery
-- postman(run google configuration)
-- run tests
-
-2 using docker
-
-- create .env
-- docker-compose up
-- docker exec -it django-container bash
-- migrate
-- fixtures
-- localhost:5050 create db
-    - localhost(5050):
-      register Server
-      in connection set:
-      host: postgres-container
-      username: postgres
-      password: your_password
-- postman (run google configuration)
-
-3 postman
-
-- install environment
-- install data
-- set data
-- run google configuration
-
-4 about
-
-- description
-- photos
-- try link(hosting)
-
-5 подсказки
+<!-- TEST DATA -->
+<h3>Dump data from Django apps to JSON files:</h4>
 
 ```
 python manage.py dumpdata E_Shop_Products --indent 4 > mydemodata.json
 python manage.py dumpdata E_Shop_Users --indent 4 > my_users_data.json
 ```
 
+<h3>Load data back into Django apps:</h4>
+
+```
 python3 manage.py loaddata My_fixtures/my_products_data.json
 python3 manage.py loaddata My_fixtures/my_users_data.json
+```
+
+<!-- END TEST DATA -->
 
 
 
+<!-- CELERY -->
+<h3>Run Celery worker:</h4>
 
-
-
-
-
-
-<h1>How to connect Stripe?</h1>
-<h4>Go here and register your profile </h4>
-<a href="https://dashboard.stripe.com/login"> sign up Stripe</a>
-
-
-
-
-
-test card
-Visa: 4242 4242 4242 4242
-Mastercard: 5105 1051 0510 5100
-American Express: 3782 822463 10005
-Discover: 6011 1111 1111 1117
-
-celery worker:
+```
 celery -A E_Shop_config worker --loglevel=info
+```
 
-celery beat:
+<h3>Run Celery beat:</h4>
+
+```
 celery -A E_Shop_config beat --loglevel=info
+```
 
-Redis:
+<h3>Start Redis server:</h4>
+
+```
 redis-server
+```
 
-commit:
-git commit --date="2023-10-30T12:00:00" -m "Updated"
-year-month-day
+<!-- END CELERY -->
 
-отменить последний коммит сохранив данные  
+
+<!-- GIT COMMANDS -->
+<h3>year-month-day</h3>
+
+```
+git commit --date="2023-05-05T12:00:00" -m "Updated"
+```
+
+<h3>Undo the last commit while keeping changes</h3>
+
+```
 git reset --soft HEAD~1
+```
 
+<!-- END GIT COMMANDS -->
+
+
+<!-- PostgreSQL -->
+<h3>Resolve PostgreSQL port already in use</h3>
+
+```
+solve commands postgres already in use
 sudo lsof -i :5432
-sudo kill -9 317  
+sudo kill -9 <your_port>  
 sudo rm /tmp/.s.PGSQL.5432.lock
 sudo rm /tmp/.s.PGSQL.5432             
 chmod 1777 /tmp
+```
 
-зайти в контейнер
-docker exec -it django-container bash
+<!-- END PostgreSQL -->
 
-ssh -R 80:localhost:8000 serveo.net
 
-ssh -o ServerAliveInterval=60 -R QvaShquai.serveo.net:80:localhost:8000 serveo.net
+<!-- TEST COMMANDS -->
+<h3>Run Django Tests:</h3>
+
+```
+python manage.py test
+```
+
+<h3>Run Tests with Coverage:</h3>
+
+```
+coverage run --source='.' manage.py test
+```
+
+<h3>Generate Coverage HTML Report:</h3>
+
+```
+coverage html
+```
+
+<!-- END TEST COMMANDS -->
+
+
+</details>
+<!-- END TIPS -->
