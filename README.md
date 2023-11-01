@@ -244,7 +244,7 @@ python commands.py
 <p>3. Navigate to the following link to obtain your API keys and <b>copy</b> them:</p>
 <a href="https://dashboard.stripe.com/test/apikeys"><b>Stripe API Keys</b></a>
 
-<p>4. Past to your .env:</p>
+<p>4. Paste to your .env:</p>
 <pre>
 STRIPE_PUBLIC_KEY=Publishable key
 STRIPE_SECRET_KEY=Secret key
@@ -298,12 +298,12 @@ Testpass1
   <br/>
   <p>Explore the visual journey of our E-Shop with these captivating screenshots:</p>
   <div style="text-align: center;">
-    <img src="E_Shop_config/static/img/Preview_dark.png" alt="Dark Mode Preview" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px;"/>
-    <br/>
-    <p><i>Experience the allure of our Dark Mode.</i></p>
     <img src="E_Shop_config/static/img/Preview_light.png" alt="Light Mode Preview" style="max-width: 100%; border-radius: 8px;"/>
     <br/>
     <p><i>Embrace the elegance of our Light Mode.</i></p>
+    <img src="E_Shop_config/static/img/Preview_dark.png" alt="Dark Mode Preview" style="max-width: 100%; border-radius: 8px; margin-bottom: 10px;"/>
+    <br/>
+    <p><i>Experience the allure of our Dark Mode.</i></p>
   </div>
 </details>
 <!-- END SCREENSHOTS -->
