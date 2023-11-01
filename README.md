@@ -20,8 +20,10 @@
 <h3><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h3>
 <h3><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h3>
 <h3><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h3>
-<h3 name="1-4"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h3>
-<a name="some-git-rules"></a>
+### [<b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host]()
+## Go to the Google Configuration
+
+
 ```
 http://localhost:8000
 ```
@@ -148,6 +150,11 @@ celery -A E_Shop_config beat --loglevel=info
 [• <b>1.4</b> Configure "Change Sites"](#some-git-rules)
 <br>
 [• <b>1.5</b> Configure "Social application"](#1-5)
+
+
+
+[• <b>1.5</b> Configure "Social application"](#Google-Configuration)
+
 
 </details>
 <!-- END MANUAL -->
