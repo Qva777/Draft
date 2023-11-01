@@ -20,9 +20,7 @@
 <h3><b>1.1</b> Import <i>"Postman Collections"</i> folder into Postman</h3>
 <h3><b>1.2</b> Set the environment settings <i>"User Data e_shop.postman_environment"</i></h3>
 <h3><b>1.3</b> The <i>"E_Shop_API.postman_collection"</i> collection contains requests</h3>
-### [<b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host]()
-## Go to the Google Configuration
-
+<h3 name="1-4"><b>1.4</b> Go to the Google Configuration, select <i>"Change Sites"</i> and set host</h3>
 
 ```
 http://localhost:8000
@@ -147,14 +145,10 @@ celery -A E_Shop_config beat --loglevel=info
 <h3>2.9 Use the following steps for configuration:</h3>
 <i>Go to Postman installation</i>
 <br>
-[• <b>1.4</b> Configure "Change Sites"](#some-git-rules)
-<br>
+
+[• <b>1.4</b> Configure "Change Sites"](#1-4)
+
 [• <b>1.5</b> Configure "Social application"](#1-5)
-
-
-
-[• <b>1.5</b> Configure "Social application"](#Google-Configuration)
-
 
 </details>
 <!-- END MANUAL -->
@@ -216,8 +210,9 @@ python commands.py
 <h3>3.6 Use the following steps for configuration:</h4>
 <i>Go to Postman installation</i>
 <br>
+
 [• <b>1.4</b> Configure "Change Sites"](#1-4)
-<br>
+
 [• <b>1.5</b> Configure "Social application"](#1-5)
 
 <h3>3.7 Localhost Database Setup:</h3>
@@ -229,12 +224,13 @@ python commands.py
     - Host: postgres-container
     - Username: postgres
     - Password: your_password
+
 </details>
 <!-- END DOCKER -->
 
 <hr>
 <h1>📂Detail information about project</h1>
-<h3><a href="#">Try the link to the website</a> - (coming soon)</h3>
+<h3>⚠️<a href="#">Try the link to the website</a> - (coming soon)⚠️</h3>
 
 <!-- ADDITIONAL INFORMATION -->
 <details><summary><h1>📚Additional Information</h1></summary><br/>
