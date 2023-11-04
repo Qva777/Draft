@@ -217,7 +217,7 @@ a {
     width: 200px;
     height: 200px;
     margin-top: 1px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 20px;
 }
 

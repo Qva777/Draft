@@ -71,7 +71,7 @@
     width: 300px;
     margin-top: 10px;
     max-width: 300px;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 20px;
 }
 
@@ -262,7 +262,7 @@
         height: 200px;
         max-width: none;
         margin-top: 20px;
-        object-fit: cover;
+        object-fit: contain;
         border-radius: 20px;
     }
 
