@@ -81,7 +81,7 @@ class ProductHomeListView(BaseProductView):
     @staticmethod
     def get(request):
         """ Handle GET request for home/product list view """
-        queryset = Product.objects.filter(active=True).order_by('-created_at')
+        queryset = Product.objects.filter(active=True).order_by('?')
 
         if not request.user.is_staff:
             queryset = queryset.filter(count__gt=0)
