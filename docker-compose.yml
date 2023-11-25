@@ -25,6 +25,18 @@ services:
       - POSTGRES_PASSWORD=${DB_PASSWORD}
     ports:
       - "5432:5432"
+    healthcheck:
+      test: pg_isready -U postgres -d postgres
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      # health check
+      #healthcheck:
+      #  test: [ "CMD-SHELL", "pg_isready -d keycloak -U admin" ]
+      #  start_period: 30s
+      #  interval: 5s
+      #  timeout: 5s
+      #  retries: 30
 
   pgadmin:
     container_name: pgadmin
